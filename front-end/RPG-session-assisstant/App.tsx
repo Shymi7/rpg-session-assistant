@@ -1,23 +1,27 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import {StatusBar} from 'expo-status-bar';
+import {Text, View} from 'react-native';
+import {NavigationContainer} from "@react-navigation/native";
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import {LoginScreen} from "./Screens/LoginScreen";
+import {NewCharacterScreen} from "./Screens/NewCharacterScreen";
+import {NewRoomScreen} from "./Screens/NewRoomScreen";
+import {CharacterSheetScreen} from "./Screens/CharacterSheetScreen";
+import {GamemasterPanelScreen} from "./Screens/GamemasterPanelScreen";
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <View className={'w-32 border-4'}>
-        <Text>asdfasdfasdfas</Text>
-      </View>
-      <StatusBar style="auto" />
-    </View>
-  );
+    return (
+        <NavigationContainer>
+            <Stack.Navigator>
+                <Stack.Screen name="login" component={LoginScreen} />
+                <Stack.Screen name="newCharacter" component={NewCharacterScreen} />
+                <Stack.Screen name="NewRoom" component={NewRoomScreen} />
+                <Stack.Screen name="CharacterSheet" component={CharacterSheetScreen} />
+                <Stack.Screen name="GamemasterPanel" component={GamemasterPanelScreen} />
+            </Stack.Navigator>
+        </NavigationContainer>
+
+    );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

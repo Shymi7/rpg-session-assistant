@@ -14,11 +14,11 @@ export default function App() {
     return (
         <NavigationContainer>
             <Stack.Navigator>
-                <Stack.Screen name="login" component={LoginScreen} />
+                <Stack.Screen name="login" component={LoginScreen} options={{title:'Connect to room'}}/>
                 <Stack.Screen name="newCharacter" component={NewCharacterScreen} />
-                <Stack.Screen name="NewRoom" component={NewRoomScreen} />
-                <Stack.Screen name="CharacterSheet" component={CharacterSheetScreen} />
-                <Stack.Screen name="GamemasterPanel" component={GamemasterPanelScreen} />
+                <Stack.Screen name="newRoom" component={NewRoomScreen} />
+                <Stack.Screen name="characterSheet" component={CharacterSheetScreen} />
+                <Stack.Screen options={{}} name="gamemasterPanel" component={GamemasterPanelScreen} />
             </Stack.Navigator>
         </NavigationContainer>
 

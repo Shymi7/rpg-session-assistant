@@ -1,55 +1,48 @@
-import React from "react";
-import {Button, Text, TextInput, TouchableOpacity, View} from "react-native";
+import React, {useState} from "react";
+import {Text, TouchableOpacity, View} from "react-native";
+import {CustomInput} from "../Components/CustomInput";
+import {Section} from "../Components/Section";
+import {Btn} from "../Components/Btn";
 
-export function LoginScreen({navigation}) {
-    const inputStyle =
-        'bg-gray-300 border-2 border-default-800 rounded-xl my-6 px-3 py-2 text-default-800 font-bold text-xl w-full';
-    const buttonStyle =
-        'w-2/3 bg-default-800 rounded-xl m-4 justify-center items-center py-2';
-    const buttonTextStyle =
-        'font-bold text-xl text-white'
+export function LoginScreen({navigation}: { navigation: any }) {
 
-    const inputPlaceholderColor = '#166534';
+    const [mail, setMail] = useState('');
+    console.log(mail);
+
     return (
-        <View>
-            <View className={'items-center px-4'}>
-                <TextInput
-                    className={inputStyle}
-                    placeholderTextColor={inputPlaceholderColor}
-                    placeholder={'Room name'}
-                />
-                <TextInput
-                    className={inputStyle}
-                    placeholderTextColor={inputPlaceholderColor}
-                    placeholder={'Room password'}
-                />
-                <TextInput
-                    className={inputStyle}
-                    placeholderTextColor={inputPlaceholderColor}
-                    placeholder={'Player password'}
-                />
-                <TouchableOpacity
-                    className={buttonStyle}
-                    onPress={() => navigation.navigate('characterSheet')}
-                >
-                    <Text className={buttonTextStyle}>
-                        Enter room
-                    </Text>
-                </TouchableOpacity>
+        <View className={"flex-col justify-center h-full"}>
+            <Section variant={"light"}>
+                <View className={'items-center px-4'}>
+                    <CustomInput
+                        placeholder={"mail"}
+                        func={()=>{
 
-                <TouchableOpacity
-                    className={buttonStyle}
-                    onPress={() => navigation.navigate('newCharacter')}
-                >
-                    <Text className={buttonTextStyle}>
-                        Create new room
-                    </Text>
-                </TouchableOpacity>
-            </View>
+                        }}
+                    />
+
+                    <CustomInput
+                        placeholder={"password"}
+                        func={() => {
+                        }}
+                        password
+                    />
+                    <Btn
+                        text={"Log in"}
+                        func={()=>{
+                            navigation.navigate('characterSheet');
+                        }}
+                    />
+                    <Btn
+                        text={"Sign in"}
+                        func={()=>{
+                            navigation.navigate('signIn');
+                        }}
+                    />
+                </View>
 
 
-
-
+            </Section>
         </View>
+
     );
 }

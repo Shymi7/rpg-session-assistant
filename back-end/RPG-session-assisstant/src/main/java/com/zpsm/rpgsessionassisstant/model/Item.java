@@ -15,7 +15,13 @@ import java.util.Set;
 @Table(name = "Item", schema = "zpsm_projekt")
 public class Item {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+        strategy = GenerationType.SEQUENCE,
+        generator = "item_seq")
+    @SequenceGenerator(
+        name = "item_seq",
+        schema = "zpsm_projekt",
+        initialValue = 10)
     @Column(name = "item_id", nullable = false)
     private Long id;
 

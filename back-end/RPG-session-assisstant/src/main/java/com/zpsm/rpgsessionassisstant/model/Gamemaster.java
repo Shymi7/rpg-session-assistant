@@ -11,7 +11,13 @@ import lombok.Setter;
 @Table(name = "Gamemaster", schema = "zpsm_projekt")
 public class Gamemaster {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+        strategy = GenerationType.SEQUENCE,
+        generator = "gamemaster_seq")
+    @SequenceGenerator(
+        name = "gamemaster_seq",
+        schema = "zpsm_projekt",
+        initialValue = 10)
     @Column(name = "gamemaster_id", nullable = false)
     private Long id;
 

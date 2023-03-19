@@ -16,7 +16,13 @@ import java.util.Set;
 public class Attribute {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+        strategy = GenerationType.SEQUENCE,
+        generator = "attribute_seq")
+    @SequenceGenerator(
+        name = "attribute_seq",
+        schema = "zpsm_projekt",
+        initialValue = 10)
     @Column(name = "attribute_id", nullable = false)
     private Long id;
 

@@ -24,7 +24,13 @@ public class Player implements UserDetails {
     @Serial
     private static final long serialVersionUID = 2203748061513131558L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+        strategy = GenerationType.SEQUENCE,
+        generator = "player_seq")
+    @SequenceGenerator(
+        name = "player_seq",
+        schema = "zpsm_projekt",
+        initialValue = 10)
     @Column(name = "player_id", nullable = false)
     private Long id;
 

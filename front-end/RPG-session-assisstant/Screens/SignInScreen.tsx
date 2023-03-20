@@ -4,14 +4,15 @@ import {CustomInput} from "../Components/CustomInput";
 import {Section} from "../Components/Section";
 import {Btn} from "../Components/Btn";
 
-export function LoginScreen({navigation}: { navigation: any }) {
+export function SignInScreen({navigation}: { navigation: any }) {
 
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
+    const [repeatedPassword, setRepeatedPassword] = useState('');
 
     return (
         <View className={"flex-col justify-center h-full"}>
-            <Section variant={"light"}>
+            <Section variant={"dark"}>
                 <View className={'items-center px-4'}>
                     <CustomInput
                         placeholder={"mail"}
@@ -29,18 +30,23 @@ export function LoginScreen({navigation}: { navigation: any }) {
                         regex={/\b\w{4,15}\b/}//simple validation regex: min 4 chars, max 15
                         password
                     />
+
+                    <CustomInput
+                        placeholder={"repeat password"}
+                        func={(value: string) => {
+                            setRepeatedPassword(value)
+                        }}
+                        regex={/\b\w{4,15}\b/}//simple validation regex: min 4 chars, max 15
+                        password
+                    />
+
                     <Btn
-                        text={"Log in"}
+                        text={"Create account"}
                         func={() => {
-                            navigation.navigate('characterSheet');
+
                         }}
                     />
-                    <Btn
-                        text={"Sign in"}
-                        func={() => {
-                            navigation.navigate('signIn');
-                        }}
-                    />
+
                 </View>
 
 

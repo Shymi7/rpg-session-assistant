@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Text, TouchableOpacity, View} from "react-native";
+import {View} from "react-native";
 import {CustomInput} from "../Components/CustomInput";
 import {Section} from "../Components/Section";
 import {Btn} from "../Components/Btn";
@@ -7,7 +7,7 @@ import {Btn} from "../Components/Btn";
 export function LoginScreen({navigation}: { navigation: any }) {
 
     const [mail, setMail] = useState('');
-    console.log(mail);
+    const [password, setPassword] = useState('');
 
     return (
         <View className={"flex-col justify-center h-full"}>
@@ -15,26 +15,29 @@ export function LoginScreen({navigation}: { navigation: any }) {
                 <View className={'items-center px-4'}>
                     <CustomInput
                         placeholder={"mail"}
-                        func={()=>{
-
+                        func={(value: string) => {
+                            setMail(value)
                         }}
+                        regex={/^\S+@\S+\.\S+$/} //simple mail validation regex
                     />
 
                     <CustomInput
                         placeholder={"password"}
-                        func={() => {
+                        func={(value: string) => {
+                            setPassword(value)
                         }}
+                        regex={/\b\w{4,15}\b/}//simple validation regex: min 4 chars, max 15
                         password
                     />
                     <Btn
                         text={"Log in"}
-                        func={()=>{
+                        func={() => {
                             navigation.navigate('characterSheet');
                         }}
                     />
                     <Btn
                         text={"Sign in"}
-                        func={()=>{
+                        func={() => {
                             navigation.navigate('signIn');
                         }}
                     />

@@ -1,16 +1,31 @@
-import {TextInput, View, Text} from "react-native";
+import {TextInput} from "react-native";
+import React from "react";
 
 
 interface Props {
     placeholder: string;
-    func: () => void;
+    func: (value:string) => void;
     password?: boolean;
-    regex?: string;
+    regex?: RegExp;
     variant?: "light" | "dark";
 }
 
-export function CustomInput({placeholder, func, password = false, regex = "[\\s\\S]*", variant = "light"}: Props) {
-    const tailwind = require("../tailwind.config");
+export function CustomInput({
+                                placeholder,
+                                func, //function that is called on change
+                                password = false,
+                                regex = /[\\s\\S]*/,
+                                variant = "light"
+                            }: Props) {
+
+    function handleInputChange(textValue:string): void {
+        if(textValue.match(regex)){
+            console.log('ok');//todo
+            func(textValue);
+        }
+    }
+
+    const tailwindColor = require("../tailwind.config");
     return (
 
 
@@ -22,13 +37,13 @@ export function CustomInput({placeholder, func, password = false, regex = "[\\s\
                     width: 0,
                     height: 14,
                 },
-                shadowOpacity:  0.24,
+                shadowOpacity: 0.24,
                 shadowRadius: 15.38,
                 elevation: 19
             }}
             placeholder={placeholder}
-            placeholderTextColor={tailwind.theme.extend.colors.color["greyLight"]}
-            onChange={func}
+            placeholderTextColor={tailwindColor.theme.extend.colors.color["greyLight"]}
+            onChangeText={text => handleInputChange(text)}
             secureTextEntry={password}
         />
         // <View style={{shadowColor: '#000',shadowOffset: {width: 0, height: 2},shadowOpacity: 0.8,shadowRadius: 2,elevation: 10}}>

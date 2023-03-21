@@ -9,6 +9,7 @@ module.exports = {
           'greyLight': '#616161',
           'greyDark': '#2D2D2D',
           'accent': '#2CB039',
+          'warning': '#c97a4f'
           // '50': '#f0fdf4',
           // '100': '#dcfce7',
           // '200': '#bbf7d0',

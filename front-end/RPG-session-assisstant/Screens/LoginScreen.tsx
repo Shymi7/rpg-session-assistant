@@ -3,11 +3,14 @@ import {View} from "react-native";
 import {CustomInput} from "../Components/CustomInput";
 import {Section} from "../Components/Section";
 import {Btn} from "../Components/Btn";
+import {modifyElementInArrayByIndex} from "../utils/utils";
 
 export function LoginScreen({navigation}: { navigation: any }) {
 
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
+
+    const [areInputsValid, setAreInputsValid] = useState<boolean[]>(Array(2));
 
     return (
         <View className={"flex-col justify-center h-full"}>
@@ -15,16 +18,19 @@ export function LoginScreen({navigation}: { navigation: any }) {
                 <View className={'items-center px-4'}>
                     <CustomInput
                         placeholder={"mail"}
-                        func={(value: string) => {
-                            setMail(value)
+                        func={(value: string, isValid: boolean) => {
+                            setMail(value);
+                            setAreInputsValid(modifyElementInArrayByIndex(areInputsValid, 0, isValid));
                         }}
                         regex={/^\S+@\S+\.\S+$/} //simple mail validation regex
                     />
 
                     <CustomInput
                         placeholder={"password"}
-                        func={(value: string) => {
-                            setPassword(value)
+                        func={(value: string, isValid: boolean) => {
+                            setPassword(value);
+                            setAreInputsValid(modifyElementInArrayByIndex(areInputsValid, 1, isValid));
+
                         }}
                         regex={/\b\w{4,15}\b/}//simple validation regex: min 4 chars, max 15
                         password

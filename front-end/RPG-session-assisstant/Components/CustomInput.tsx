@@ -23,9 +23,12 @@ export function CustomInput({
 
     function handleInputChange(textValue: string): void {
         if (textValue.match(regex)) {
-            console.log('ok');//todo
+            setIsValid(true);
             func(textValue, true);
+            return;
         }
+        setIsValid(false);
+        func(textValue, false);
     }
 
     const tailwindColor = require("../tailwind.config");

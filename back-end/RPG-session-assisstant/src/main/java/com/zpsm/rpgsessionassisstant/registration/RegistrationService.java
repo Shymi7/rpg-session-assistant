@@ -1,7 +1,7 @@
 package com.zpsm.rpgsessionassisstant.registration;
 
 import com.zpsm.rpgsessionassisstant.model.Player;
-import com.zpsm.rpgsessionassisstant.player.PlayerService;
+import com.zpsm.rpgsessionassisstant.player.PlayerDetailsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class RegistrationService {
 
-    private final PlayerService playerService;
+    private final PlayerDetailsService playerDetailsService;
 
     public void register(RegistrationRequest request) {
         Player player = mapRequestToPlayer(request);
-        playerService.registerNewPlayer(player);
+        playerDetailsService.registerNewPlayer(player);
         log.info("New player registered");
     }
 

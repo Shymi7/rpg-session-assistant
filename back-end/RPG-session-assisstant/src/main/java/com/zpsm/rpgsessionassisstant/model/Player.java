@@ -51,7 +51,7 @@ public class Player implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Set.of(new SimpleGrantedAuthority("PLAYER"));
+        return Set.of(new SimpleGrantedAuthority("ROLE_PLAYER"));
     }
 
     @Override

@@ -4,11 +4,13 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zpsm.rpgsessionassisstant.model.Player;
+import com.zpsm.rpgsessionassisstant.util.ErrorsMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +29,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     private final JwtConfig jwtConfig;
     private final Algorithm algorithm;
     private final Clock clock;
+    private final ObjectMapper objectMapper;
 
     public JwtUsernameAndPasswordAuthenticationFilter(
         AuthenticationManager authenticationManager,
@@ -38,6 +41,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
         this.jwtConfig = jwtConfig;
         this.algorithm = algorithm;
         this.clock = clock;
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -66,6 +70,17 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
         response.addHeader(jwtConfig.getAuthorizationHeader(), accessToken);
         response.addHeader("Refresh-Token", refreshToken);
         log.debug("Successful authentication");
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        AuthenticationException failed) throws IOException, ServletException {
+
+        response.getOutputStream()
+            .println(objectMapper.writeValueAsString(ErrorsMapper.getErrorsMap(failed.getMessage())));
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
     }
 
     private LoginRequest mapToLoginRequest(HttpServletRequest request) {

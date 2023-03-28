@@ -1,6 +1,7 @@
 package com.zpsm.rpgsessionassisstant.config.exceptions;
 
 import com.zpsm.rpgsessionassisstant.player.LoginAlreadyTakenException;
+import com.zpsm.rpgsessionassisstant.util.ErrorsMapper;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,16 +22,14 @@ public class RestResponseEntityExceptionHandler {
             .stream()
             .map(DefaultMessageSourceResolvable::getDefaultMessage)
             .toList();
-        return new ResponseEntity<>(getErrorsMap(errors), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ErrorsMapper.getErrorsMap(errors), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(LoginAlreadyTakenException.class)
     public ResponseEntity<Map<String, String>> handleLoginTakenError(LoginAlreadyTakenException e) {
-        return new ResponseEntity<>(getErrorsMap(e.getMessage()), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(ErrorsMapper.getErrorsMap(e.getMessage()), HttpStatus.CONFLICT);
     }
 
-    private <T> Map<String, T> getErrorsMap(T error) {
-        return Map.of("errors", error);
-    }
+
 
 }

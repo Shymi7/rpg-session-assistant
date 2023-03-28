@@ -42,6 +42,7 @@ public class ApplicationSecurityConfig {
             .and()
             .authorizeHttpRequests(auth ->
                 auth.requestMatchers("/api/registration").permitAll()
+                    .requestMatchers("/login").permitAll()
                     .requestMatchers(PathRequest.toH2Console()).permitAll()
                     .anyRequest().authenticated())
             .headers()

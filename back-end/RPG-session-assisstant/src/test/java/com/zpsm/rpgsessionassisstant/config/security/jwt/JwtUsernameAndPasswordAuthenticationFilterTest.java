@@ -2,7 +2,9 @@ package com.zpsm.rpgsessionassisstant.config.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zpsm.rpgsessionassisstant.model.Player;
+import com.zpsm.rpgsessionassisstant.util.ErrorsMapper;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -125,6 +128,24 @@ class JwtUsernameAndPasswordAuthenticationFilterTest {
         // then
         assertEquals(expected.getHeader(HttpHeaders.AUTHORIZATION), actual.getHeader(HttpHeaders.AUTHORIZATION));
         assertEquals(expected.getHeader("Refresh-Token"), actual.getHeader("Refresh-Token"));
+    }
+
+    @Test
+    void givenFailedAuthenticationShouldCreateResponseWithErrorsAndStatusUNAUTHORIZED() throws IOException, ServletException {
+        // given
+        var actual = new MockHttpServletResponse();
+        var expected = new MockHttpServletResponse();
+        ObjectMapper objectMapper = new ObjectMapper();
+        expected.getOutputStream()
+            .println(objectMapper.writeValueAsString(ErrorsMapper.getErrorsMap("Player with login Testowy not found")));
+        expected.setStatus(HttpStatus.UNAUTHORIZED.value());
+
+        // when
+        filter.unsuccessfulAuthentication(null, actual, new LoginException("Player with login Testowy not found"));
+
+        // then
+        assertEquals(expected.getStatus(), actual.getStatus());
+        assertEquals(expected.getContentAsString(), actual.getContentAsString());
     }
 
     private String accessToken(Player player, Authentication authResult) {

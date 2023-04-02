@@ -28,12 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-class RefreshJwtServiceTest {
+class JwtServiceTest {
 
     @Mock
     private PlayerRepository playerRepository;
     private MockHttpServletRequest mockHttpServletRequest;
-    private RefreshJwtService service;
+    private JwtService service;
     private Algorithm algorithm;
     private final Clock clock = Clock.fixed(Instant.parse("2023-04-03T09:00:25Z"), ZoneId.systemDefault());
 
@@ -45,7 +45,7 @@ class RefreshJwtServiceTest {
         jwtConfig.setRefreshTokenExpirationAfterHours(24);
         mockHttpServletRequest = new MockHttpServletRequest();
         algorithm = Algorithm.HMAC256(jwtConfig.getSecret());
-        service = new RefreshJwtService(jwtConfig, algorithm, clock, playerRepository);
+        service = new JwtService(jwtConfig, algorithm, clock, playerRepository);
     }
 
     @Test
@@ -103,6 +103,34 @@ class RefreshJwtServiceTest {
 
         // then 2023-04-03T17:00:25Z
         assertEquals(expected.getHeader(HttpHeaders.AUTHORIZATION), actual.getHeader(HttpHeaders.AUTHORIZATION));
+    }
+
+    @Test
+    void givenPlayerShouldReturnAccessToken() {
+        // given
+        Player player = new Player();
+        player.setLogin("Testowy");
+        String expected = accessToken(player, clock.instant());
+
+        // when
+        String actual = service.accessToken(player);
+
+        // then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenPlayerShouldReturnRefreshToken() {
+        // given
+        Player player = new Player();
+        player.setLogin("Testowy");
+        String expected = refreshToken(player, Date.from(clock.instant()), refreshTokenExpiration(clock.instant()));
+
+        // when
+        String actual = service.refreshToken(player);
+
+        // then
+        assertEquals(expected, actual);
     }
 
     private String accessToken(Player player, Instant now) {

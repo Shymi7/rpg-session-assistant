@@ -3,6 +3,7 @@ package com.zpsm.rpgsessionassisstant.config.security;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.zpsm.rpgsessionassisstant.config.security.jwt.JwtAccessTokenVerifier;
 import com.zpsm.rpgsessionassisstant.config.security.jwt.JwtConfig;
+import com.zpsm.rpgsessionassisstant.config.security.jwt.JwtService;
 import com.zpsm.rpgsessionassisstant.config.security.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -33,7 +34,8 @@ public class ApplicationSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
         HttpSecurity http,
-        AuthenticationManager authenticationManager) throws Exception {
+        AuthenticationManager authenticationManager,
+        JwtService jwtService) throws Exception {
 
         return http
             .csrf().disable()
@@ -51,10 +53,9 @@ public class ApplicationSecurityConfig {
             .sameOrigin()
             .and()
             .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(
+                jwtService,
                 authenticationManager,
-                jwtConfig,
-                algorithm,
-                clock))
+                jwtConfig))
             .addFilterAfter(new JwtAccessTokenVerifier(jwtConfig, algorithm, clock), JwtUsernameAndPasswordAuthenticationFilter.class)
             .build();
     }

@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class RefreshJwtController {
 
-    private final RefreshJwtService refreshJwtService;
+    private final JwtService jwtService;
 
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
         log.debug("Token refresh");
-        refreshJwtService.refreshToken(request, response);
+        jwtService.refreshToken(request, response);
     }
 
 }

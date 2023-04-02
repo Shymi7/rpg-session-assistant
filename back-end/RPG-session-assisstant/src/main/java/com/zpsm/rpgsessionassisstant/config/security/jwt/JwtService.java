@@ -21,7 +21,7 @@ import java.util.Date;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class RefreshJwtService {
+public class JwtService {
 
     private final JwtConfig jwtConfig;
     private final Algorithm algorithm;
@@ -46,12 +46,7 @@ public class RefreshJwtService {
         log.debug("Token refreshed successfully");
     }
 
-    private JWTVerifier buildJWTVerifier() {
-        JWTVerifier.BaseVerification verification = (JWTVerifier.BaseVerification) JWT.require(algorithm);
-        return verification.build(clock);
-    }
-
-    private String accessToken(Player player) {
+    public String accessToken(Player player) {
         return JWT.create()
             .withSubject(player.getLogin())
             .withIssuedAt(Date.from(clock.instant()))
@@ -63,8 +58,25 @@ public class RefreshJwtService {
             .sign(algorithm);
     }
 
+    public String refreshToken(Player player) {
+        return JWT.create()
+            .withSubject(player.getLogin())
+            .withIssuedAt(Date.from(clock.instant()))
+            .withExpiresAt(refreshTokenExpiration())
+            .sign(algorithm);
+    }
+
     private Date accessTokenExpiration() {
         return Date.from(clock.instant().plus(Duration.ofHours(jwtConfig.getAccessTokenExpirationAfterHours())));
+    }
+
+    private Date refreshTokenExpiration() {
+        return Date.from(clock.instant().plus(Duration.ofHours(jwtConfig.getRefreshTokenExpirationAfterHours())));
+    }
+
+    private JWTVerifier buildJWTVerifier() {
+        JWTVerifier.BaseVerification verification = (JWTVerifier.BaseVerification) JWT.require(algorithm);
+        return verification.build(clock);
     }
 
 }

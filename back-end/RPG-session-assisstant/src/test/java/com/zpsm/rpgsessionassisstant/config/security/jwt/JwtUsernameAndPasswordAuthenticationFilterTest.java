@@ -37,8 +37,10 @@ import static org.mockito.Mockito.when;
 class JwtUsernameAndPasswordAuthenticationFilterTest {
 
     @Mock
-    AuthenticationManager mockAuthenticationManager;
-    MockHttpServletRequest mockRequest;
+    private AuthenticationManager mockAuthenticationManager;
+    @Mock
+    private JwtService jwtService;
+    private MockHttpServletRequest mockRequest;
 
     private JwtUsernameAndPasswordAuthenticationFilter filter;
     private JwtConfig jwtConfig;
@@ -50,13 +52,11 @@ class JwtUsernameAndPasswordAuthenticationFilterTest {
         jwtConfig.setSecret("secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret");
         jwtConfig.setRefreshTokenExpirationAfterHours(8);
         jwtConfig.setAccessTokenExpirationAfterHours(24);
-        Algorithm algorithm = Algorithm.HMAC256(jwtConfig.getSecret());
         mockRequest = new MockHttpServletRequest();
         filter = new JwtUsernameAndPasswordAuthenticationFilter(
+            jwtService,
             mockAuthenticationManager,
-            jwtConfig,
-            algorithm,
-            clock);
+            jwtConfig);
     }
 
     @Test
@@ -119,8 +119,12 @@ class JwtUsernameAndPasswordAuthenticationFilterTest {
             player,
             "password1",
             Set.of(new SimpleGrantedAuthority("ROLE_PLAYER")));
-        expected.addHeader(HttpHeaders.AUTHORIZATION, accessToken(player, authResult));
-        expected.addHeader("Refresh-Token", refreshToken(player));
+        String accessToken = accessToken(player, authResult);
+        String refreshToken = refreshToken(player);
+        expected.addHeader(HttpHeaders.AUTHORIZATION, accessToken);
+        expected.addHeader("Refresh-Token", refreshToken);
+        when(jwtService.accessToken(player)).thenReturn(accessToken);
+        when(jwtService.refreshToken(player)).thenReturn(refreshToken);
 
         // when
         filter.successfulAuthentication(null, actual, null, authResult);

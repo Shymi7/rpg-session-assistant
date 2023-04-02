@@ -118,11 +118,11 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     }
 
     private Date accessTokenExpiration() {
-        return Date.from(clock.instant().plus(Duration.ofDays(jwtConfig.getAccessTokenExpirationAfterHours())));
+        return Date.from(clock.instant().plus(Duration.ofHours(jwtConfig.getAccessTokenExpirationAfterHours())));
     }
 
     private Date refreshTokenExpiration() {
-        return Date.from(clock.instant().plus(Duration.ofDays(jwtConfig.getRefreshTokenExpirationAfterHours())));
+        return Date.from(clock.instant().plus(Duration.ofHours(jwtConfig.getRefreshTokenExpirationAfterHours())));
     }
 
     private boolean isLoginRequestCorrect(LoginRequest loginRequest) {

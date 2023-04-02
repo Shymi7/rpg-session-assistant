@@ -35,6 +35,10 @@ public class JwtAccessTokenVerifier extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
 
+        if (request.getServletPath().equals("/login") || request.getServletPath().equals("/api/token/refresh")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         String token = request.getHeader(jwtConfig.getAuthorizationHeader());
         if (null == token || token.isBlank()) {
             log.debug("No token provided");

@@ -1,5 +1,7 @@
 package com.zpsm.rpgsessionassisstant.config.exceptions;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.zpsm.rpgsessionassisstant.config.security.jwt.MissingTokenException;
 import com.zpsm.rpgsessionassisstant.player.LoginAlreadyTakenException;
 import com.zpsm.rpgsessionassisstant.util.ErrorsMapper;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -15,7 +17,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class, MissingTokenException.class})
     public ResponseEntity<Map<String, List<String>>> handleValidationErrors(MethodArgumentNotValidException e) {
         List<String> errors = e.getBindingResult()
             .getFieldErrors()
@@ -30,6 +32,9 @@ public class RestResponseEntityExceptionHandler {
         return new ResponseEntity<>(ErrorsMapper.getErrorsMap(e.getMessage()), HttpStatus.CONFLICT);
     }
 
-
+    @ExceptionHandler(JWTVerificationException.class)
+    public ResponseEntity<Map<String, String>> handleJwtErrors(LoginAlreadyTakenException e) {
+        return new ResponseEntity<>(ErrorsMapper.getErrorsMap(e.getMessage()), HttpStatus.FORBIDDEN);
+    }
 
 }

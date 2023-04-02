@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
@@ -35,7 +37,6 @@ class JwtAccessTokenVerifierTest {
         JwtConfig jwtConfig = new JwtConfig();
         jwtConfig.setSecret("secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret");
         mockHttpServletRequest = new MockHttpServletRequest();
-
         mockHttpServletResponse = new MockHttpServletResponse();
         jwtAccessTokenVerifier = new JwtAccessTokenVerifier(jwtConfig, Algorithm.HMAC256(jwtConfig.getSecret()), clock);
     }
@@ -56,6 +57,19 @@ class JwtAccessTokenVerifierTest {
     void givenNullOrEmptyTokenShouldExitEarlier() throws ServletException, IOException {
         // given
         mockHttpServletRequest.addHeader(HttpHeaders.AUTHORIZATION, "");
+
+        // when
+        jwtAccessTokenVerifier.doFilterInternal(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
+
+        // then
+        verify(mockFilterChain, only()).doFilter(mockHttpServletRequest, mockHttpServletResponse);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/login", "/api/token/refresh"})
+    void givenAppropriatePathShouldExitEarlier(String path) throws ServletException, IOException {
+        // given
+        mockHttpServletRequest.setServletPath(path);
 
         // when
         jwtAccessTokenVerifier.doFilterInternal(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);

@@ -169,11 +169,11 @@ class JwtUsernameAndPasswordAuthenticationFilterTest {
     }
 
     private Date accessTokenExpiration() {
-        return Date.from(clock.instant().plus(Duration.ofDays(jwtConfig.getAccessTokenExpirationAfterHours())));
+        return Date.from(clock.instant().plus(Duration.ofHours(jwtConfig.getAccessTokenExpirationAfterHours())));
     }
 
     private Date refreshTokenExpiration() {
-        return Date.from(clock.instant().plus(Duration.ofDays(jwtConfig.getRefreshTokenExpirationAfterHours())));
+        return Date.from(clock.instant().plus(Duration.ofHours(jwtConfig.getRefreshTokenExpirationAfterHours())));
     }
 
 }

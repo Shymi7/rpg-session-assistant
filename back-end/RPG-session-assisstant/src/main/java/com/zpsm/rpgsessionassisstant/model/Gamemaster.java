@@ -26,7 +26,6 @@ public class Gamemaster {
     @JoinColumn(name = "player_id", nullable = false)
     private Player player;
 
-    @NotNull
     @OneToOne(mappedBy = "gamemaster")
     private Room room;
 

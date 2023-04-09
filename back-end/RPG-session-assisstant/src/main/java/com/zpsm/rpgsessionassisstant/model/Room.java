@@ -26,7 +26,7 @@ public class Room {
     private Long id;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
     @JoinColumn(name = "gamemaster_id", nullable = false)
     private Gamemaster gamemaster;
 
@@ -47,7 +47,7 @@ public class Room {
 
     @Size(max = 30)
     @NotNull
-    @Column(name = "name", nullable = false, length = 30)
+    @Column(name = "name", nullable = false, unique = true, length = 30)
     private String name;
 
 }

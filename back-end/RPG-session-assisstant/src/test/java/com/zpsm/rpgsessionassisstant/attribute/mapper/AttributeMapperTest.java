@@ -1,7 +1,7 @@
 package com.zpsm.rpgsessionassisstant.attribute.mapper;
 
+import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
 import com.zpsm.rpgsessionassisstant.model.Attribute;
-import com.zpsm.rpgsessionassisstant.room.dto.AttributeDto;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

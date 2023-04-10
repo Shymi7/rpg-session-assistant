@@ -1,8 +1,8 @@
 package com.zpsm.rpgsessionassisstant.room.mapper;
 
+import com.zpsm.rpgsessionassisstant.dto.RoomDto;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.Room;
-import com.zpsm.rpgsessionassisstant.room.dto.RoomDto;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;

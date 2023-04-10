@@ -1,4 +1,4 @@
-package com.zpsm.rpgsessionassisstant.room.dto;
+package com.zpsm.rpgsessionassisstant.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

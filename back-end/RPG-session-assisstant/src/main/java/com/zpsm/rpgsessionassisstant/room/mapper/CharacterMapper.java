@@ -1,10 +1,10 @@
 package com.zpsm.rpgsessionassisstant.room.mapper;
 
+import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.CharacterAttribute;
 import com.zpsm.rpgsessionassisstant.model.Item;
 import com.zpsm.rpgsessionassisstant.model.Quest;
-import com.zpsm.rpgsessionassisstant.room.dto.CharacterDto;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;

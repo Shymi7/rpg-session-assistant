@@ -1,7 +1,7 @@
 package com.zpsm.rpgsessionassisstant.attribute;
 
-import com.zpsm.rpgsessionassisstant.room.dto.AttributeDto;
-import com.zpsm.rpgsessionassisstant.room.dto.CreateNewAttributeDto;
+import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
+import com.zpsm.rpgsessionassisstant.dto.CreateNewAttributeDto;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

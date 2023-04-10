@@ -1,9 +1,9 @@
 package com.zpsm.rpgsessionassisstant.room.mapper;
 
+import com.zpsm.rpgsessionassisstant.dto.RoomDto;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.Gamemaster;
 import com.zpsm.rpgsessionassisstant.model.Room;
-import com.zpsm.rpgsessionassisstant.room.dto.RoomDto;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;

@@ -1,10 +1,10 @@
 package com.zpsm.rpgsessionassisstant.attribute;
 
 import com.zpsm.rpgsessionassisstant.attribute.mapper.AttributeMapper;
+import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
+import com.zpsm.rpgsessionassisstant.dto.CreateNewAttributeDto;
 import com.zpsm.rpgsessionassisstant.model.Attribute;
 import com.zpsm.rpgsessionassisstant.repository.AttributeRepository;
-import com.zpsm.rpgsessionassisstant.room.dto.AttributeDto;
-import com.zpsm.rpgsessionassisstant.room.dto.CreateNewAttributeDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

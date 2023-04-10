@@ -1,5 +1,6 @@
 package com.zpsm.rpgsessionassisstant.room;
 
+import com.zpsm.rpgsessionassisstant.dto.*;
 import com.zpsm.rpgsessionassisstant.model.Gamemaster;
 import com.zpsm.rpgsessionassisstant.model.Player;
 import com.zpsm.rpgsessionassisstant.model.Room;
@@ -8,7 +9,6 @@ import com.zpsm.rpgsessionassisstant.repository.CharacterRepository;
 import com.zpsm.rpgsessionassisstant.repository.GamemasterRepository;
 import com.zpsm.rpgsessionassisstant.repository.PlayerRepository;
 import com.zpsm.rpgsessionassisstant.repository.RoomRepository;
-import com.zpsm.rpgsessionassisstant.room.dto.*;
 import com.zpsm.rpgsessionassisstant.room.mapper.CharacterMapper;
 import com.zpsm.rpgsessionassisstant.room.mapper.RoomMapper;
 import lombok.AllArgsConstructor;

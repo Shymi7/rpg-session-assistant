@@ -8,7 +8,7 @@ import {NewRoomScreen} from "./Screens/NewRoomScreen";
 import {CharacterSheetScreen} from "./Screens/CharacterSheetScreen";
 import {GamemasterPanelScreen} from "./Screens/GamemasterPanelScreen";
 import {SelectRoomScreen} from "./Screens/SelectRoomScreen";
-import {SignInScreen} from "./Screens/SignInScreen";
+import {RegisterScreen} from "./Screens/RegisterScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,7 +21,7 @@ export default function App() {
                 <Stack.Screen name="newRoom" component={NewRoomScreen} options={{title:'Create new room'}}/>
                 <Stack.Screen name="characterSheet" component={CharacterSheetScreen} />
                 <Stack.Screen name="selectRoom" component={SelectRoomScreen} options={{title:'Your rooms'}}/>
-                <Stack.Screen name="signIn" component={SignInScreen} options={{title:'Sign in'}}/>
+                <Stack.Screen name="signIn" component={RegisterScreen} options={{title:'Sign in'}}/>
                 <Stack.Screen options={{}} name="gamemasterPanel" component={GamemasterPanelScreen} />
             </Stack.Navigator>
         </NavigationContainer>

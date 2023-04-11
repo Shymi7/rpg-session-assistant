@@ -9,6 +9,7 @@ module.exports = {
           'greyLight': '#616161',
           'greyDark': '#2D2D2D',
           'accent': '#2CB039',
+          'accentInactive' :'#66c970',
           'warning': '#ff7a7a'
 
         },

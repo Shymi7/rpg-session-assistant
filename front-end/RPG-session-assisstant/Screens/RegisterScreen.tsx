@@ -3,9 +3,12 @@ import {View} from "react-native";
 import {CustomInput} from "../Components/CustomInput";
 import {Section} from "../Components/Section";
 import {Btn} from "../Components/Btn";
-import {modifyElementInArrayByIndex} from "../utils/utils";
+import {isArrayFilledWithTrue, modifyElementInArrayByIndex} from "../utils/utils";
+import axios from "axios";
+import {Warning} from "../Components/Warning";
 
-export function SignInScreen({navigation}: { navigation: any }) {
+export function RegisterScreen({navigation}: { navigation: any }) {
+    const registerApiUrl = "http://localhost:8080/api/registration";
 
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
@@ -13,7 +16,9 @@ export function SignInScreen({navigation}: { navigation: any }) {
 
     const [areInputsValid, setAreInputsValid] = useState<boolean[]>(Array(3));
 
-    console.log(areInputsValid);
+    const [warningValue, setWarningValue] = useState('');
+    const [serverErrorReceived, setServerErrorReceived] = useState(false);
+
     return (
         <View className={"flex-col justify-center h-full"}>
             <Section variant={"light"}>
@@ -46,14 +51,26 @@ export function SignInScreen({navigation}: { navigation: any }) {
                             setAreInputsValid(modifyElementInArrayByIndex(areInputsValid, 2, isValid));
 
                         }}
-                        regex={new RegExp('^'+password+'$')}//validation regex: repeated password = password
+                        regex={new RegExp('^' + password + '$')}//validation regex: repeated password = password
                         password
                     />
 
                     <Btn
                         text={"Create account"}
+                        disabled={isArrayFilledWithTrue(areInputsValid)}
                         func={() => {
-
+                            axios.post(registerApiUrl, {
+                                login: mail,
+                                password: password
+                            })
+                                .then(function (response) {
+                                    console.log(response);
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                    setWarningValue(error);
+                                });
+                            console.log("sdfasdf");
                         }}
                     />
 
@@ -61,6 +78,12 @@ export function SignInScreen({navigation}: { navigation: any }) {
 
 
             </Section>
+
+            {
+                ( isArrayFilledWithTrue(areInputsValid) || serverErrorReceived )  &&
+                    <Warning text={warningValue} />
+            }
+
         </View>
 
     );

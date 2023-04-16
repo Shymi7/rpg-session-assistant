@@ -1,17 +1,35 @@
 package com.zpsm.rpgsessionassisstant.room.mapper;
 
-import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
+import com.zpsm.rpgsessionassisstant.attribute.mapper.AttributeMapper;
+import com.zpsm.rpgsessionassisstant.dto.*;
+import com.zpsm.rpgsessionassisstant.item.mapper.ItemMapper;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class CharacterMapperTest {
 
-    private CharacterMapper characterMapper = new CharacterMapper();
+    @Mock
+    private ItemMapper mockItemMapper;
+    @Mock
+    private AttributeMapper mockAttributeMapper;
+    private CharacterMapper characterMapper;
+
+    @BeforeEach
+    void setUp() {
+        characterMapper = new CharacterMapper(mockItemMapper, mockAttributeMapper);
+    }
 
     @Test
     void givenCharacterEntityShouldMapToDTO() {
@@ -21,6 +39,23 @@ class CharacterMapperTest {
 
         // when
         CharacterDto actual = characterMapper.mapToDto(character);
+
+        // then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenCharacterEntityShouldMapToOtherDTO() {
+        // given
+        Character character = getCharacter();
+        CharacterDto1 expected = getCharacterDto1();
+        when(mockItemMapper.mapToDto(any()))
+            .thenReturn(new ItemDto(1L, "Master Sword", "Sword", Set.of()));
+        when(mockAttributeMapper.mapToCharacterAttributeDto(any()))
+            .thenReturn(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1));
+
+        // when
+        CharacterDto1 actual = characterMapper.mapToOtherDTO(character);
 
         // then
         assertEquals(expected, actual);
@@ -61,5 +96,17 @@ class CharacterMapperTest {
             Set.of(1L),
             Set.of(1L));
     }
+    private CharacterDto1 getCharacterDto1() {
+        return new CharacterDto1(
+            1L,
+            "Test",
+            4,
+            100,
+            22,
+            300,
+            Set.of(new ItemDto(1L, "Master Sword", "Sword", Set.of())),
+            Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)));
+    }
+
 
 }

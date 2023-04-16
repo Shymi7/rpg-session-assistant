@@ -1,6 +1,8 @@
 package com.zpsm.rpgsessionassisstant.room;
 
+import com.zpsm.rpgsessionassisstant.attribute.mapper.AttributeMapper;
 import com.zpsm.rpgsessionassisstant.dto.*;
+import com.zpsm.rpgsessionassisstant.item.mapper.ItemMapper;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.Gamemaster;
 import com.zpsm.rpgsessionassisstant.model.Player;
@@ -47,10 +49,14 @@ class RoomServiceTest {
     @Mock
     private GamemasterService mockGamemasterService;
     @Mock
-    Principal mockPrincipal;
+    private ItemMapper mockItemMapper;
+    @Mock
+    private AttributeMapper mockAttributeMapper;
+    @Mock
+    private Principal mockPrincipal;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final RoomMapper roomMapper = new RoomMapper();
-    private final CharacterMapper characterMapper = new CharacterMapper();
+    private final CharacterMapper characterMapper = new CharacterMapper(mockItemMapper, mockAttributeMapper);
     private RoomService roomService;
 
     @BeforeEach

@@ -12,7 +12,7 @@ import lombok.Setter;
 public class ItemAttribute {
 
     @EmbeddedId
-    private ItemAttributeKey id;
+    private ItemAttributeKey id = new ItemAttributeKey();
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

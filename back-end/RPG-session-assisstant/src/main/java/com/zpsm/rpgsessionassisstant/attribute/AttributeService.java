@@ -21,7 +21,7 @@ public class AttributeService {
 
     public AttributeDto getAttributeByName(String name) {
         return attributeRepository.findByName(name)
-            .map(attributeMapper::mapToDto)
+            .map(attributeMapper::mapToAttributeDto)
             .orElseThrow(() -> {
                 log.error("Attribute with name {} doesn't exits", name);
                 return new AttributeException(String.format("Attribute with name %s doesn't exits", name));
@@ -31,13 +31,13 @@ public class AttributeService {
     public Collection<AttributeDto> getAllAttributes() {
         return attributeRepository.findAll()
             .stream()
-            .map(attributeMapper::mapToDto)
+            .map(attributeMapper::mapToAttributeDto)
             .toList();
     }
 
     public AttributeDto getAttributeById(Long id) {
         return attributeRepository.findById(id)
-            .map(attributeMapper::mapToDto)
+            .map(attributeMapper::mapToAttributeDto)
             .orElseThrow(() -> {
                 log.error("Attribute with id {} doesn't exits", id);
                 return new AttributeException(String.format("Attribute with id %d doesn't exits", id));
@@ -49,7 +49,7 @@ public class AttributeService {
         attribute.setName(dto.name());
         Attribute saved = attributeRepository.save(attribute);
         log.info("New attribute created");
-        return attributeMapper.mapToDto(saved);
+        return attributeMapper.mapToAttributeDto(saved);
     }
 
 }

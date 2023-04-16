@@ -11,7 +11,7 @@ import lombok.Setter;
 @Table(name = "Character_Attribute", schema = "zpsm_projekt")
 public class CharacterAttribute {
     @EmbeddedId
-    private CharacterAttributeKey characterAttributeKey;
+    private CharacterAttributeKey characterAttributeKey = new CharacterAttributeKey();
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -27,6 +27,6 @@ public class CharacterAttribute {
 
     @NotNull
     @Column(name = "attribute_level", nullable = false)
-    private Integer attributeLevel;
+    private Integer attributeLevel = 1;
 
 }

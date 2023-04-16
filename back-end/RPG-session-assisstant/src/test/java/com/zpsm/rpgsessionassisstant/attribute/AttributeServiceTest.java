@@ -42,7 +42,7 @@ class AttributeServiceTest {
         attribute.setName(attributeName);
         AttributeDto expected = new AttributeDto(attribute.getId(), attributeName);
         when(mockAttributeRepository.findByName(anyString())).thenReturn(Optional.of(attribute));
-        when(mockAttributeMapper.mapToDto(any())).thenReturn(expected);
+        when(mockAttributeMapper.mapToAttributeDto(any())).thenReturn(expected);
 
         // when
         AttributeDto actual = attributeService.getAttributeByName(attributeName);
@@ -75,8 +75,8 @@ class AttributeServiceTest {
             new AttributeDto(attribute1.getId(), attribute1.getName()),
             new AttributeDto(attribute2.getId(), attribute2.getName()));
         when(mockAttributeRepository.findAll()).thenReturn(attributes);
-        when(mockAttributeMapper.mapToDto(attribute1)).thenReturn(expected.get(0));
-        when(mockAttributeMapper.mapToDto(attribute2)).thenReturn(expected.get(1));
+        when(mockAttributeMapper.mapToAttributeDto(attribute1)).thenReturn(expected.get(0));
+        when(mockAttributeMapper.mapToAttributeDto(attribute2)).thenReturn(expected.get(1));
 
         // when
         Collection<AttributeDto> actual = attributeService.getAllAttributes();
@@ -106,7 +106,7 @@ class AttributeServiceTest {
         attribute.setName("Strength");
         AttributeDto expected = new AttributeDto(attribute.getId(), attribute.getName());
         when(mockAttributeRepository.findById(anyLong())).thenReturn(Optional.of(attribute));
-        when(mockAttributeMapper.mapToDto(any())).thenReturn(expected);
+        when(mockAttributeMapper.mapToAttributeDto(any())).thenReturn(expected);
 
         // when
         AttributeDto actual = attributeService.getAttributeById(id);
@@ -133,7 +133,7 @@ class AttributeServiceTest {
         attribute.setName("Strength");
         AttributeDto expected = new AttributeDto(attribute.getId(), attribute.getName());
         when(mockAttributeRepository.save(any())).thenReturn(attribute);
-        when(mockAttributeMapper.mapToDto(any())).thenReturn(expected);
+        when(mockAttributeMapper.mapToAttributeDto(any())).thenReturn(expected);
 
         // when
         AttributeDto actual = attributeService.createNewAttribute(new CreateNewAttributeDto(attribute.getName()));

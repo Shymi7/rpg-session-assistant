@@ -1,6 +1,6 @@
 package com.zpsm.rpgsessionassisstant.item.mapper;
 
-import com.zpsm.rpgsessionassisstant.attribute.mapper.AttributeMapper;
+import com.zpsm.rpgsessionassisstant.attribute.AttributeMapper;
 import com.zpsm.rpgsessionassisstant.dto.ItemDto;
 import com.zpsm.rpgsessionassisstant.model.Item;
 import lombok.AllArgsConstructor;

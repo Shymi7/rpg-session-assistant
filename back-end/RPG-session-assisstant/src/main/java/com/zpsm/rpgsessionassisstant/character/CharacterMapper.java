@@ -1,6 +1,6 @@
-package com.zpsm.rpgsessionassisstant.room.mapper;
+package com.zpsm.rpgsessionassisstant.character;
 
-import com.zpsm.rpgsessionassisstant.attribute.mapper.AttributeMapper;
+import com.zpsm.rpgsessionassisstant.attribute.AttributeMapper;
 import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CharacterDto1;
 import com.zpsm.rpgsessionassisstant.item.mapper.ItemMapper;

@@ -1,8 +1,7 @@
 package com.zpsm.rpgsessionassisstant.room;
 
-import com.zpsm.rpgsessionassisstant.attribute.mapper.AttributeMapper;
+import com.zpsm.rpgsessionassisstant.character.CharacterMapper;
 import com.zpsm.rpgsessionassisstant.dto.*;
-import com.zpsm.rpgsessionassisstant.item.mapper.ItemMapper;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.Gamemaster;
 import com.zpsm.rpgsessionassisstant.model.Player;
@@ -12,8 +11,6 @@ import com.zpsm.rpgsessionassisstant.repository.CharacterRepository;
 import com.zpsm.rpgsessionassisstant.repository.GamemasterRepository;
 import com.zpsm.rpgsessionassisstant.repository.PlayerRepository;
 import com.zpsm.rpgsessionassisstant.repository.RoomRepository;
-import com.zpsm.rpgsessionassisstant.room.mapper.CharacterMapper;
-import com.zpsm.rpgsessionassisstant.room.mapper.RoomMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +24,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.security.Principal;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -49,14 +45,12 @@ class RoomServiceTest {
     @Mock
     private GamemasterService mockGamemasterService;
     @Mock
-    private ItemMapper mockItemMapper;
-    @Mock
-    private AttributeMapper mockAttributeMapper;
-    @Mock
     private Principal mockPrincipal;
+    @Mock
+    private CharacterMapper mockCharacterMapper;
+    @Mock
+    private RoomMapper mockRoomMapper;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private final RoomMapper roomMapper = new RoomMapper();
-    private final CharacterMapper characterMapper = new CharacterMapper(mockItemMapper, mockAttributeMapper);
     private RoomService roomService;
 
     @BeforeEach
@@ -67,8 +61,8 @@ class RoomServiceTest {
             mockRoomRepository,
             mockCharacterRepository,
             mockGamemasterService,
-            roomMapper,
-            characterMapper,
+            mockRoomMapper,
+            mockCharacterMapper,
             passwordEncoder);
     }
 
@@ -93,6 +87,7 @@ class RoomServiceTest {
             room.getCapacity(),
             room.getName());
         when(mockRoomRepository.findByName(roomName)).thenReturn(Optional.of(room));
+        when(mockRoomMapper.mapToDto(any())).thenReturn(expected);
 
         // when
         RoomDto actual = roomService.findRoomByName(roomName);
@@ -133,6 +128,7 @@ class RoomServiceTest {
             room.getCapacity(),
             room.getName());
         when(mockRoomRepository.findById(roomId)).thenReturn(Optional.of(room));
+        when(mockRoomMapper.mapToDto(any())).thenReturn(expected);
 
         // when
         RoomDto actual = roomService.findRoomById(roomId);
@@ -145,11 +141,20 @@ class RoomServiceTest {
     void givenIdShouldReturnListOfCharacters() {
         // given
         long roomId = 3L;
-        Collection<Character> characters = getCharacters();
-        when(mockRoomRepository.findAllByRoomId(roomId)).thenReturn(characters);
-        List<CharacterDto> expected = characters.stream()
-            .map(characterMapper::mapToDto)
-            .toList();
+        Character character = getCharacter();
+        CharacterDto characterDto = new CharacterDto(
+            character.getId(),
+            character.getName(),
+            character.getLevel(),
+            character.getHealth(),
+            character.getSkillPoints(),
+            character.getExperience(),
+            Set.of(),
+            Set.of(),
+            Set.of());
+        List<CharacterDto> expected = List.of(characterDto);
+        when(mockRoomRepository.findAllByRoomId(roomId)).thenReturn(List.of(character));
+        when(mockCharacterMapper.mapToDto(any())).thenReturn(characterDto);
 
         // when
         List<CharacterDto> actual = roomService.getCharactersFromRoom(roomId);
@@ -180,6 +185,7 @@ class RoomServiceTest {
         when(mockPlayerRepository.findByLogin(anyString())).thenReturn(Optional.of(player));
         when(mockGamemasterService.createGamemaster(any())).thenReturn(gamemaster);
         when(mockRoomRepository.save(any())).thenReturn(savedRoom);
+        when(mockRoomMapper.mapToDto(any())).thenReturn(expected);
 
         // when
         RoomDto actual = roomService.createRoom(dto, mockPrincipal);
@@ -342,7 +348,7 @@ class RoomServiceTest {
         verify(mockRoomRepository, times(1)).save(any());
     }
 
-    private Collection<Character> getCharacters() {
+    private Character getCharacter() {
         Character character = new Character();
         character.setId(1L);
         character.setLevel(3);
@@ -351,7 +357,7 @@ class RoomServiceTest {
         character.setLevel(3);
         character.setExperience(230);
         character.setHealth(170);
-        return List.of(character);
+        return character;
     }
 
 }

@@ -1,4 +1,4 @@
-package com.zpsm.rpgsessionassisstant.attribute.mapper;
+package com.zpsm.rpgsessionassisstant.attribute;
 
 import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
 import com.zpsm.rpgsessionassisstant.dto.CharacterAttributeDto;

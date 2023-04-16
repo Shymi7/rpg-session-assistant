@@ -1,6 +1,5 @@
 package com.zpsm.rpgsessionassisstant.attribute;
 
-import com.zpsm.rpgsessionassisstant.attribute.mapper.AttributeMapper;
 import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateNewAttributeDto;
 import com.zpsm.rpgsessionassisstant.model.Attribute;

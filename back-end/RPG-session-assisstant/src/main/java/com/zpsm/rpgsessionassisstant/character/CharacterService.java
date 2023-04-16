@@ -7,7 +7,6 @@ import com.zpsm.rpgsessionassisstant.model.*;
 import com.zpsm.rpgsessionassisstant.player.PlayerNotFoundException;
 import com.zpsm.rpgsessionassisstant.repository.*;
 import com.zpsm.rpgsessionassisstant.room.RoomException;
-import com.zpsm.rpgsessionassisstant.room.mapper.CharacterMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

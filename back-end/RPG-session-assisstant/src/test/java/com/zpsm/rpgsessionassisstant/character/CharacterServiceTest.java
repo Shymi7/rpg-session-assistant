@@ -9,7 +9,6 @@ import com.zpsm.rpgsessionassisstant.model.*;
 import com.zpsm.rpgsessionassisstant.player.PlayerNotFoundException;
 import com.zpsm.rpgsessionassisstant.repository.*;
 import com.zpsm.rpgsessionassisstant.room.RoomException;
-import com.zpsm.rpgsessionassisstant.room.mapper.CharacterMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

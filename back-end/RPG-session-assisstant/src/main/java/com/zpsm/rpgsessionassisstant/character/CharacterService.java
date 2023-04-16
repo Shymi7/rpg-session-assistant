@@ -1,6 +1,6 @@
 package com.zpsm.rpgsessionassisstant.character;
 
-import com.zpsm.rpgsessionassisstant.dto.CharacterDto1;
+import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateCharacterDto;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.*;
@@ -26,23 +26,23 @@ public class CharacterService {
     private final PlayerRepository playerRepository;
     private final CharacterMapper characterMapper;
 
-    public CharacterDto1 getCharacterById(Long id) {
+    public CharacterDto getCharacterById(Long id) {
         return characterRepository.findById(id)
-            .map(characterMapper::mapToOtherDTO)
+            .map(characterMapper::mapToDto)
             .orElseThrow(() -> {
                 log.error("Character with id {} doesn't exist", id);
                 return new CharacterException(String.format("Character with id %d doesn't exist", id));
             });
     }
 
-    public Collection<CharacterDto1> getPlayersCharacters(Long id) {
+    public Collection<CharacterDto> getPlayersCharacters(Long id) {
         return characterRepository.findAllPlayersCharacters(id)
             .stream()
-            .map(characterMapper::mapToOtherDTO)
+            .map(characterMapper::mapToDto)
             .toList();
     }
 
-    public CharacterDto1 createCharacter(CreateCharacterDto dto, Principal principal) {
+    public CharacterDto createCharacter(CreateCharacterDto dto, Principal principal) {
         Player player = playerRepository.findByLogin(principal.getName())
             .orElseThrow(() -> new PlayerNotFoundException(
                 String.format("Player with login %s not found", principal.getName())));
@@ -54,7 +54,7 @@ public class CharacterService {
         Set<CharacterAttribute> savedCharacterAttributes = saveCharacterAttributes(saved, dto.attributeNames());
         saved.setCharacterAttributes(savedCharacterAttributes);
         saved = characterRepository.save(saved);
-        return characterMapper.mapToOtherDTO(saved);
+        return characterMapper.mapToDto(saved);
     }
 
     private Character prepareCharacter(String name, long roomId) {

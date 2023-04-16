@@ -2,7 +2,7 @@ package com.zpsm.rpgsessionassisstant.character;
 
 import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
 import com.zpsm.rpgsessionassisstant.dto.CharacterAttributeDto;
-import com.zpsm.rpgsessionassisstant.dto.CharacterDto1;
+import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateCharacterDto;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.*;
@@ -59,7 +59,7 @@ class CharacterServiceTest {
     void givenValidIdShouldGetCharacterById() {
         // given
         long id = 1L;
-        CharacterDto1 expected = new CharacterDto1(id, "Bezi", 3, 150, 2, 220, Set.of(), Set.of());
+        CharacterDto expected = new CharacterDto(id, "Bezi", 3, 150, 2, 220, Set.of(), Set.of());
         Character character = new Character();
         character.setId(expected.id());
         character.setName(expected.name());
@@ -68,10 +68,10 @@ class CharacterServiceTest {
         character.setSkillPoints(expected.skillPoints());
         character.setExperience(expected.experience());
         when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.of(character));
-        when(mockCharacterMapper.mapToOtherDTO(any())).thenReturn(expected);
+        when(mockCharacterMapper.mapToDto(any())).thenReturn(expected);
 
         // when
-        CharacterDto1 actual = characterService.getCharacterById(id);
+        CharacterDto actual = characterService.getCharacterById(id);
 
         // then
         assertEquals(expected, actual);
@@ -89,7 +89,7 @@ class CharacterServiceTest {
     @Test
     void givenValidIdShouldGetPlayersCharacters() {
         // given
-        CharacterDto1 dto = new CharacterDto1(1L, "Bezi", 3, 150, 2, 220, Set.of(), Set.of());
+        CharacterDto dto = new CharacterDto(1L, "Bezi", 3, 150, 2, 220, Set.of(), Set.of());
         Character character = new Character();
         character.setId(dto.id());
         character.setName(dto.name());
@@ -97,10 +97,10 @@ class CharacterServiceTest {
         character.setHealth(dto.health());
         character.setSkillPoints(dto.skillPoints());
         character.setExperience(dto.experience());
-        List<CharacterDto1> expected = List.of(dto);
+        List<CharacterDto> expected = List.of(dto);
         List<Character> characters = List.of(character);
         when(mockCharacterRepository.findAllPlayersCharacters(anyLong())).thenReturn(characters);
-        when(mockCharacterMapper.mapToOtherDTO(any())).thenReturn(dto);
+        when(mockCharacterMapper.mapToDto(any())).thenReturn(dto);
 
         // when
         var actual = characterService.getPlayersCharacters(dto.id());
@@ -145,10 +145,10 @@ class CharacterServiceTest {
         when(mockCharacterRepository.save(any())).thenReturn(savedWithPlayer);
         when(mockAttributeRepository.findAllByNameIn(anyList())).thenReturn(List.of(attribute));
         when(mockCharacterAttributeRepository.saveAll(anySet())).thenReturn(List.of(characterAttribute));
-        when(mockCharacterMapper.mapToOtherDTO(any())).thenReturn(getCharacterDto());
+        when(mockCharacterMapper.mapToDto(any())).thenReturn(getCharacterDto());
 
         // when
-        CharacterDto1 actual = characterService.createCharacter(dto, mockPrincipal);
+        CharacterDto actual = characterService.createCharacter(dto, mockPrincipal);
 
         // then
         assertEquals(getCharacterDto(), actual);
@@ -190,8 +190,8 @@ class CharacterServiceTest {
         return character;
     }
 
-    private CharacterDto1 getCharacterDto() {
-        return new CharacterDto1(
+    private CharacterDto getCharacterDto() {
+        return new CharacterDto(
             1L,
             "Bezi",
             1,

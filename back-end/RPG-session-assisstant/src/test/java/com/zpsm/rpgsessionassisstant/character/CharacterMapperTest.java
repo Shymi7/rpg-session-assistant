@@ -1,7 +1,10 @@
 package com.zpsm.rpgsessionassisstant.character;
 
 import com.zpsm.rpgsessionassisstant.attribute.AttributeMapper;
-import com.zpsm.rpgsessionassisstant.dto.*;
+import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
+import com.zpsm.rpgsessionassisstant.dto.CharacterAttributeDto;
+import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
+import com.zpsm.rpgsessionassisstant.dto.ItemDto;
 import com.zpsm.rpgsessionassisstant.item.mapper.ItemMapper;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.*;
@@ -36,6 +39,10 @@ class CharacterMapperTest {
         // given
         Character character = getCharacter();
         CharacterDto expected = getCharacterDto();
+        when(mockItemMapper.mapToDto(any()))
+            .thenReturn(new ItemDto(1L, "Sword", "", Set.of()));
+        when(mockAttributeMapper.mapToCharacterAttributeDto(any()))
+            .thenReturn(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1));
 
         // when
         CharacterDto actual = characterMapper.mapToDto(character);
@@ -48,14 +55,14 @@ class CharacterMapperTest {
     void givenCharacterEntityShouldMapToOtherDTO() {
         // given
         Character character = getCharacter();
-        CharacterDto1 expected = getCharacterDto1();
+        CharacterDto expected = getCharacterDto1();
         when(mockItemMapper.mapToDto(any()))
             .thenReturn(new ItemDto(1L, "Master Sword", "Sword", Set.of()));
         when(mockAttributeMapper.mapToCharacterAttributeDto(any()))
             .thenReturn(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1));
 
         // when
-        CharacterDto1 actual = characterMapper.mapToOtherDTO(character);
+        CharacterDto actual = characterMapper.mapToDto(character);
 
         // then
         assertEquals(expected, actual);
@@ -92,12 +99,11 @@ class CharacterMapperTest {
             100,
             22,
             300,
-            Set.of(1L),
-            Set.of(1L),
-            Set.of(1L));
+            Set.of(new ItemDto(1L, "Sword", "", Set.of())),
+            Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)));
     }
-    private CharacterDto1 getCharacterDto1() {
-        return new CharacterDto1(
+    private CharacterDto getCharacterDto1() {
+        return new CharacterDto(
             1L,
             "Test",
             4,

@@ -2,8 +2,8 @@ package com.zpsm.rpgsessionassisstant.config.exceptions;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.zpsm.rpgsessionassisstant.config.security.jwt.MissingTokenException;
-import com.zpsm.rpgsessionassisstant.player.LoginAlreadyTakenException;
-import com.zpsm.rpgsessionassisstant.room.RoomException;
+import com.zpsm.rpgsessionassisstant.exception.LoginAlreadyTakenException;
+import com.zpsm.rpgsessionassisstant.exception.RoomException;
 import com.zpsm.rpgsessionassisstant.util.ErrorsMapper;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;

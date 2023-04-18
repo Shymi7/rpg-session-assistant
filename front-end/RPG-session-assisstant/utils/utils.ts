@@ -10,3 +10,5 @@ export function isArrayFilledWithTrue(array: Array<boolean>): boolean{
     }
     return true;
 }
+
+

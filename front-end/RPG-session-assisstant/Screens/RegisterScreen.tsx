@@ -7,8 +7,12 @@ import {isArrayFilledWithTrue, modifyElementInArrayByIndex} from "../utils/utils
 import axios from "axios";
 import {Warning} from "../Components/Warning";
 
+//import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+
 export function RegisterScreen({navigation}: { navigation: any }) {
-    const registerApiUrl = "http://localhost:8080/api/registration";
+    //dotenv.config()
+    const registerApiUrl =  "//10.0.2.2:8080/api" +"/register";
+    // const registerApiUrl =  "//192.168.56.1:8080/api" +"/register";
 
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
@@ -17,8 +21,12 @@ export function RegisterScreen({navigation}: { navigation: any }) {
     const [areInputsValid, setAreInputsValid] = useState<boolean[]>(Array(3));
 
     const [warningValue, setWarningValue] = useState('');
-    const [serverErrorReceived, setServerErrorReceived] = useState(false);
+    const [serverError, setServerError] = useState(null);
 
+
+    //
+
+    console.log(registerApiUrl)
     return (
         <View className={"flex-col justify-center h-full"}>
             <Section variant={"light"}>
@@ -57,7 +65,7 @@ export function RegisterScreen({navigation}: { navigation: any }) {
 
                     <Btn
                         text={"Create account"}
-                        disabled={isArrayFilledWithTrue(areInputsValid)}
+                        disabled={!isArrayFilledWithTrue(areInputsValid)}
                         func={() => {
                             axios.post(registerApiUrl, {
                                 login: mail,
@@ -68,7 +76,7 @@ export function RegisterScreen({navigation}: { navigation: any }) {
                                 })
                                 .catch(function (error) {
                                     console.log(error);
-                                    setWarningValue(error);
+                                    setServerError(error);
                                 });
                             console.log("sdfasdf");
                         }}
@@ -80,8 +88,9 @@ export function RegisterScreen({navigation}: { navigation: any }) {
             </Section>
 
             {
-                ( isArrayFilledWithTrue(areInputsValid) || serverErrorReceived )  &&
-                    <Warning text={warningValue} />
+
+                (serverError !== null) &&
+                <Warning text={serverError}/>
             }
 
         </View>

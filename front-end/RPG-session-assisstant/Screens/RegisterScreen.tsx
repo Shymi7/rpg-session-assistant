@@ -6,9 +6,12 @@ import {Btn} from "../Components/Btn";
 import {isArrayFilledWithTrue, modifyElementInArrayByIndex} from "../utils/utils";
 import axios from "axios";
 import {Warning} from "../Components/Warning";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+//import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 
 export function RegisterScreen({navigation}: { navigation: any }) {
-    const registerApiUrl = "http://localhost:8080/api/registration";
+    const registerApiUrl =  "http://10.0.2.2:8080/api" +"/registration";
 
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
@@ -16,11 +19,28 @@ export function RegisterScreen({navigation}: { navigation: any }) {
 
     const [areInputsValid, setAreInputsValid] = useState<boolean[]>(Array(3));
 
-    const [warningValue, setWarningValue] = useState('');
-    const [serverErrorReceived, setServerErrorReceived] = useState(false);
+    const [serverError, setServerError] = useState(null);
 
+
+    function register() {
+        axios.post(registerApiUrl, {
+            login: mail,
+            password: password
+        })
+            .then(function (response) {
+                console.log(response);
+                setServerError(null);
+                //AsyncStorage.setItem('token', response.data.token);
+                navigation.navigate('login');
+            })
+            .catch(function (error) {
+                setServerError(error.message);
+            });
+    }
+
+    //console.log(registerApiUrl)
     return (
-        <View className={"flex-col justify-center h-full"}>
+        <View className={"flex-col justify-center h-full w-full"}>
             <Section variant={"light"}>
                 <View className={'items-center px-4'}>
                     <CustomInput
@@ -40,7 +60,7 @@ export function RegisterScreen({navigation}: { navigation: any }) {
                             setAreInputsValid(modifyElementInArrayByIndex(areInputsValid, 1, isValid));
 
                         }}
-                        regex={/\b\w{4,15}\b/}//simple validation regex: min 4 chars, max 15
+                        regex={new RegExp("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")}//password validation regex
                         password
                     />
 
@@ -51,26 +71,15 @@ export function RegisterScreen({navigation}: { navigation: any }) {
                             setAreInputsValid(modifyElementInArrayByIndex(areInputsValid, 2, isValid));
 
                         }}
-                        regex={new RegExp('^' + password + '$')}//validation regex: repeated password = password
+                        regex={new RegExp('^' + password + '$')}//validation regex: repeated password == password
                         password
                     />
 
                     <Btn
                         text={"Create account"}
-                        disabled={isArrayFilledWithTrue(areInputsValid)}
+                        disabled={!isArrayFilledWithTrue(areInputsValid)}
                         func={() => {
-                            axios.post(registerApiUrl, {
-                                login: mail,
-                                password: password
-                            })
-                                .then(function (response) {
-                                    console.log(response);
-                                })
-                                .catch(function (error) {
-                                    console.log(error);
-                                    setWarningValue(error);
-                                });
-                            console.log("sdfasdf");
+                            register();
                         }}
                     />
 
@@ -80,8 +89,9 @@ export function RegisterScreen({navigation}: { navigation: any }) {
             </Section>
 
             {
-                ( isArrayFilledWithTrue(areInputsValid) || serverErrorReceived )  &&
-                    <Warning text={warningValue} />
+
+                (serverError !== null) &&
+                <Warning text={serverError}/>
             }
 
         </View>

@@ -16,13 +16,13 @@ export default function App() {
     return (
         <NavigationContainer>
             <Stack.Navigator>
-                <Stack.Screen name="login" component={LoginScreen} options={{title:'Log in'}}/>
-                <Stack.Screen name="newCharacter" component={NewCharacterScreen} options={{title:'Create new character'}}/>
-                <Stack.Screen name="newRoom" component={NewRoomScreen} options={{title:'Create new room'}}/>
-                <Stack.Screen name="characterSheet" component={CharacterSheetScreen} />
-                <Stack.Screen name="selectRoom" component={SelectRoomScreen} options={{title:'Your rooms'}}/>
-                <Stack.Screen name="signIn" component={RegisterScreen} options={{title:'Sign in'}}/>
-                <Stack.Screen options={{}} name="gamemasterPanel" component={GamemasterPanelScreen} />
+                <Stack.Screen name="login"              component={LoginScreen}             options={{title:'Log in'}}/>
+                <Stack.Screen name="newCharacter"       component={NewCharacterScreen}      options={{title:'Create new character'}}/>
+                <Stack.Screen name="newRoom"            component={NewRoomScreen}           options={{title:'Create new room'}}/>
+                <Stack.Screen name="characterSheet"     component={CharacterSheetScreen}    options={{}}/>
+                <Stack.Screen name="selectRoom"         component={SelectRoomScreen}        options={{title:'Your rooms'}}/>
+                <Stack.Screen name="signIn"             component={RegisterScreen}          options={{title:'Sign in'}}/>
+                <Stack.Screen name="gamemasterPanel"    component={GamemasterPanelScreen}   options={{}}/>
             </Stack.Navigator>
         </NavigationContainer>
 

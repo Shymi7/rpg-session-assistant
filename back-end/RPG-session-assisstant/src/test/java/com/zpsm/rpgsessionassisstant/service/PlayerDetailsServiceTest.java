@@ -1,11 +1,17 @@
 package com.zpsm.rpgsessionassisstant.service;
 
 import com.zpsm.rpgsessionassisstant.dto.PlayerDto;
+import com.zpsm.rpgsessionassisstant.dto.RoomDto;
 import com.zpsm.rpgsessionassisstant.exception.LoginAlreadyTakenException;
 import com.zpsm.rpgsessionassisstant.exception.PlayerNotFoundException;
+import com.zpsm.rpgsessionassisstant.model.Character;
+import com.zpsm.rpgsessionassisstant.model.Gamemaster;
 import com.zpsm.rpgsessionassisstant.model.Player;
+import com.zpsm.rpgsessionassisstant.model.Room;
 import com.zpsm.rpgsessionassisstant.repository.PlayerRepository;
+import com.zpsm.rpgsessionassisstant.repository.RoomRepository;
 import com.zpsm.rpgsessionassisstant.util.PlayerMapper;
+import com.zpsm.rpgsessionassisstant.util.RoomMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,11 +22,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -30,12 +36,21 @@ class PlayerDetailsServiceTest {
     @Mock
     private PlayerRepository mockPlayerRepository;
     @Mock
+    private RoomRepository mockRoomRepository;
+    @Mock
     private PlayerMapper mockPlayerMapper;
+    @Mock
+    private RoomMapper mockRoomMapper;
     private PlayerDetailsService playerDetailsService;
 
     @BeforeEach
     void setUp() {
-        playerDetailsService = new PlayerDetailsService(mockPlayerRepository, mockPlayerMapper, new BCryptPasswordEncoder());
+        playerDetailsService = new PlayerDetailsService(
+            mockPlayerRepository,
+            mockRoomRepository,
+            mockPlayerMapper,
+            mockRoomMapper,
+            new BCryptPasswordEncoder());
     }
 
     @Test
@@ -157,6 +172,110 @@ class PlayerDetailsServiceTest {
 
         // when // then
         assertThrows(PlayerNotFoundException.class, () -> playerDetailsService.getPlayerByLogin("Testowy"));
+    }
+
+    @Test
+    void givenExistingIdShouldReturnRoomsWhichPlayersCharactersBelongTo() {
+        // given
+        Gamemaster gamemaster = new Gamemaster();
+        gamemaster.setId(1L);
+        Character character = new Character();
+        character.setId(2L);
+        Room room = new Room();
+        room.setId(1L);
+        room.setName("Test room");
+        room.setCapacity(5);
+        room.setCharacter(Set.of(character));
+        room.setGamemaster(gamemaster);
+        Player player = new Player();
+        player.setId(10L);
+        List<RoomDto> expected = List.of(new RoomDto(
+            room.getId(),
+            gamemaster.getId(),
+            Set.of(character.getId()),
+            room.getCapacity(),
+            room.getName()));
+        when(mockPlayerRepository.findById(anyLong())).thenReturn(Optional.of(player));
+        when(mockRoomRepository.findPlayersRooms(player)).thenReturn(List.of(room));
+        when(mockRoomMapper.mapToDto(any())).thenReturn(expected.get(0));
+
+        // when
+        List<RoomDto> actual = playerDetailsService.findRoomsWhichPlayersCharactersBelongTo(player.getId());
+
+        // then
+        assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    void givenPlayerWithNoCharactersShouldReturnEmptyCollection() {
+        // given
+        Player player = new Player();
+        player.setId(10L);
+        when(mockPlayerRepository.findById(anyLong())).thenReturn(Optional.of(player));
+        when(mockRoomRepository.findPlayersRooms(any())).thenReturn(List.of());
+
+        // when
+        List<RoomDto> actual = playerDetailsService.findRoomsWhichPlayersCharactersBelongTo(player.getId());
+
+        // then
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    void givenNonExistingPlayerIdShouldThrowPlayerNotFoundException() {
+        // given
+        when(mockPlayerRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // when // then
+        assertThrows(PlayerNotFoundException.class,
+            () -> playerDetailsService.findRoomsWhichPlayersCharactersBelongTo(1L));
+    }
+
+    @Test
+    void givenExistingIdShouldReturnRoomsWhichPlayerIsGamemasterIn() {
+        // given
+        Gamemaster gamemaster = new Gamemaster();
+        gamemaster.setId(1L);
+        Character character = new Character();
+        character.setId(2L);
+        Room room = new Room();
+        room.setId(1L);
+        room.setName("Test room");
+        room.setCapacity(5);
+        room.setCharacter(Set.of(character));
+        room.setGamemaster(gamemaster);
+        Player player = new Player();
+        player.setId(10L);
+        List<RoomDto> expected = List.of(new RoomDto(
+            room.getId(),
+            gamemaster.getId(),
+            Set.of(character.getId()),
+            room.getCapacity(),
+            room.getName()));
+        when(mockPlayerRepository.findById(anyLong())).thenReturn(Optional.of(player));
+        when(mockRoomRepository.findGamemastersRooms(player)).thenReturn(List.of(room));
+        when(mockRoomMapper.mapToDto(any())).thenReturn(expected.get(0));
+
+        // when
+        List<RoomDto> actual = playerDetailsService.findRoomsWhichPlayerIsGamemasterIn(player.getId());
+
+        // then
+        assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    void givenPlayerWithoutGamemasterShouldReturnEmptyCollection() {
+        // given
+        Player player = new Player();
+        player.setId(10L);
+        when(mockPlayerRepository.findById(anyLong())).thenReturn(Optional.of(player));
+        when(mockRoomRepository.findGamemastersRooms(any())).thenReturn(List.of());
+
+        // when
+        List<RoomDto> actual = playerDetailsService.findRoomsWhichPlayerIsGamemasterIn(player.getId());
+
+        // then
+        assertTrue(actual.isEmpty());
     }
 
 }

@@ -4,7 +4,11 @@ import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateNewAttributeDto;
 import com.zpsm.rpgsessionassisstant.exception.AttributeException;
 import com.zpsm.rpgsessionassisstant.model.Attribute;
+import com.zpsm.rpgsessionassisstant.model.Item;
+import com.zpsm.rpgsessionassisstant.model.ItemAttribute;
+import com.zpsm.rpgsessionassisstant.model.ItemAttributeKey;
 import com.zpsm.rpgsessionassisstant.repository.AttributeRepository;
+import com.zpsm.rpgsessionassisstant.repository.ItemAttributeRepository;
 import com.zpsm.rpgsessionassisstant.util.AttributeMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,11 +31,13 @@ class AttributeServiceTest {
     private AttributeRepository mockAttributeRepository;
     @Mock
     private AttributeMapper mockAttributeMapper;
+    @Mock
+    private ItemAttributeRepository mockItemAttributeRepository;
     private AttributeService attributeService;
 
     @BeforeEach
     void setUp() {
-        attributeService = new AttributeService(mockAttributeRepository, mockAttributeMapper);
+        attributeService = new AttributeService(mockAttributeRepository, mockItemAttributeRepository, mockAttributeMapper);
     }
 
     @Test
@@ -141,6 +147,50 @@ class AttributeServiceTest {
 
         // then
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenItemAndExistingAttributeShouldCreateItemAttribute() {
+        // given
+        Item item = new Item();
+        item.setId(1L);
+        Attribute attribute = new Attribute();
+        attribute.setId(1L);
+        attribute.setName("Price");
+        ItemAttribute expected = new ItemAttribute();
+        expected.setAttribute(attribute);
+        expected.setItem(item);
+        expected.setAttributeValue(4);
+        ItemAttributeKey itemAttributeKey = new ItemAttributeKey();
+        itemAttributeKey.setAttributeId(attribute.getId());
+        itemAttributeKey.setItemId(item.getId());
+        expected.setId(itemAttributeKey);
+        when(mockAttributeRepository.findByName(anyString())).thenReturn(Optional.of(attribute));
+        when(mockItemAttributeRepository.save(any())).thenReturn(expected);
+
+        // when
+        ItemAttribute actual = attributeService.createNewItemAttribute(item, attribute.getName(), expected.getAttributeValue());
+
+        // then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenNullItemShouldThrowAttributeException() {
+        // given // when // then
+        assertThrows(AttributeException.class,
+            () -> attributeService.createNewItemAttribute(null, "Strength", 6));
+    }
+
+    @Test
+    void givenNonExistingAttributeShouldThrowAttributeException() {
+        // given
+        Item item = new Item();
+        when(mockAttributeRepository.findByName(anyString())).thenReturn(Optional.empty());
+
+        // when // then
+        assertThrows(AttributeException.class,
+            () -> attributeService.createNewItemAttribute(item, "Strength", 6));
     }
 
 }

@@ -2,6 +2,7 @@ package com.zpsm.rpgsessionassisstant.config.exceptions;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.zpsm.rpgsessionassisstant.config.security.jwt.MissingTokenException;
+import com.zpsm.rpgsessionassisstant.exception.AttributeException;
 import com.zpsm.rpgsessionassisstant.exception.LoginAlreadyTakenException;
 import com.zpsm.rpgsessionassisstant.exception.RoomException;
 import com.zpsm.rpgsessionassisstant.util.ErrorsMapper;
@@ -22,7 +23,8 @@ public class RestResponseEntityExceptionHandler {
     @ExceptionHandler({
         MethodArgumentNotValidException.class,
         MissingTokenException.class,
-        RoomException.class
+        RoomException.class,
+        AttributeException.class
     })
     public ResponseEntity<Map<String, List<String>>> handleValidationErrors(MethodArgumentNotValidException e) {
         List<String> errors = e.getBindingResult()

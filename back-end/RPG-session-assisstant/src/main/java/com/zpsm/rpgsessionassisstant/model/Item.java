@@ -27,7 +27,7 @@ public class Item {
 
     @Size(max = 40)
     @NotNull
-    @Column(name = "name", nullable = false, length = 40)
+    @Column(name = "name", nullable = false, length = 40, unique = true)
     private String name;
 
     @NotNull

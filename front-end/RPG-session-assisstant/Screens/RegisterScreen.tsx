@@ -19,7 +19,6 @@ export function RegisterScreen({navigation}: { navigation: any }) {
 
     const [areInputsValid, setAreInputsValid] = useState<boolean[]>(Array(3));
 
-    const [warningValue, setWarningValue] = useState('');
     const [serverError, setServerError] = useState(null);
 
 

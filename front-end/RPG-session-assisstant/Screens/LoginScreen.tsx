@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {View} from "react-native";
 import {CustomInput} from "../Components/CustomInput";
 import {Section} from "../Components/Section";
@@ -6,28 +6,38 @@ import {Btn} from "../Components/Btn";
 import {modifyElementInArrayByIndex} from "../utils/utils";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {Warning} from "../Components/Warning";
 
 export function LoginScreen({navigation}: { navigation: any }) {
 
-    // const registerApiUrl =  "//10.0.2.16:8080/api" +"/register";
-    // const registerApiUrl =  "//10.0.2.16:8080/api" +"/register";
-    const loginApiUrl =  "http://10.0.2.2:8080/api" +"/login";
-
+    const loginApiUrl = "http://10.0.2.2:8080" + "/login";
 
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
 
     const [areInputsValid, setAreInputsValid] = useState<boolean[]>(Array(2));
 
+    const [serverError, setServerError] = useState<string | null>(null);
+
     function logIn() {
         axios.post(loginApiUrl, {
             login: login,
             password: password
         }).then(res => {
-            console.log(res);
-            //AsyncStorage.setItem("token", res.data.token);
-
+            const authKey = res.headers.authorization;
+            try {
+                AsyncStorage.setItem('@storage_Key', authKey)
+                    .then(() => {
+                        setServerError(null);
+                        navigation.navigate('characterSheet');
+                    }).catch(err => {
+                    console.log(err);
+                });
+            } catch (e) {
+                console.log("async storage error: " + e);
+            }
         }).catch(err => {
+            setServerError("Login failed: \n" + err.message);
             console.log(err);
         })
     }
@@ -49,7 +59,6 @@ export function LoginScreen({navigation}: { navigation: any }) {
                         func={(value: string, isValid: boolean) => {
                             setPassword(value);
                             setAreInputsValid(modifyElementInArrayByIndex(areInputsValid, 1, isValid));
-
                         }}
                         password
                     />
@@ -62,13 +71,15 @@ export function LoginScreen({navigation}: { navigation: any }) {
                     <Btn
                         text={"Sign in"}
                         func={() => {
-                            navigation.navigate('signIn');
+                            navigation.navigate('selectRoom');
                         }}
                     />
                 </View>
-
-
             </Section>
+            {
+                (serverError !== null) &&
+                <Warning text={serverError}/>
+            }
         </View>
 
     );

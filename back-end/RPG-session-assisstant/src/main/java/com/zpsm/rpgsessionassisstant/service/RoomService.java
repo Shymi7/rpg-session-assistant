@@ -1,8 +1,9 @@
 package com.zpsm.rpgsessionassisstant.service;
 
 import com.zpsm.rpgsessionassisstant.dto.*;
+import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
+import com.zpsm.rpgsessionassisstant.exception.FullRoomException;
 import com.zpsm.rpgsessionassisstant.exception.PlayerNotFoundException;
-import com.zpsm.rpgsessionassisstant.exception.RoomException;
 import com.zpsm.rpgsessionassisstant.model.Gamemaster;
 import com.zpsm.rpgsessionassisstant.model.Player;
 import com.zpsm.rpgsessionassisstant.model.Room;
@@ -41,7 +42,7 @@ public class RoomService {
                 .map(roomMapper::mapToDto)
                 .orElseThrow(() -> {
                     log.error("Room with name {} doesn't exist", name);
-                    return new RoomException(String.format("Room with name %s doesn't exist", name));
+                    return new EntityNotFoundException(String.format("Room with name %s doesn't exist", name));
                 });
     }
 
@@ -76,7 +77,7 @@ public class RoomService {
         Room room = getRoomById(dto.roomId());
         if (room.getCharacter().size() >= room.getCapacity()) {
             log.error("Room is full");
-            throw new RoomException("Room is full");
+            throw new FullRoomException("Room is full");
         }
         addCharacterToRoom(dto.characterId(), room);
         log.info("Player entered the room");
@@ -158,7 +159,7 @@ public class RoomService {
         return roomRepository.findById(id)
             .orElseThrow(() -> {
                 log.error("Room {} doesn't exist", id);
-                return new RoomException(String.format("Room %d doesn't exist", id));
+                return new EntityNotFoundException(String.format("Room %d doesn't exist", id));
             });
     }
 

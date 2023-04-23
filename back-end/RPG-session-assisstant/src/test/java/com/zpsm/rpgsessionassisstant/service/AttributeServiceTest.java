@@ -2,7 +2,7 @@ package com.zpsm.rpgsessionassisstant.service;
 
 import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateNewAttributeDto;
-import com.zpsm.rpgsessionassisstant.exception.AttributeException;
+import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Attribute;
 import com.zpsm.rpgsessionassisstant.model.Item;
 import com.zpsm.rpgsessionassisstant.model.ItemAttribute;
@@ -65,7 +65,7 @@ class AttributeServiceTest {
         when(mockAttributeRepository.findByName(anyString())).thenReturn(Optional.empty());
 
         // when // then
-        assertThrows(AttributeException.class, () -> attributeService.getAttributeByName(attributeName));
+        assertThrows(EntityNotFoundException.class, () -> attributeService.getAttributeByName(attributeName));
     }
 
     @Test
@@ -123,13 +123,13 @@ class AttributeServiceTest {
     }
 
     @Test
-    void givenNonExistingIdShouldThrowAttributeException() {
+    void givenNonExistingIdShouldThrowEntityNotFoundException() {
         // given
         long id = 1L;
         when(mockAttributeRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // when // then
-        assertThrows(AttributeException.class, () -> attributeService.getAttributeById(id));
+        assertThrows(EntityNotFoundException.class, () -> attributeService.getAttributeById(id));
     }
 
     @Test
@@ -176,20 +176,20 @@ class AttributeServiceTest {
     }
 
     @Test
-    void givenNullItemShouldThrowAttributeException() {
+    void givenNullItemShouldThrowEntityNotFoundException() {
         // given // when // then
-        assertThrows(AttributeException.class,
+        assertThrows(EntityNotFoundException.class,
             () -> attributeService.createNewItemAttribute(null, "Strength", 6));
     }
 
     @Test
-    void givenNonExistingAttributeShouldThrowAttributeException() {
+    void givenNonExistingAttributeShouldThrowEntityNotFoundException() {
         // given
         Item item = new Item();
         when(mockAttributeRepository.findByName(anyString())).thenReturn(Optional.empty());
 
         // when // then
-        assertThrows(AttributeException.class,
+        assertThrows(EntityNotFoundException.class,
             () -> attributeService.createNewItemAttribute(item, "Strength", 6));
     }
 

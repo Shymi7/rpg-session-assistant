@@ -1,7 +1,7 @@
 package com.zpsm.rpgsessionassisstant.service;
 
 import com.zpsm.rpgsessionassisstant.dto.*;
-import com.zpsm.rpgsessionassisstant.exception.ItemException;
+import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Attribute;
 import com.zpsm.rpgsessionassisstant.model.Item;
 import com.zpsm.rpgsessionassisstant.model.ItemAttribute;
@@ -74,7 +74,7 @@ class ItemServiceTest {
         when(mockiItemRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // when // then
-        assertThrows(ItemException.class, () -> itemService.getById(1L));
+        assertThrows(EntityNotFoundException.class, () -> itemService.getById(1L));
     }
 
     @Test
@@ -114,7 +114,7 @@ class ItemServiceTest {
         when(mockiItemRepository.findByName(anyString())).thenReturn(Optional.empty());
 
         // when // then
-        assertThrows(ItemException.class, () -> itemService.getByName("asdf"));
+        assertThrows(EntityNotFoundException.class, () -> itemService.getByName("asdf"));
     }
 
     @Test

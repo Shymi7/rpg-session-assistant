@@ -2,7 +2,7 @@ package com.zpsm.rpgsessionassisstant.service;
 
 import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateNewAttributeDto;
-import com.zpsm.rpgsessionassisstant.exception.AttributeException;
+import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Attribute;
 import com.zpsm.rpgsessionassisstant.model.Item;
 import com.zpsm.rpgsessionassisstant.model.ItemAttribute;
@@ -29,7 +29,7 @@ public class AttributeService {
             .map(attributeMapper::mapToAttributeDto)
             .orElseThrow(() -> {
                 log.error("Attribute with name {} doesn't exits", name);
-                return new AttributeException(String.format("Attribute with name %s doesn't exits", name));
+                return new EntityNotFoundException(String.format("Attribute with name %s doesn't exits", name));
             });
     }
 
@@ -45,7 +45,7 @@ public class AttributeService {
             .map(attributeMapper::mapToAttributeDto)
             .orElseThrow(() -> {
                 log.error("Attribute with id {} doesn't exits", id);
-                return new AttributeException(String.format("Attribute with id %d doesn't exits", id));
+                return new EntityNotFoundException(String.format("Attribute with id %d doesn't exits", id));
             });
     }
 
@@ -60,12 +60,12 @@ public class AttributeService {
     public ItemAttribute createNewItemAttribute(Item item, String attributeName, int attributeValue) {
         if (null == item) {
             log.error("Item to bind ItemAttribute to is null");
-            throw new AttributeException("Item to bind ItemAttribute to is null");
+            throw new EntityNotFoundException("Item to bind ItemAttribute to is null");
         }
         Attribute attribute = attributeRepository.findByName(attributeName)
             .orElseThrow(() -> {
                 log.error("Attribute with name {} doesn't exist", attributeName);
-                return new AttributeException(String.format("Attribute with name %s doesn't exist", attributeName));
+                return new EntityNotFoundException(String.format("Attribute with name %s doesn't exist", attributeName));
             });
         ItemAttribute newItemAttribute = new ItemAttribute();
         newItemAttribute.setItem(item);

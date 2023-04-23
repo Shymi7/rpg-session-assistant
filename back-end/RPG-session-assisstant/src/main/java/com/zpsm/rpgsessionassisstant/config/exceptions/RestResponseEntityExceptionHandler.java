@@ -2,9 +2,9 @@ package com.zpsm.rpgsessionassisstant.config.exceptions;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.zpsm.rpgsessionassisstant.config.security.jwt.MissingTokenException;
-import com.zpsm.rpgsessionassisstant.exception.AttributeException;
+import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
+import com.zpsm.rpgsessionassisstant.exception.FullRoomException;
 import com.zpsm.rpgsessionassisstant.exception.LoginAlreadyTakenException;
-import com.zpsm.rpgsessionassisstant.exception.RoomException;
 import com.zpsm.rpgsessionassisstant.util.ErrorsMapper;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -23,8 +23,7 @@ public class RestResponseEntityExceptionHandler {
     @ExceptionHandler({
         MethodArgumentNotValidException.class,
         MissingTokenException.class,
-        RoomException.class,
-        AttributeException.class
+        FullRoomException.class,
     })
     public ResponseEntity<Map<String, List<String>>> handleValidationErrors(MethodArgumentNotValidException e) {
         List<String> errors = e.getBindingResult()
@@ -33,6 +32,11 @@ public class RestResponseEntityExceptionHandler {
             .map(DefaultMessageSourceResolvable::getDefaultMessage)
             .toList();
         return new ResponseEntity<>(ErrorsMapper.getErrorsMap(errors), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handlenotFoundErrors(LoginAlreadyTakenException e) {
+        return new ResponseEntity<>(ErrorsMapper.getErrorsMap(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(LoginAlreadyTakenException.class)

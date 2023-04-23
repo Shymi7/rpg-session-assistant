@@ -3,7 +3,7 @@ package com.zpsm.rpgsessionassisstant.service;
 import com.zpsm.rpgsessionassisstant.dto.CreateItemAttributeDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateItemDto;
 import com.zpsm.rpgsessionassisstant.dto.ItemDto;
-import com.zpsm.rpgsessionassisstant.exception.ItemException;
+import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Item;
 import com.zpsm.rpgsessionassisstant.model.ItemAttribute;
 import com.zpsm.rpgsessionassisstant.repository.ItemRepository;
@@ -28,7 +28,7 @@ public class ItemService {
             .map(itemMapper::mapToDto)
             .orElseThrow(() -> {
                 log.error("Item with id {} doesn't exists", id);
-                return new ItemException(String.format("Item with id %d doesn't exists", id));
+                return new EntityNotFoundException(String.format("Item with id %d doesn't exists", id));
             });
     }
 
@@ -37,7 +37,7 @@ public class ItemService {
             .map(itemMapper::mapToDto)
             .orElseThrow(() -> {
                 log.error("Item with name {} doesn't exists", name);
-                return new ItemException(String.format("Item with name %s doesn't exists", name));
+                return new EntityNotFoundException(String.format("Item with name %s doesn't exists", name));
             });
     }
 

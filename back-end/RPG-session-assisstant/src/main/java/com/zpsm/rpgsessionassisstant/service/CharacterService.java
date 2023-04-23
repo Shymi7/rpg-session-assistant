@@ -2,9 +2,8 @@ package com.zpsm.rpgsessionassisstant.service;
 
 import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateCharacterDto;
-import com.zpsm.rpgsessionassisstant.exception.CharacterException;
+import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.exception.PlayerNotFoundException;
-import com.zpsm.rpgsessionassisstant.exception.RoomException;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.*;
 import com.zpsm.rpgsessionassisstant.repository.*;
@@ -33,7 +32,7 @@ public class CharacterService {
             .map(characterMapper::mapToDto)
             .orElseThrow(() -> {
                 log.error("Character with id {} doesn't exist", id);
-                return new CharacterException(String.format("Character with id %d doesn't exist", id));
+                return new EntityNotFoundException(String.format("Character with id %d doesn't exist", id));
             });
     }
 
@@ -46,8 +45,11 @@ public class CharacterService {
 
     public CharacterDto createCharacter(CreateCharacterDto dto, Principal principal) {
         Player player = playerRepository.findByLogin(principal.getName())
-            .orElseThrow(() -> new PlayerNotFoundException(
-                String.format("Player with login %s not found", principal.getName())));
+            .orElseThrow(() -> {
+                log.error("Player with login {} not found", principal.getName());
+                return new PlayerNotFoundException(
+                    String.format("Player with login %s not found", principal.getName()));
+            });
         Character character = prepareCharacter(dto.name(), dto.roomId());
         character.setPlayer(player);
         Character saved = characterRepository.save(character);
@@ -63,7 +65,7 @@ public class CharacterService {
         Room room = roomRepository.findById(roomId)
             .orElseThrow(() -> {
                 log.error("Room with id {} not found", roomId);
-                return new RoomException(String.format("Room with id %d not found", roomId));
+                return new EntityNotFoundException(String.format("Room with id %d not found", roomId));
             });
         Character character = new Character();
         character.setName(name);

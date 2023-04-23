@@ -1,8 +1,9 @@
 package com.zpsm.rpgsessionassisstant.service;
 
 import com.zpsm.rpgsessionassisstant.dto.*;
+import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
+import com.zpsm.rpgsessionassisstant.exception.FullRoomException;
 import com.zpsm.rpgsessionassisstant.exception.PlayerNotFoundException;
-import com.zpsm.rpgsessionassisstant.exception.RoomException;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.Gamemaster;
 import com.zpsm.rpgsessionassisstant.model.Player;
@@ -101,12 +102,12 @@ class RoomServiceTest {
     @ParameterizedTest
     @ValueSource(strings = {"asdf"})
     @NullAndEmptySource
-    void givenIncorrectRoomNameShouldThrowRoomException(String roomName) {
+    void givenIncorrectRoomNameShouldThrowEntityNotFoundException(String roomName) {
         // given
         when(mockRoomRepository.findByName(nullable(String.class))).thenReturn(Optional.empty());
 
         // when // then
-        assertThrows(RoomException.class, () -> roomService.findRoomByName(roomName));
+        assertThrows(EntityNotFoundException.class, () -> roomService.findRoomByName(roomName));
     }
 
     @Test
@@ -236,7 +237,7 @@ class RoomServiceTest {
     }
 
     @Test
-    void givenIncorrectRoomIdShouldThrowRoomException() {
+    void givenIncorrectRoomIdShouldThrowEntityNotFoundException() {
         // given
         EnterRoomDto enterRoomDto = new EnterRoomDto(1L, "password", 1L);
         when(mockRoomRepository.getPasswordOfRoom(anyLong()))
@@ -244,11 +245,11 @@ class RoomServiceTest {
         when(mockRoomRepository.findById(enterRoomDto.roomId())).thenReturn(Optional.empty());
 
         // when //then
-        assertThrows(RoomException.class, () -> roomService.enterRoom(enterRoomDto));
+        assertThrows(EntityNotFoundException.class, () -> roomService.enterRoom(enterRoomDto));
     }
 
     @Test
-    void givenFullRoomShouldThrowRoomException() {
+    void givenFullRoomShouldThrowFullRoomException() {
         // given
         EnterRoomDto enterRoomDto = new EnterRoomDto(1L, "password", 1L);
         Room room = new Room();
@@ -259,7 +260,7 @@ class RoomServiceTest {
         when(mockRoomRepository.findById(enterRoomDto.roomId())).thenReturn(Optional.of(room));
 
         // when //then
-        assertThrows(RoomException.class, () -> roomService.enterRoom(enterRoomDto));
+        assertThrows(FullRoomException.class, () -> roomService.enterRoom(enterRoomDto));
     }
 
     @Test
@@ -284,13 +285,13 @@ class RoomServiceTest {
     }
 
     @Test
-    void givenIncorrectIdForRoomDeletionShouldThrowRoomException() {
+    void givenIncorrectIdForRoomDeletionShouldThrowEntityNotFoundException() {
         // given
         long id = 1L;
         when(mockRoomRepository.findById(id)).thenReturn(Optional.empty());
 
         // when // then
-        assertThrows(RoomException.class, () -> roomService.deleteRoom(id, mockPrincipal));
+        assertThrows(EntityNotFoundException.class, () -> roomService.deleteRoom(id, mockPrincipal));
     }
 
     @Test

@@ -4,9 +4,8 @@ import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
 import com.zpsm.rpgsessionassisstant.dto.CharacterAttributeDto;
 import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateCharacterDto;
-import com.zpsm.rpgsessionassisstant.exception.CharacterException;
+import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.exception.PlayerNotFoundException;
-import com.zpsm.rpgsessionassisstant.exception.RoomException;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.*;
 import com.zpsm.rpgsessionassisstant.repository.*;
@@ -80,12 +79,12 @@ class CharacterServiceTest {
     }
 
     @Test
-    void givenNonExistingIdShouldThrowCharacterException() {
+    void givenNonExistingIdShouldThrowEntityNotFoundException() {
         // given
         when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // when // then
-        assertThrows(CharacterException.class, () -> characterService.getCharacterById(1L));
+        assertThrows(EntityNotFoundException.class, () -> characterService.getCharacterById(1L));
     }
 
     @Test
@@ -170,7 +169,7 @@ class CharacterServiceTest {
     }
 
     @Test
-    void givenNonExistingRoomShouldThrowRoomException() {
+    void givenNonExistingRoomShouldThrowEntityNotFoundException() {
         // given
         CreateCharacterDto dto = new CreateCharacterDto("Bezi", 1L, List.of());
         when(mockPlayerRepository.findByLogin(anyString())).thenReturn(Optional.of(new Player()));
@@ -178,7 +177,7 @@ class CharacterServiceTest {
         when(mockRoomRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // when // then
-        assertThrows(RoomException.class, () -> characterService.createCharacter(dto, mockPrincipal));
+        assertThrows(EntityNotFoundException.class, () -> characterService.createCharacter(dto, mockPrincipal));
     }
 
     private Character getCharacter() {

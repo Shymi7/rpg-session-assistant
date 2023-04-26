@@ -60,11 +60,7 @@ public class Character {
         inverseJoinColumns = @JoinColumn(name = "Quest_id"))
     private Set<Quest> quests = new LinkedHashSet<>();
 
-    @ManyToMany
-    @JoinTable(name = "Room_Character",
-        schema = "zpsm_projekt",
-        joinColumns = @JoinColumn(name = "Character_id"),
-        inverseJoinColumns = @JoinColumn(name = "Room_id"))
+    @ManyToMany(mappedBy = "characters")
     private Set<Room> rooms = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "character")

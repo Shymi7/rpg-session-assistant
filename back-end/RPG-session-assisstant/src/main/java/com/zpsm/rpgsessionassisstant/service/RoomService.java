@@ -75,7 +75,7 @@ public class RoomService {
             throw new AccessDeniedException("Incorrect password to room");
         }
         Room room = getRoomById(dto.roomId());
-        if (room.getCharacter().size() >= room.getCapacity()) {
+        if (room.getCharacters().size() >= room.getCapacity()) {
             log.error("Room is full");
             throw new FullRoomException("Room is full");
         }
@@ -134,7 +134,7 @@ public class RoomService {
     private void addCharacterToRoom(long characterId, Room room) {
         characterRepository.findById(characterId)
             .ifPresent(character -> {
-                room.getCharacter().add(character);
+                room.getCharacters().add(character);
                 Room savedRoom = roomRepository.save(room);
                 character.getRooms().add(savedRoom);
                 characterRepository.save(character);

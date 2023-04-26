@@ -82,7 +82,7 @@ class RoomServiceTest {
         room.setName(roomName);
         room.setGamemaster(gamemaster);
         room.setCapacity(8);
-        room.setCharacter(Set.of(character));
+        room.setCharacters(Set.of(character));
         RoomDto expected = new RoomDto(
             room.getId(),
             gamemaster.getId(),
@@ -123,7 +123,7 @@ class RoomServiceTest {
         room.setName("roomName");
         room.setGamemaster(gamemaster);
         room.setCapacity(8);
-        room.setCharacter(Set.of(character));
+        room.setCharacters(Set.of(character));
         RoomDto expected = new RoomDto(
             room.getId(),
             gamemaster.getId(),
@@ -254,7 +254,7 @@ class RoomServiceTest {
         EnterRoomDto enterRoomDto = new EnterRoomDto(1L, "password", 1L);
         Room room = new Room();
         room.setCapacity(1);
-        room.setCharacter(Set.of(new Character()));
+        room.setCharacters(Set.of(new Character()));
         when(mockRoomRepository.getPasswordOfRoom(anyLong()))
             .thenReturn(Optional.of(passwordEncoder.encode("password")));
         when(mockRoomRepository.findById(enterRoomDto.roomId())).thenReturn(Optional.of(room));

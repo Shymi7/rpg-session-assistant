@@ -60,4 +60,12 @@ public class ItemService {
         });
     }
 
+    public Item getItem(long itemId) {
+        return itemRepository.findById(itemId)
+            .orElseThrow(() -> {
+                log.error("Item with id {} not found", itemId);
+                return new EntityNotFoundException(String.format("Item with id %d not found", itemId));
+            });
+    }
+
 }

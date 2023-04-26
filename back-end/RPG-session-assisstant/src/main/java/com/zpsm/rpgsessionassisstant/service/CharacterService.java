@@ -1,5 +1,6 @@
 package com.zpsm.rpgsessionassisstant.service;
 
+import com.zpsm.rpgsessionassisstant.dto.AddOrRemoveFromCharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateCharacterDto;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
@@ -26,6 +27,7 @@ public class CharacterService {
     private final RoomRepository roomRepository;
     private final PlayerRepository playerRepository;
     private final CharacterMapper characterMapper;
+    private final ItemService itemService;
 
     public CharacterDto getCharacterById(Long id) {
         return characterRepository.findById(id)
@@ -59,6 +61,29 @@ public class CharacterService {
         saved.setCharacterAttributes(savedCharacterAttributes);
         saved = characterRepository.save(saved);
         return characterMapper.mapToDto(saved);
+    }
+
+    public CharacterDto addItem(AddOrRemoveFromCharacterDto dto) {
+        Character character = getCharacter(dto.characterId());
+        Item item = itemService.getItem(dto.entityId());
+        character.addItem(item);
+        Character savedCharacter = characterRepository.save(character);
+        return characterMapper.mapToDto(savedCharacter);
+    }
+
+    public CharacterDto removeItem(AddOrRemoveFromCharacterDto dto) {
+        Character foundCharacter = getCharacter(dto.characterId());
+        Item foundItem = itemService.getItem(dto.entityId());
+        foundCharacter.removeItem(foundItem);
+        return characterMapper.mapToDto(characterRepository.save(foundCharacter));
+    }
+
+    public Character getCharacter(long characterId) {
+        return characterRepository.findById(characterId)
+            .orElseThrow(() -> {
+                log.error("Character with id {} not found", characterId);
+                return new EntityNotFoundException(String.format("Character with id %d not found", characterId));
+            });
     }
 
     private Character prepareCharacter(String name, long roomId) {

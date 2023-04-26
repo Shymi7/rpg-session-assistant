@@ -75,4 +75,14 @@ public class Character {
     @JoinColumn(name = "char_player_id", nullable = false)
     private Player player;
 
+    public void addItem(Item item) {
+        this.items.add(item);
+        item.getCharacters().add(this);
+    }
+
+    public void removeItem(Item item) {
+        this.items.remove(item);
+        item.getCharacters().remove(this);
+    }
+
 }

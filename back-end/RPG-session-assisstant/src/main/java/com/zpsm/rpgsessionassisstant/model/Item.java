@@ -34,11 +34,7 @@ public class Item {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @ManyToMany
-    @JoinTable(name = "Item_Character",
-        schema = "zpsm_projekt",
-        joinColumns = @JoinColumn(name = "Item_id"),
-        inverseJoinColumns = @JoinColumn(name = "Character_id"))
+    @ManyToMany(mappedBy = "items")
     private Set<Character> characters = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "item")

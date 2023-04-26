@@ -171,4 +171,27 @@ class ItemServiceTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    void givenExistingIdShouldReturnItemEntity() {
+        // given
+        Item expected = new Item();
+        expected.setId(1L);
+        when(mockiItemRepository.findById(anyLong())).thenReturn(Optional.of(expected));
+
+        // when
+        Item actual = itemService.getItem(expected.getId());
+
+        // then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenNonExistingIdOfEntityShouldThrowEntityNotFoundException() {
+        // given
+        when(mockiItemRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // when // then
+        assertThrows(EntityNotFoundException.class, () -> itemService.getItem(1L));
+    }
+
 }

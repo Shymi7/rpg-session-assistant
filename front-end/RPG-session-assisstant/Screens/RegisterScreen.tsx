@@ -6,14 +6,12 @@ import {Btn} from "../Components/Btn";
 import {isArrayFilledWithTrue, modifyElementInArrayByIndex} from "../utils/utils";
 import axios from "axios";
 import {Warning} from "../Components/Warning";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-//import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+import {API_URL} from "../env";
 
 export function RegisterScreen({navigation}: { navigation: any }) {
-    const registerApiUrl =  "http://10.0.2.2:8080/api" +"/registration";
+    const registerApiUrl = API_URL + "/api/registration";
 
-    const [mail, setMail] = useState('');
+    const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [repeatedPassword, setRepeatedPassword] = useState('');
 
@@ -24,13 +22,12 @@ export function RegisterScreen({navigation}: { navigation: any }) {
 
     function register() {
         axios.post(registerApiUrl, {
-            login: mail,
+            login: login,
             password: password
         })
             .then(function (response) {
                 console.log(response);
                 setServerError(null);
-                //AsyncStorage.setItem('token', response.data.token);
                 navigation.navigate('login');
             })
             .catch(function (error) {
@@ -38,19 +35,19 @@ export function RegisterScreen({navigation}: { navigation: any }) {
             });
     }
 
-    //console.log(registerApiUrl)
+
     return (
         <View className={"flex-col justify-center h-full w-full"}>
             <Section variant={"light"}>
                 <View className={'items-center px-4'}>
                     <CustomInput
-                        placeholder={"mail"}
+                        placeholder={"login"}
                         func={(value: string, isValid: boolean) => {
-                            setMail(value);
+                            setLogin(value);
                             setAreInputsValid(modifyElementInArrayByIndex(areInputsValid, 0, isValid));
 
                         }}
-                        regex={/^\S+@\S+\.\S+$/} //simple mail validation regex
+                        regex={/^[a-zA-Z0-9]{4,19}$/} //login validation regex:  4-19 letters or numbers
                     />
 
                     <CustomInput

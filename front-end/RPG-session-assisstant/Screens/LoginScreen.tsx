@@ -3,14 +3,16 @@ import {View} from "react-native";
 import {CustomInput} from "../Components/CustomInput";
 import {Section} from "../Components/Section";
 import {Btn} from "../Components/Btn";
-import {modifyElementInArrayByIndex} from "../utils/utils";
+import {modifyElementInArrayByIndex, saveToAsyncStorage} from "../utils/utils";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Warning} from "../Components/Warning";
+import {API_URL} from "../env";
 
 export function LoginScreen({navigation}: { navigation: any }) {
 
-    const loginApiUrl = "http://10.0.2.2:8080" + "/login";
+    const loginApiUrl = API_URL + "/login";
+    const getUserIdApiUrl = API_URL + "/player";
 
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
@@ -25,20 +27,32 @@ export function LoginScreen({navigation}: { navigation: any }) {
             password: password
         }).then(res => {
             const authKey = res.headers.authorization;
-            try {
-                AsyncStorage.setItem('@storage_Key', authKey)
-                    .then(() => {
-                        setServerError(null);
-                        navigation.navigate('characterSheet');
-                    }).catch(err => {
-                    console.log(err);
+
+            const url = getUserIdApiUrl+"?login="+login
+            axios.get(url, {
+                headers: {
+                    Authorization: authKey
+                }
+            }).then(res => {
+                const playerId = res.data.id;
+
+                saveToAsyncStorage([
+                    {key: '@loginAuthKey', value : authKey},
+                    {key: '@loginUserId', value : playerId}
+                ]).then(() => {
+                    setServerError(null);
+                    navigation.navigate('browseRooms');
+                }).catch(err => {
+                    console.log("async storage error: "+err);
                 });
-            } catch (e) {
-                console.log("async storage error: " + e);
-            }
+
+            }).catch(err => {
+                console.log("get player id error: "+err);
+            })
+
         }).catch(err => {
             setServerError("Login failed: \n" + err.message);
-            console.log(err);
+            console.log("login error"+err);
         })
     }
 
@@ -69,9 +83,9 @@ export function LoginScreen({navigation}: { navigation: any }) {
                         }}
                     />
                     <Btn
-                        text={"Sign in"}
+                        text={"Sign up"}
                         func={() => {
-                            navigation.navigate('selectRoom');
+                            navigation.navigate('register');
                         }}
                     />
                 </View>

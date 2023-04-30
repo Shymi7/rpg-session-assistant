@@ -12,7 +12,7 @@ import {API_URL} from "../env";
 export function LoginScreen({navigation}: { navigation: any }) {
 
     const loginApiUrl = API_URL + "/login";
-    const getUserIdApiUrl = API_URL + "/player";
+    const getUserIdApiUrl = API_URL + "/api/player";
 
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
@@ -34,7 +34,7 @@ export function LoginScreen({navigation}: { navigation: any }) {
                     Authorization: authKey
                 }
             }).then(res => {
-                const playerId = res.data.id;
+                const playerId = res.data.id.toString();
 
                 saveToAsyncStorage([
                     {key: '@loginAuthKey', value : authKey},

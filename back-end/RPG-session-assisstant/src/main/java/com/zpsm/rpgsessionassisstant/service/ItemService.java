@@ -10,6 +10,8 @@ import com.zpsm.rpgsessionassisstant.repository.ItemRepository;
 import com.zpsm.rpgsessionassisstant.util.ItemMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -41,6 +43,11 @@ public class ItemService {
             });
     }
 
+    public Page<ItemDto> getPage(Pageable pageable) {
+        return itemRepository.findAll(pageable)
+            .map(itemMapper::mapToDto);
+    }
+
     public ItemDto create(CreateItemDto createItemDto) {
         Item item = new Item();
         item.setName(createItemDto.name());
@@ -67,5 +74,4 @@ public class ItemService {
                 return new EntityNotFoundException(String.format("Item with id %d not found", itemId));
             });
     }
-
 }

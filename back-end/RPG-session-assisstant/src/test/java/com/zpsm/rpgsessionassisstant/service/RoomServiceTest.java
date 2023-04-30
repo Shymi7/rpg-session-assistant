@@ -22,6 +22,9 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -350,6 +353,25 @@ class RoomServiceTest {
         verify(mockRoomRepository, times(1)).save(any());
     }
 
+    @Test
+    void givenPageableShouldReturnPageOfRooms() {
+        // given
+        PageRequest pageRequest = PageRequest.of(0, 20);
+        List<Room> roomList = getRooms();
+        List<RoomDto> dtoList = List.of(new RoomDto(1L, 1L, Set.of(), 4, "Room 1"),
+            new RoomDto(2L, 1L, Set.of(), 7, "Room 2"));
+        PageImpl<Room> items = new PageImpl<>(roomList, pageRequest, roomList.size());
+        PageImpl<RoomDto> expected = new PageImpl<>(dtoList, pageRequest, dtoList.size());
+        when(mockRoomRepository.findAll(eq(pageRequest))).thenReturn(items);
+        when(mockRoomMapper.mapToDto(any())).thenReturn(dtoList.get(0), dtoList.get(1));
+
+        // when
+        Page<RoomDto> actual = roomService.getPage(pageRequest);
+
+        // then
+        assertIterableEquals(expected, actual);
+    }
+
     private Character getCharacter() {
         Character character = new Character();
         character.setId(1L);
@@ -360,6 +382,24 @@ class RoomServiceTest {
         character.setExperience(230);
         character.setHealth(170);
         return character;
+    }
+
+    private List<Room> getRooms() {
+        Gamemaster gamemaster = new Gamemaster();
+        gamemaster.setId(1L);
+        Room room1 = new Room();
+        room1.setId(1L);
+        room1.setName("Room 1");
+        room1.setPassword("123qwe");
+        room1.setCapacity(4);
+        room1.setGamemaster(gamemaster);
+        Room room2 = new Room();
+        room2.setId(2L);
+        room2.setName("Room 2");
+        room2.setPassword("123qwe");
+        room2.setCapacity(7);
+        room2.setGamemaster(gamemaster);
+        return List.of(room1, room2);
     }
 
 }

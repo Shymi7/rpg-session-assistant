@@ -5,6 +5,8 @@ import com.zpsm.rpgsessionassisstant.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,12 @@ public class RoomController {
     public ResponseEntity<RoomDto> findRoomByName(@RequestParam String name) {
         log.info("Getting room with name {}", name);
         return ResponseEntity.ok(roomService.findRoomByName(name));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Page<RoomDto>> getPage(Pageable pageable) {
+        log.info("Getting page {}", pageable.getPageNumber());
+        return ResponseEntity.ok(roomService.getPage(pageable));
     }
 
     @GetMapping("/{id}")

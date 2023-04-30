@@ -12,12 +12,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -192,6 +195,37 @@ class ItemServiceTest {
 
         // when // then
         assertThrows(EntityNotFoundException.class, () -> itemService.getItem(1L));
+    }
+
+    @Test
+    void givenPageableShouldReturnPageOfItems() {
+        // given
+        PageRequest pageRequest = PageRequest.of(0, 20);
+        List<Item> itemList = getItems();
+        List<ItemDto> dtoList = List.of(new ItemDto(1L, "Sword", "Desc", Set.of()),
+            new ItemDto(2L, "Gun", "Gun", Set.of()));
+        PageImpl<Item> items = new PageImpl<>(itemList, pageRequest, itemList.size());
+        PageImpl<ItemDto> expected = new PageImpl<>(dtoList, pageRequest, dtoList.size());
+        when(mockiItemRepository.findAll(eq(pageRequest))).thenReturn(items);
+        when(mockItemMapper.mapToDto(any())).thenReturn(dtoList.get(0), dtoList.get(1));
+
+        // when
+        Page<ItemDto> actual = itemService.getPage(pageRequest);
+
+        // then
+        assertIterableEquals(expected, actual);
+    }
+
+    private List<Item> getItems() {
+        Item item1 = new Item();
+        item1.setId(1L);
+        item1.setName("Sword");
+        item1.setDescription("Sword");
+        Item item2 = new Item();
+        item2.setId(2L);
+        item2.setName("Gun");
+        item2.setDescription("Gun");
+        return List.of(item1, item2);
     }
 
 }

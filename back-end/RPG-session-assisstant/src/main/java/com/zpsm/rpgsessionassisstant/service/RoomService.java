@@ -15,6 +15,8 @@ import com.zpsm.rpgsessionassisstant.util.CharacterMapper;
 import com.zpsm.rpgsessionassisstant.util.RoomMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,11 +41,16 @@ public class RoomService {
 
     public RoomDto findRoomByName(String name) {
         return roomRepository.findByName(name)
-                .map(roomMapper::mapToDto)
-                .orElseThrow(() -> {
-                    log.error("Room with name {} doesn't exist", name);
-                    return new EntityNotFoundException(String.format("Room with name %s doesn't exist", name));
-                });
+            .map(roomMapper::mapToDto)
+            .orElseThrow(() -> {
+                log.error("Room with name {} doesn't exist", name);
+                return new EntityNotFoundException(String.format("Room with name %s doesn't exist", name));
+            });
+    }
+
+    public Page<RoomDto> getPage(Pageable pageable) {
+        return roomRepository.findAll(pageable)
+            .map(roomMapper::mapToDto);
     }
 
     public RoomDto findRoomById(Long id) {
@@ -162,5 +169,4 @@ public class RoomService {
                 return new EntityNotFoundException(String.format("Room %d doesn't exist", id));
             });
     }
-
 }

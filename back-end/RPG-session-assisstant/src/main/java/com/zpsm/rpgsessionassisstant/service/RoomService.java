@@ -1,8 +1,9 @@
 package com.zpsm.rpgsessionassisstant.service;
 
 import com.zpsm.rpgsessionassisstant.dto.*;
+import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
+import com.zpsm.rpgsessionassisstant.exception.FullRoomException;
 import com.zpsm.rpgsessionassisstant.exception.PlayerNotFoundException;
-import com.zpsm.rpgsessionassisstant.exception.RoomException;
 import com.zpsm.rpgsessionassisstant.model.Gamemaster;
 import com.zpsm.rpgsessionassisstant.model.Player;
 import com.zpsm.rpgsessionassisstant.model.Room;
@@ -14,6 +15,8 @@ import com.zpsm.rpgsessionassisstant.util.CharacterMapper;
 import com.zpsm.rpgsessionassisstant.util.RoomMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,11 +41,16 @@ public class RoomService {
 
     public RoomDto findRoomByName(String name) {
         return roomRepository.findByName(name)
-                .map(roomMapper::mapToDto)
-                .orElseThrow(() -> {
-                    log.error("Room with name {} doesn't exist", name);
-                    return new RoomException(String.format("Room with name %s doesn't exist", name));
-                });
+            .map(roomMapper::mapToDto)
+            .orElseThrow(() -> {
+                log.error("Room with name {} doesn't exist", name);
+                return new EntityNotFoundException(String.format("Room with name %s doesn't exist", name));
+            });
+    }
+
+    public Page<RoomDto> getPage(Pageable pageable) {
+        return roomRepository.findAll(pageable)
+            .map(roomMapper::mapToDto);
     }
 
     public RoomDto findRoomById(Long id) {
@@ -70,13 +78,13 @@ public class RoomService {
     }
 
     public void enterRoom(EnterRoomDto dto) {
-        if (!isPasswordCorrect(dto.roomId(), dto.password())) {
+        if (!isPasswordCorrect(dto.roomName(), dto.password())) {
             throw new AccessDeniedException("Incorrect password to room");
         }
-        Room room = getRoomById(dto.roomId());
-        if (room.getCharacter().size() >= room.getCapacity()) {
+        Room room = getRoomByName(dto.roomName());
+        if (room.getCharacters().size() >= room.getCapacity()) {
             log.error("Room is full");
-            throw new RoomException("Room is full");
+            throw new FullRoomException("Room is full");
         }
         addCharacterToRoom(dto.characterId(), room);
         log.info("Player entered the room");
@@ -115,6 +123,15 @@ public class RoomService {
         log.info("Room name changed");
     }
 
+    public CharacterDto findCharacterOfLoggedInPlayerFromGivenRoom(Long roomId, Principal principal) {
+        return roomRepository.findPlayerCharacterFromGivenRoom(principal.getName(), roomId)
+            .map(characterMapper::mapToDto)
+            .orElseThrow(() -> {
+                log.error("Room or character doesn't exist");
+                return new EntityNotFoundException("Room or character doesn't exist");
+            });
+    }
+
     private Room newRoomEntity(CreateRoomDto dto, Gamemaster gamemaster) {
         Room newRoom = new Room();
         newRoom.setName(dto.name());
@@ -124,8 +141,8 @@ public class RoomService {
         return newRoom;
     }
 
-    private boolean isPasswordCorrect(long roomId, String rawPassword) {
-        String encodedPassword = roomRepository.getPasswordOfRoom(roomId)
+    private boolean isPasswordCorrect(String roomName, String rawPassword) {
+        String encodedPassword = roomRepository.getPasswordOfRoom(roomName)
             .orElseThrow();
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
@@ -133,7 +150,7 @@ public class RoomService {
     private void addCharacterToRoom(long characterId, Room room) {
         characterRepository.findById(characterId)
             .ifPresent(character -> {
-                room.getCharacter().add(character);
+                room.getCharacters().add(character);
                 Room savedRoom = roomRepository.save(room);
                 character.getRooms().add(savedRoom);
                 characterRepository.save(character);
@@ -158,7 +175,15 @@ public class RoomService {
         return roomRepository.findById(id)
             .orElseThrow(() -> {
                 log.error("Room {} doesn't exist", id);
-                return new RoomException(String.format("Room %d doesn't exist", id));
+                return new EntityNotFoundException(String.format("Room %d doesn't exist", id));
+            });
+    }
+
+    private Room getRoomByName(String roomName) {
+        return roomRepository.findByName(roomName)
+            .orElseThrow(() -> {
+                log.error("Room {} doesn't exist", roomName);
+                return new EntityNotFoundException(String.format("Room %s doesn't exist", roomName));
             });
     }
 

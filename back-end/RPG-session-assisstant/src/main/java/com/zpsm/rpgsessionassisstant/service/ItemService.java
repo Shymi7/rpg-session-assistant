@@ -3,13 +3,15 @@ package com.zpsm.rpgsessionassisstant.service;
 import com.zpsm.rpgsessionassisstant.dto.CreateItemAttributeDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateItemDto;
 import com.zpsm.rpgsessionassisstant.dto.ItemDto;
-import com.zpsm.rpgsessionassisstant.exception.ItemException;
+import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Item;
 import com.zpsm.rpgsessionassisstant.model.ItemAttribute;
 import com.zpsm.rpgsessionassisstant.repository.ItemRepository;
 import com.zpsm.rpgsessionassisstant.util.ItemMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -28,7 +30,7 @@ public class ItemService {
             .map(itemMapper::mapToDto)
             .orElseThrow(() -> {
                 log.error("Item with id {} doesn't exists", id);
-                return new ItemException(String.format("Item with id %d doesn't exists", id));
+                return new EntityNotFoundException(String.format("Item with id %d doesn't exists", id));
             });
     }
 
@@ -37,8 +39,13 @@ public class ItemService {
             .map(itemMapper::mapToDto)
             .orElseThrow(() -> {
                 log.error("Item with name {} doesn't exists", name);
-                return new ItemException(String.format("Item with name %s doesn't exists", name));
+                return new EntityNotFoundException(String.format("Item with name %s doesn't exists", name));
             });
+    }
+
+    public Page<ItemDto> getPage(Pageable pageable) {
+        return itemRepository.findAll(pageable)
+            .map(itemMapper::mapToDto);
     }
 
     public ItemDto create(CreateItemDto createItemDto) {
@@ -60,4 +67,11 @@ public class ItemService {
         });
     }
 
+    public Item getItem(long itemId) {
+        return itemRepository.findById(itemId)
+            .orElseThrow(() -> {
+                log.error("Item with id {} not found", itemId);
+                return new EntityNotFoundException(String.format("Item with id %d not found", itemId));
+            });
+    }
 }

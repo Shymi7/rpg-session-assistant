@@ -1,5 +1,6 @@
 package com.zpsm.rpgsessionassisstant.controller;
 
+import com.zpsm.rpgsessionassisstant.dto.AddOrRemoveFromCharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateCharacterDto;
 import com.zpsm.rpgsessionassisstant.service.CharacterService;
@@ -37,6 +38,18 @@ public class CharacterController {
     public ResponseEntity<CharacterDto> createCharacter(@Valid @RequestBody CreateCharacterDto dto, Principal principal) {
         log.info("Creating new character");
         return new ResponseEntity<>(characterService.createCharacter(dto, principal), HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/add-item")
+    public ResponseEntity<CharacterDto> addItemToCharacter(@RequestBody AddOrRemoveFromCharacterDto dto) {
+        log.info("Add item to character with id {}", dto.characterId());
+        return ResponseEntity.ok(characterService.addItem(dto));
+    }
+
+    @PatchMapping("/remove-item")
+    public ResponseEntity<CharacterDto> removeItemFromCharacter(@RequestBody AddOrRemoveFromCharacterDto dto) {
+        log.info("Removing item from character with id {}", dto.characterId());
+        return ResponseEntity.ok(characterService.removeItem(dto));
     }
 
 }

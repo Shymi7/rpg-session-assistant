@@ -6,6 +6,8 @@ import com.zpsm.rpgsessionassisstant.service.ItemService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,12 @@ public class ItemController {
     public ResponseEntity<ItemDto> getByName(@RequestParam String name) {
         log.info("Getting item with name {}", name);
         return ResponseEntity.ok(itemService.getByName(name));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Page<ItemDto>> getPage(Pageable pageable) {
+        log.info("Getting page {}", pageable.getPageNumber());
+        return ResponseEntity.ok(itemService.getPage(pageable));
     }
 
     @GetMapping("/{id}")

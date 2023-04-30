@@ -14,7 +14,7 @@ public class RoomMapper {
         return new RoomDto(
             room.getId(),
             room.getGamemaster().getId(),
-            room.getCharacter()
+            room.getCharacters()
                 .stream()
                 .map(Character::getId)
                 .collect(Collectors.toSet()),

@@ -5,7 +5,7 @@ import lombok.experimental.StandardException;
 import java.io.Serial;
 
 @StandardException
-public class CharacterException extends RuntimeException {
+public class FullRoomException extends RuntimeException {
     @Serial
-    private static final long serialVersionUID = -5096780577817465962L;
+    private static final long serialVersionUID = 4943703845919538086L;
 }

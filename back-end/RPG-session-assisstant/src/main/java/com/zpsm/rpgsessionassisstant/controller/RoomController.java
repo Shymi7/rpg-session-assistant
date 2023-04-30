@@ -5,6 +5,8 @@ import com.zpsm.rpgsessionassisstant.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,10 +29,22 @@ public class RoomController {
         return ResponseEntity.ok(roomService.findRoomByName(name));
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<Page<RoomDto>> getPage(Pageable pageable) {
+        log.info("Getting page {}", pageable.getPageNumber());
+        return ResponseEntity.ok(roomService.getPage(pageable));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<RoomDto> findRoomById(@PathVariable Long id) {
         log.info("Getting room with id {}", id);
         return ResponseEntity.ok(roomService.findRoomById(id));
+    }
+
+    @GetMapping("/{roomId}/character")
+    public ResponseEntity<CharacterDto> findCharacterOfLoggedInPlayerFromGivenRoom(@PathVariable Long roomId, Principal principal) {
+        log.info("Getting character from room with id {}", roomId);
+        return ResponseEntity.ok(roomService.findCharacterOfLoggedInPlayerFromGivenRoom(roomId, principal));
     }
 
     @GetMapping("/{id}/characters")
@@ -42,7 +56,7 @@ public class RoomController {
 
     @PostMapping("/enter-room")
     public ResponseEntity<Void> enterRoom(@Valid @RequestBody EnterRoomDto dto) {
-        log.info("Entering room {}", dto.roomId());
+        log.info("Entering room {}", dto.roomName());
         roomService.enterRoom(dto);
         return ResponseEntity.ok().build();
     }

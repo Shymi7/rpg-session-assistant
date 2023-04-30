@@ -1,6 +1,7 @@
 package com.zpsm.rpgsessionassisstant.config.security;
 
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zpsm.rpgsessionassisstant.config.security.jwt.JwtAccessTokenVerifier;
 import com.zpsm.rpgsessionassisstant.config.security.jwt.JwtConfig;
 import com.zpsm.rpgsessionassisstant.config.security.jwt.JwtService;
@@ -35,7 +36,8 @@ public class ApplicationSecurityConfig {
     public SecurityFilterChain securityFilterChain(
         HttpSecurity http,
         AuthenticationManager authenticationManager,
-        JwtService jwtService) throws Exception {
+        JwtService jwtService,
+        ObjectMapper objectMapper) throws Exception {
 
         return http
             .csrf().disable()
@@ -56,7 +58,8 @@ public class ApplicationSecurityConfig {
                 jwtService,
                 authenticationManager,
                 jwtConfig))
-            .addFilterAfter(new JwtAccessTokenVerifier(jwtConfig, algorithm, clock), JwtUsernameAndPasswordAuthenticationFilter.class)
+            .addFilterAfter(new JwtAccessTokenVerifier(jwtConfig, algorithm, clock, objectMapper),
+                JwtUsernameAndPasswordAuthenticationFilter.class)
             .build();
     }
 

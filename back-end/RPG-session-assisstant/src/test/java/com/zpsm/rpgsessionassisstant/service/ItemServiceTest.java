@@ -1,7 +1,7 @@
 package com.zpsm.rpgsessionassisstant.service;
 
 import com.zpsm.rpgsessionassisstant.dto.*;
-import com.zpsm.rpgsessionassisstant.exception.ItemException;
+import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Attribute;
 import com.zpsm.rpgsessionassisstant.model.Item;
 import com.zpsm.rpgsessionassisstant.model.ItemAttribute;
@@ -12,12 +12,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -74,7 +77,7 @@ class ItemServiceTest {
         when(mockiItemRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // when // then
-        assertThrows(ItemException.class, () -> itemService.getById(1L));
+        assertThrows(EntityNotFoundException.class, () -> itemService.getById(1L));
     }
 
     @Test
@@ -114,7 +117,7 @@ class ItemServiceTest {
         when(mockiItemRepository.findByName(anyString())).thenReturn(Optional.empty());
 
         // when // then
-        assertThrows(ItemException.class, () -> itemService.getByName("asdf"));
+        assertThrows(EntityNotFoundException.class, () -> itemService.getByName("asdf"));
     }
 
     @Test
@@ -169,6 +172,60 @@ class ItemServiceTest {
 
         // then
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenExistingIdShouldReturnItemEntity() {
+        // given
+        Item expected = new Item();
+        expected.setId(1L);
+        when(mockiItemRepository.findById(anyLong())).thenReturn(Optional.of(expected));
+
+        // when
+        Item actual = itemService.getItem(expected.getId());
+
+        // then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenNonExistingIdOfEntityShouldThrowEntityNotFoundException() {
+        // given
+        when(mockiItemRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // when // then
+        assertThrows(EntityNotFoundException.class, () -> itemService.getItem(1L));
+    }
+
+    @Test
+    void givenPageableShouldReturnPageOfItems() {
+        // given
+        PageRequest pageRequest = PageRequest.of(0, 20);
+        List<Item> itemList = getItems();
+        List<ItemDto> dtoList = List.of(new ItemDto(1L, "Sword", "Desc", Set.of()),
+            new ItemDto(2L, "Gun", "Gun", Set.of()));
+        PageImpl<Item> items = new PageImpl<>(itemList, pageRequest, itemList.size());
+        PageImpl<ItemDto> expected = new PageImpl<>(dtoList, pageRequest, dtoList.size());
+        when(mockiItemRepository.findAll(eq(pageRequest))).thenReturn(items);
+        when(mockItemMapper.mapToDto(any())).thenReturn(dtoList.get(0), dtoList.get(1));
+
+        // when
+        Page<ItemDto> actual = itemService.getPage(pageRequest);
+
+        // then
+        assertIterableEquals(expected, actual);
+    }
+
+    private List<Item> getItems() {
+        Item item1 = new Item();
+        item1.setId(1L);
+        item1.setName("Sword");
+        item1.setDescription("Sword");
+        Item item2 = new Item();
+        item2.setId(2L);
+        item2.setName("Gun");
+        item2.setDescription("Gun");
+        return List.of(item1, item2);
     }
 
 }

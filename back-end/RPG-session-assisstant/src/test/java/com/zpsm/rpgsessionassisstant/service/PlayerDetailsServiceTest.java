@@ -185,7 +185,7 @@ class PlayerDetailsServiceTest {
         room.setId(1L);
         room.setName("Test room");
         room.setCapacity(5);
-        room.setCharacter(Set.of(character));
+        room.setCharacters(Set.of(character));
         room.setGamemaster(gamemaster);
         Player player = new Player();
         player.setId(10L);
@@ -242,7 +242,7 @@ class PlayerDetailsServiceTest {
         room.setId(1L);
         room.setName("Test room");
         room.setCapacity(5);
-        room.setCharacter(Set.of(character));
+        room.setCharacters(Set.of(character));
         room.setGamemaster(gamemaster);
         Player player = new Player();
         player.setId(10L);

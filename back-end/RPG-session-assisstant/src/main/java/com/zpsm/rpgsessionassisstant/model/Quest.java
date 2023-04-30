@@ -35,11 +35,7 @@ public class Quest {
     @Column(name = "description", nullable = false, length = 250)
     private String description;
 
-    @ManyToMany
-    @JoinTable(name = "Quest_Character",
-        schema = "zpsm_projekt",
-        joinColumns = @JoinColumn(name = "Quest_id"),
-        inverseJoinColumns = @JoinColumn(name = "Character_id"))
+    @ManyToMany(mappedBy = "quests")
     private Set<Character> characters = new LinkedHashSet<>();
 
 }

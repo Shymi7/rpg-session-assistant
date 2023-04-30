@@ -11,18 +11,21 @@ import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
-    @Query("select r.character from Room r where r.id = :roomId")
+    @Query("select r.characters from Room r where r.id = :roomId")
     Collection<Character> findAllByRoomId(long roomId);
 
-    @Query("select r.password from Room r where r.id = :roomId")
-    Optional<String> getPasswordOfRoom(long roomId);
+    @Query("select r.password from Room r where r.name = :roomName")
+    Optional<String> getPasswordOfRoom(String roomName);
 
     Optional<Room> findByName(String name);
 
-    @Query("select r from Room r join r.character ch join ch.player p where p = :player")
+    @Query("select r from Room r join r.characters ch join ch.player p where p = :player")
     Collection<Room> findPlayersRooms(Player player);
 
     @Query("select r from Room r join r.gamemaster g join g.player p where p = :player")
     Collection<Room> findGamemastersRooms(Player player);
+
+    @Query("select ch from Room r join r.characters ch join ch.player p where p.login = :login and r.id = :roomId")
+    Optional<Character> findPlayerCharacterFromGivenRoom(String login, long roomId);
 
 }

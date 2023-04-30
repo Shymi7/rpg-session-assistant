@@ -60,11 +60,7 @@ public class Character {
         inverseJoinColumns = @JoinColumn(name = "Quest_id"))
     private Set<Quest> quests = new LinkedHashSet<>();
 
-    @ManyToMany
-    @JoinTable(name = "Room_Character",
-        schema = "zpsm_projekt",
-        joinColumns = @JoinColumn(name = "Character_id"),
-        inverseJoinColumns = @JoinColumn(name = "Room_id"))
+    @ManyToMany(mappedBy = "characters")
     private Set<Room> rooms = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "character")
@@ -74,5 +70,15 @@ public class Character {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "char_player_id", nullable = false)
     private Player player;
+
+    public void addItem(Item item) {
+        this.items.add(item);
+        item.getCharacters().add(this);
+    }
+
+    public void removeItem(Item item) {
+        this.items.remove(item);
+        item.getCharacters().remove(this);
+    }
 
 }

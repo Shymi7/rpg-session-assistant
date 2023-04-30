@@ -35,7 +35,7 @@ public class Room {
         schema = "zpsm_projekt",
         joinColumns = @JoinColumn(name = "Room_id"),
         inverseJoinColumns = @JoinColumn(name = "Character_id"))
-    private Set<Character> character = new LinkedHashSet<>();
+    private Set<Character> characters = new LinkedHashSet<>();
 
     @NotNull
     @Column(name = "capacity", nullable = false)

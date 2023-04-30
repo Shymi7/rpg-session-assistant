@@ -38,7 +38,7 @@ class RoomMapperTest {
         room.setPassword("password");
         room.setCapacity(4);
         room.setGamemaster(gamemaster);
-        room.setCharacter(Set.of(character));
+        room.setCharacters(Set.of(character));
         return room;
     }
 

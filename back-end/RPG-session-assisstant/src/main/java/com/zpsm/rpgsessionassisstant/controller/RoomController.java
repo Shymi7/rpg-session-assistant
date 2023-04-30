@@ -50,7 +50,7 @@ public class RoomController {
 
     @PostMapping("/enter-room")
     public ResponseEntity<Void> enterRoom(@Valid @RequestBody EnterRoomDto dto) {
-        log.info("Entering room {}", dto.roomId());
+        log.info("Entering room {}", dto.roomName());
         roomService.enterRoom(dto);
         return ResponseEntity.ok().build();
     }

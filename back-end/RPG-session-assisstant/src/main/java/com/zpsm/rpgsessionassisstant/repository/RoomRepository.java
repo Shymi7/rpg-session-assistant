@@ -14,8 +14,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query("select r.characters from Room r where r.id = :roomId")
     Collection<Character> findAllByRoomId(long roomId);
 
-    @Query("select r.password from Room r where r.id = :roomId")
-    Optional<String> getPasswordOfRoom(long roomId);
+    @Query("select r.password from Room r where r.name = :roomName")
+    Optional<String> getPasswordOfRoom(String roomName);
 
     Optional<Room> findByName(String name);
 

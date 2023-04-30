@@ -125,7 +125,7 @@ class CharacterServiceTest {
     @Test
     void givenCorrectDTOShouldCreateCharacter() {
         // given
-        CreateCharacterDto dto = new CreateCharacterDto("Bezi", 2L, List.of("Strength"));
+        CreateCharacterDto dto = new CreateCharacterDto("Bezi", List.of("Strength"));
         Player player = new Player();
         Room room = new Room();
         Character savedWithPlayer = getCharacter();
@@ -142,7 +142,6 @@ class CharacterServiceTest {
         savedWithAttributes.getCharacterAttributes().add(characterAttribute);
         when(mockPrincipal.getName()).thenReturn("Testowy");
         when(mockPlayerRepository.findByLogin(anyString())).thenReturn(Optional.of(player));
-        when(mockRoomRepository.findById(anyLong())).thenReturn(Optional.of(room));
         when(mockCharacterRepository.save(any())).thenReturn(savedWithPlayer);
         when(mockAttributeRepository.findAllByNameIn(anyList())).thenReturn(List.of(attribute));
         when(mockCharacterAttributeRepository.saveAll(anySet())).thenReturn(List.of(characterAttribute));
@@ -164,20 +163,8 @@ class CharacterServiceTest {
         // when // then
         assertThrows(PlayerNotFoundException.class, () ->
             characterService.createCharacter(
-                new CreateCharacterDto("Bezi", 1L, List.of()),
+                new CreateCharacterDto("Bezi", List.of()),
                 mockPrincipal));
-    }
-
-    @Test
-    void givenNonExistingRoomShouldThrowEntityNotFoundException() {
-        // given
-        CreateCharacterDto dto = new CreateCharacterDto("Bezi", 1L, List.of());
-        when(mockPlayerRepository.findByLogin(anyString())).thenReturn(Optional.of(new Player()));
-        when(mockPrincipal.getName()).thenReturn("Testowy");
-        when(mockRoomRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        // when // then
-        assertThrows(EntityNotFoundException.class, () -> characterService.createCharacter(dto, mockPrincipal));
     }
 
     @Test

@@ -214,12 +214,12 @@ class RoomServiceTest {
     @Test
     void givenCorrectDTOShouldLetPlayerIntoRoom() {
         // given
-        EnterRoomDto enterRoomDto = new EnterRoomDto(1L, "password", 1L);
+        EnterRoomDto enterRoomDto = new EnterRoomDto("Room", "password", 1L);
         Room room = new Room();
         room.setCapacity(4);
-        when(mockRoomRepository.getPasswordOfRoom(anyLong()))
+        when(mockRoomRepository.getPasswordOfRoom(anyString()))
             .thenReturn(Optional.of(passwordEncoder.encode(enterRoomDto.password())));
-        when(mockRoomRepository.findById(anyLong())).thenReturn(Optional.of(room));
+        when(mockRoomRepository.findByName(anyString())).thenReturn(Optional.of(room));
         when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.of(new Character()));
 
         // when // then
@@ -231,8 +231,8 @@ class RoomServiceTest {
     @Test
     void givenIncorrectRoomPasswordShouldThrowAccessDeniedException() {
         // given
-        EnterRoomDto enterRoomDto = new EnterRoomDto(1L, "password1", 1L);
-        when(mockRoomRepository.getPasswordOfRoom(anyLong()))
+        EnterRoomDto enterRoomDto = new EnterRoomDto("room", "password1", 1L);
+        when(mockRoomRepository.getPasswordOfRoom(anyString()))
             .thenReturn(Optional.of(passwordEncoder.encode("password")));
 
         // when //then
@@ -242,10 +242,10 @@ class RoomServiceTest {
     @Test
     void givenIncorrectRoomIdShouldThrowEntityNotFoundException() {
         // given
-        EnterRoomDto enterRoomDto = new EnterRoomDto(1L, "password", 1L);
-        when(mockRoomRepository.getPasswordOfRoom(anyLong()))
+        EnterRoomDto enterRoomDto = new EnterRoomDto("Room", "password", 1L);
+        when(mockRoomRepository.getPasswordOfRoom(anyString()))
             .thenReturn(Optional.of(passwordEncoder.encode("password")));
-        when(mockRoomRepository.findById(enterRoomDto.roomId())).thenReturn(Optional.empty());
+        when(mockRoomRepository.findByName(enterRoomDto.roomName())).thenReturn(Optional.empty());
 
         // when //then
         assertThrows(EntityNotFoundException.class, () -> roomService.enterRoom(enterRoomDto));
@@ -254,13 +254,13 @@ class RoomServiceTest {
     @Test
     void givenFullRoomShouldThrowFullRoomException() {
         // given
-        EnterRoomDto enterRoomDto = new EnterRoomDto(1L, "password", 1L);
+        EnterRoomDto enterRoomDto = new EnterRoomDto("Room", "password", 1L);
         Room room = new Room();
         room.setCapacity(1);
         room.setCharacters(Set.of(new Character()));
-        when(mockRoomRepository.getPasswordOfRoom(anyLong()))
+        when(mockRoomRepository.getPasswordOfRoom(anyString()))
             .thenReturn(Optional.of(passwordEncoder.encode("password")));
-        when(mockRoomRepository.findById(enterRoomDto.roomId())).thenReturn(Optional.of(room));
+        when(mockRoomRepository.findByName(enterRoomDto.roomName())).thenReturn(Optional.of(room));
 
         // when //then
         assertThrows(FullRoomException.class, () -> roomService.enterRoom(enterRoomDto));

@@ -78,10 +78,10 @@ public class RoomService {
     }
 
     public void enterRoom(EnterRoomDto dto) {
-        if (!isPasswordCorrect(dto.roomId(), dto.password())) {
+        if (!isPasswordCorrect(dto.roomName(), dto.password())) {
             throw new AccessDeniedException("Incorrect password to room");
         }
-        Room room = getRoomById(dto.roomId());
+        Room room = getRoomByName(dto.roomName());
         if (room.getCharacters().size() >= room.getCapacity()) {
             log.error("Room is full");
             throw new FullRoomException("Room is full");
@@ -132,8 +132,8 @@ public class RoomService {
         return newRoom;
     }
 
-    private boolean isPasswordCorrect(long roomId, String rawPassword) {
-        String encodedPassword = roomRepository.getPasswordOfRoom(roomId)
+    private boolean isPasswordCorrect(String roomName, String rawPassword) {
+        String encodedPassword = roomRepository.getPasswordOfRoom(roomName)
             .orElseThrow();
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
@@ -169,4 +169,13 @@ public class RoomService {
                 return new EntityNotFoundException(String.format("Room %d doesn't exist", id));
             });
     }
+
+    private Room getRoomByName(String roomName) {
+        return roomRepository.findByName(roomName)
+            .orElseThrow(() -> {
+                log.error("Room {} doesn't exist", roomName);
+                return new EntityNotFoundException(String.format("Room %s doesn't exist", roomName));
+            });
+    }
+
 }

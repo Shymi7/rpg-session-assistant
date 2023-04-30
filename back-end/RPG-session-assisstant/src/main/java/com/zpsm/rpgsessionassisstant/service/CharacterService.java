@@ -52,7 +52,7 @@ public class CharacterService {
                 return new PlayerNotFoundException(
                     String.format("Player with login %s not found", principal.getName()));
             });
-        Character character = prepareCharacter(dto.name(), dto.roomId());
+        Character character = prepareCharacter(dto.name());
         character.setPlayer(player);
         Character saved = characterRepository.save(character);
         player.getCharacters().add(saved);
@@ -86,19 +86,13 @@ public class CharacterService {
             });
     }
 
-    private Character prepareCharacter(String name, long roomId) {
-        Room room = roomRepository.findById(roomId)
-            .orElseThrow(() -> {
-                log.error("Room with id {} not found", roomId);
-                return new EntityNotFoundException(String.format("Room with id %d not found", roomId));
-            });
+    private Character prepareCharacter(String name) {
         Character character = new Character();
         character.setName(name);
         character.setHealth(100);
         character.setLevel(1);
         character.setSkillPoints(0);
         character.setExperience(0);
-        character.getRooms().add(room);
         return character;
     }
 

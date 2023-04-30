@@ -1,6 +1,7 @@
 package com.zpsm.rpgsessionassisstant.config.security.jwt;
 
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -19,6 +21,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 
@@ -27,6 +30,8 @@ class JwtAccessTokenVerifierTest {
 
     @Mock
     private MockFilterChain mockFilterChain;
+    @Mock
+    private ObjectMapper mockObjectMapper;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpServletResponse mockHttpServletResponse;
     private JwtAccessTokenVerifier jwtAccessTokenVerifier;
@@ -38,7 +43,11 @@ class JwtAccessTokenVerifierTest {
         jwtConfig.setSecret("secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret");
         mockHttpServletRequest = new MockHttpServletRequest();
         mockHttpServletResponse = new MockHttpServletResponse();
-        jwtAccessTokenVerifier = new JwtAccessTokenVerifier(jwtConfig, Algorithm.HMAC256(jwtConfig.getSecret()), clock);
+        jwtAccessTokenVerifier = new JwtAccessTokenVerifier(
+            jwtConfig,
+            Algorithm.HMAC256(jwtConfig.getSecret()),
+            clock,
+            mockObjectMapper);
     }
 
     @Test
@@ -76,6 +85,21 @@ class JwtAccessTokenVerifierTest {
 
         // then
         verify(mockFilterChain, only()).doFilter(mockHttpServletRequest, mockHttpServletResponse);
+    }
+
+    @Test
+    void givenJWTVerificationExceptionShouldExitEarlier() throws ServletException, IOException {
+        // given
+        MockHttpServletResponse expected = new MockHttpServletResponse();
+        expected.setStatus(HttpStatus.UNAUTHORIZED.value());
+        mockHttpServletRequest.addHeader(HttpHeaders.AUTHORIZATION, "incorrect-token");
+
+        // when
+        jwtAccessTokenVerifier.doFilterInternal(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
+
+        // then
+        verify(mockFilterChain, only()).doFilter(mockHttpServletRequest, mockHttpServletResponse);
+        assertEquals(expected.getStatus(), mockHttpServletResponse.getStatus());
     }
 
 }

@@ -123,6 +123,15 @@ public class RoomService {
         log.info("Room name changed");
     }
 
+    public CharacterDto findCharacterOfLoggedInPlayerFromGivenRoom(Long roomId, Principal principal) {
+        return roomRepository.findPlayerCharacterFromGivenRoom(principal.getName(), roomId)
+            .map(characterMapper::mapToDto)
+            .orElseThrow(() -> {
+                log.error("Room or character doesn't exist");
+                return new EntityNotFoundException("Room or character doesn't exist");
+            });
+    }
+
     private Room newRoomEntity(CreateRoomDto dto, Gamemaster gamemaster) {
         Room newRoom = new Room();
         newRoom.setName(dto.name());

@@ -25,4 +25,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query("select r from Room r join r.gamemaster g join g.player p where p = :player")
     Collection<Room> findGamemastersRooms(Player player);
 
+    @Query("select ch from Room r join r.characters ch join ch.player p where p.login = :login and r.id = :roomId")
+    Optional<Character> findPlayerCharacterFromGivenRoom(String login, long roomId);
+
 }

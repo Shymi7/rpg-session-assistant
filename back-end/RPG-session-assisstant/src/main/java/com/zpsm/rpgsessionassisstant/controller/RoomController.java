@@ -41,6 +41,12 @@ public class RoomController {
         return ResponseEntity.ok(roomService.findRoomById(id));
     }
 
+    @GetMapping("/{roomId}/character")
+    public ResponseEntity<CharacterDto> findCharacterOfLoggedInPlayerFromGivenRoom(@PathVariable Long roomId, Principal principal) {
+        log.info("Getting character from room with id {}", roomId);
+        return ResponseEntity.ok(roomService.findCharacterOfLoggedInPlayerFromGivenRoom(roomId, principal));
+    }
+
     @GetMapping("/{id}/characters")
     public ResponseEntity<Collection<CharacterDto>> characters(@PathVariable long id) {
         log.info("Getting characters from room {}", id);

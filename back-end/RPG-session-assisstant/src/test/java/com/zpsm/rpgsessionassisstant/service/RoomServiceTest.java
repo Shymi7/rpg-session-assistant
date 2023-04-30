@@ -372,6 +372,43 @@ class RoomServiceTest {
         assertIterableEquals(expected, actual);
     }
 
+    @Test
+    void givenCorrectRoomIdShouldReturnCharacterOfLoggedInPlayer() {
+        // given
+        Character character = getCharacter();
+        CharacterDto expected = new CharacterDto(
+            character.getId(),
+            character.getName(),
+            character.getLevel(),
+            character.getHealth(),
+            character.getSkillPoints(),
+            character.getExperience(),
+            Set.of(),
+            Set.of());
+        when(mockPrincipal.getName()).thenReturn("Testowy");
+        when(mockRoomRepository.findPlayerCharacterFromGivenRoom(anyString(), anyLong()))
+            .thenReturn(Optional.of(character));
+        when(mockCharacterMapper.mapToDto(any())).thenReturn(expected);
+
+        // when
+        CharacterDto actual = roomService.findCharacterOfLoggedInPlayerFromGivenRoom(1L, mockPrincipal);
+
+        // then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenIncorrectParametersShouldThrowEntityNotFoundException() {
+        // given
+        when(mockPrincipal.getName()).thenReturn("Testowy");
+        when(mockRoomRepository.findPlayerCharacterFromGivenRoom(anyString(), anyLong()))
+            .thenReturn(Optional.empty());
+
+        // when // then
+        assertThrows(EntityNotFoundException.class,
+            () -> roomService.findCharacterOfLoggedInPlayerFromGivenRoom(1L, mockPrincipal));
+    }
+
     private Character getCharacter() {
         Character character = new Character();
         character.setId(1L);

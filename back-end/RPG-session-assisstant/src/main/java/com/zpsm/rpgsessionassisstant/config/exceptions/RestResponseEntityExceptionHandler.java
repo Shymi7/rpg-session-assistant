@@ -5,6 +5,7 @@ import com.zpsm.rpgsessionassisstant.config.security.jwt.MissingTokenException;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.exception.FullRoomException;
 import com.zpsm.rpgsessionassisstant.exception.LoginAlreadyTakenException;
+import com.zpsm.rpgsessionassisstant.exception.NotGamemasterException;
 import com.zpsm.rpgsessionassisstant.util.ErrorsMapper;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class RestResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handlenotFoundErrors(LoginAlreadyTakenException e) {
+    public ResponseEntity<Map<String, String>> handlenotFoundErrors(EntityNotFoundException e) {
         return new ResponseEntity<>(ErrorsMapper.getErrorsMap(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
@@ -44,8 +45,11 @@ public class RestResponseEntityExceptionHandler {
         return new ResponseEntity<>(ErrorsMapper.getErrorsMap(e.getMessage()), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler({JWTVerificationException.class, AccessDeniedException.class})
-    public ResponseEntity<Map<String, String>> handleJwtErrors(LoginAlreadyTakenException e) {
+    @ExceptionHandler({
+        JWTVerificationException.class,
+        AccessDeniedException.class,
+        NotGamemasterException.class})
+    public ResponseEntity<Map<String, String>> handleJwtErrors(RuntimeException e) {
         return new ResponseEntity<>(ErrorsMapper.getErrorsMap(e.getMessage()), HttpStatus.FORBIDDEN);
     }
 

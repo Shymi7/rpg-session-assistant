@@ -12,6 +12,7 @@ import com.zpsm.rpgsessionassisstant.util.AttributeMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
@@ -57,6 +58,7 @@ public class AttributeService {
         return attributeMapper.mapToAttributeDto(saved);
     }
 
+    @Transactional
     public ItemAttribute createNewItemAttribute(Item item, String attributeName, int attributeValue) {
         if (null == item) {
             log.error("Item to bind ItemAttribute to is null");

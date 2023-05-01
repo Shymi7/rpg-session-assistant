@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.List;
@@ -64,6 +65,7 @@ public class RoomService {
             .toList();
     }
 
+    @Transactional
     public RoomDto createRoom(CreateRoomDto dto, Principal principal) {
         Player player = playerRepository.findByLogin(principal.getName())
             .orElseThrow(() -> new PlayerNotFoundException(

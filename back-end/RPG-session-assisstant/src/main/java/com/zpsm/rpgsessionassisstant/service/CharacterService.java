@@ -12,6 +12,7 @@ import com.zpsm.rpgsessionassisstant.util.CharacterMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.*;
@@ -45,6 +46,7 @@ public class CharacterService {
             .toList();
     }
 
+    @Transactional
     public CharacterDto createCharacter(CreateCharacterDto dto, Principal principal) {
         Player player = playerRepository.findByLogin(principal.getName())
             .orElseThrow(() -> {
@@ -63,6 +65,7 @@ public class CharacterService {
         return characterMapper.mapToDto(saved);
     }
 
+    @Transactional
     public CharacterDto addItem(AddOrRemoveFromCharacterDto dto) {
         Character character = getCharacter(dto.characterId());
         Item item = itemService.getItem(dto.entityId());
@@ -71,6 +74,7 @@ public class CharacterService {
         return characterMapper.mapToDto(savedCharacter);
     }
 
+    @Transactional
     public CharacterDto removeItem(AddOrRemoveFromCharacterDto dto) {
         Character foundCharacter = getCharacter(dto.characterId());
         Item foundItem = itemService.getItem(dto.entityId());

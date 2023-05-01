@@ -5,7 +5,7 @@ import classNames from "classnames";
 
 interface Props {
     placeholder: string;
-    func: (value: string, isValid: boolean) => void;
+    func?: (value: string, isValid: boolean) => void;
     password?: boolean;
     regex?: RegExp;
     variant?: "light" | "dark";
@@ -22,11 +22,15 @@ export function CustomInput({
     const [isValid, setIsValid] = useState(true)
 
     function handleInputChange(textValue: string): void {
+        if(func === undefined)
+            return;
+
         if (textValue.match(regex)) {
             setIsValid(true);
             func(textValue, true);
             return;
         }
+
         setIsValid(false);
         func(textValue, false);
     }
@@ -52,7 +56,10 @@ export function CustomInput({
             }}
             placeholder={placeholder}
             placeholderTextColor={tailwindColor.theme.extend.colors.color["greyLight"]}
-            onChangeText={text => handleInputChange(text)}
+            onChangeText={(text) => {
+                if(func)
+                    handleInputChange(text);
+            }}
             secureTextEntry={password}
         />
 

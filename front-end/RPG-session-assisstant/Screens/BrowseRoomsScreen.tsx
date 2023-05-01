@@ -1,11 +1,12 @@
-import {Button, Text, TouchableOpacity, View} from "react-native";
+import {Text, TouchableOpacity, View} from "react-native";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {RoomLabel} from "../Components/RoomLabel";
 import {API_URL} from "../env";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Section} from "../Components/Section";
 import {CustomInput} from "../Components/CustomInput";
+import {getUserDataFromLocalStorage} from "../utils/utils";
+import {Btn} from "../Components/Btn";
 
 
 export function BrowseRoomsScreen({navigation}: { navigation: any }) {
@@ -18,37 +19,26 @@ export function BrowseRoomsScreen({navigation}: { navigation: any }) {
     const [password, setPassword] = useState<string>('');
 
 
-    let authKey: string | null;
-    let playerId: string | null;
-
-
-    async function getDataFromLocalStorage() {
-        authKey = await AsyncStorage.getItem('@loginAuthKey');
-        playerId = await AsyncStorage.getItem('@loginUserId');
-    }
-
-    async function getRoomsData(url: string) {
+    async function getRoomsData(url: string, key: string | null) {
         return await axios.get(url, {
             headers: {
-                Authorization: authKey,
+                Authorization: key,
             }
         })
     }
 
-    function roomLabelFromData(room: any, index: number): JSX.Element {
+    function roomLabelFromData(room: any, isGM: boolean = false): JSX.Element {
         return <RoomLabel
             roomName={room.name}
-            characterData={room.characterData}
             roomId={room.id}
-            index={index}
+            isGM={isGM}
         />
     }
 
     useEffect(() => {
-
         //load all rooms where player is a character or a game master
-        getDataFromLocalStorage()
-            .then(() => {
+        getUserDataFromLocalStorage()
+            .then(({authKey, playerId}) => {
                 const playerInRoomsUrl = API_URL + '/api/player/' + playerId + '/player-in-rooms';
                 const GMInRoomsUrl = API_URL + '/api/player/' + playerId + '/gamemaster-in-rooms';
 
@@ -56,21 +46,21 @@ export function BrowseRoomsScreen({navigation}: { navigation: any }) {
 
                 const promises = [
                     // rooms where player has a character
-                    getRoomsData(playerInRoomsUrl)
+                    getRoomsData(playerInRoomsUrl, authKey)
                         .then(res => {
-                            const elements = res.data.map((room: any, index: number) => {
-                                roomLabelFromData(room, index);
+                            const elements = res.data.map((room: any) => {
+                                return roomLabelFromData(room);
                             });
 
-                            tempRoomLabelElements.concat(elements);
+                            tempRoomLabelElements = tempRoomLabelElements.concat(elements);
                         }),
 
                     //rooms where player is a game master
-                    getRoomsData(GMInRoomsUrl)
+                    getRoomsData(GMInRoomsUrl, authKey)
                         .then(res => {
-                            const elements = res.data.map((room: any, index: number) =>
-                                roomLabelFromData(room, index)
-                            );
+                            const elements = res.data.map((room: any) => {
+                                return roomLabelFromData(room, true);
+                            });
 
                             tempRoomLabelElements = tempRoomLabelElements.concat(elements);
                         })
@@ -89,7 +79,7 @@ export function BrowseRoomsScreen({navigation}: { navigation: any }) {
     function enterRoomSection() {
         return (
             <Section variant={"light"}>
-                <Text className={"text-2xl font-bold text-center text-color-white" }>
+                <Text className={"text-2xl font-bold text-center text-color-white"}>
                     Enter new room
                 </Text>
                 <View className={'flex-row w-full'}>
@@ -101,10 +91,11 @@ export function BrowseRoomsScreen({navigation}: { navigation: any }) {
                                 //setAreInputsValid(modifyElementInArrayByIndex(areInputsValid, 0, isValid));
                             }
                             }/>
-                        <CustomInput placeholder={'Password'} func={(value: string, isValid: boolean) => {
-                            setPassword(value);
-                            //setAreInputsValid(modifyElementInArrayByIndex(areInputsValid, 0, isValid));
-                        }}/>
+                        <CustomInput
+                            placeholder={'Password'}
+                            password
+
+                        />
                     </View>
                     <TouchableOpacity
                         className={'bg-color-accent rounded-xl w-1/6 justify-center items-center p-2 mx-5 my-2'}
@@ -122,12 +113,18 @@ export function BrowseRoomsScreen({navigation}: { navigation: any }) {
 
 
     return (
-        <View>
-            <Text>
-                BrowseRoomsScreen
-            </Text>
+        <View className={'items-center'}>
+
             {roomLabelElements}
+
             {enterRoomSection()}
+
+            <Btn
+                func={() => {
+                    navigation.navigate('newRoom');
+                }}
+                text={'Create new room'}
+            />
         </View>
     )
 }

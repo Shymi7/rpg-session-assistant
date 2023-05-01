@@ -3,13 +3,11 @@ package com.zpsm.rpgsessionassisstant.service;
 import com.zpsm.rpgsessionassisstant.dto.*;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.exception.FullRoomException;
-import com.zpsm.rpgsessionassisstant.exception.PlayerNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Gamemaster;
 import com.zpsm.rpgsessionassisstant.model.Player;
 import com.zpsm.rpgsessionassisstant.model.Room;
 import com.zpsm.rpgsessionassisstant.repository.CharacterRepository;
 import com.zpsm.rpgsessionassisstant.repository.GamemasterRepository;
-import com.zpsm.rpgsessionassisstant.repository.PlayerRepository;
 import com.zpsm.rpgsessionassisstant.repository.RoomRepository;
 import com.zpsm.rpgsessionassisstant.util.CharacterMapper;
 import com.zpsm.rpgsessionassisstant.util.RoomMapper;
@@ -32,10 +30,10 @@ import java.util.function.Consumer;
 public class RoomService {
 
     private final GamemasterRepository gamemasterRepository;
-    private final PlayerRepository playerRepository;
     private final RoomRepository roomRepository;
     private final CharacterRepository characterRepository;
     private final GamemasterService gamemasterService;
+    private final PlayerDetailsService playerDetailsService;
     private final RoomMapper roomMapper;
     private final CharacterMapper characterMapper;
     private final PasswordEncoder passwordEncoder;
@@ -67,9 +65,7 @@ public class RoomService {
 
     @Transactional
     public RoomDto createRoom(CreateRoomDto dto, Principal principal) {
-        Player player = playerRepository.findByLogin(principal.getName())
-            .orElseThrow(() -> new PlayerNotFoundException(
-                String.format("Player with login %s not found", principal.getName())));
+        Player player = (Player) playerDetailsService.loadUserByUsername(principal.getName());
         Gamemaster savedGamemaster = gamemasterService.createGamemaster(player);
         Room room = newRoomEntity(dto, savedGamemaster);
         Room savedRoom = roomRepository.save(room);
@@ -160,12 +156,7 @@ public class RoomService {
     }
 
     private void findGamemasterForGivenRoomAndDoSomething(long roomId, String playerName, Consumer<Gamemaster> action) {
-        Player player = playerRepository.findByLogin(playerName)
-            .orElseThrow(() -> {
-                log.error("Player with login {} not found", playerName);
-                return new PlayerNotFoundException(
-                    String.format("Player with login %s not found", playerName));
-            });
+        Player player = (Player) playerDetailsService.loadUserByUsername(playerName);
         player.getGamemasters()
             .stream()
             .filter(gamemaster -> gamemaster.getRoom().getId() == roomId)

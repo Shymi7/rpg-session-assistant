@@ -4,10 +4,11 @@ import com.zpsm.rpgsessionassisstant.dto.AddOrRemoveFromCharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateCharacterDto;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
-import com.zpsm.rpgsessionassisstant.exception.PlayerNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.*;
-import com.zpsm.rpgsessionassisstant.repository.*;
+import com.zpsm.rpgsessionassisstant.repository.AttributeRepository;
+import com.zpsm.rpgsessionassisstant.repository.CharacterAttributeRepository;
+import com.zpsm.rpgsessionassisstant.repository.CharacterRepository;
 import com.zpsm.rpgsessionassisstant.util.CharacterMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +26,8 @@ public class CharacterService {
     private final CharacterRepository characterRepository;
     private final AttributeRepository attributeRepository;
     private final CharacterAttributeRepository characterAttributeRepository;
-    private final RoomRepository roomRepository;
-    private final PlayerRepository playerRepository;
     private final CharacterMapper characterMapper;
+    private final PlayerDetailsService playerDetailsService;
     private final ItemService itemService;
 
     public CharacterDto getCharacterById(Long id) {
@@ -48,17 +48,12 @@ public class CharacterService {
 
     @Transactional
     public CharacterDto createCharacter(CreateCharacterDto dto, Principal principal) {
-        Player player = playerRepository.findByLogin(principal.getName())
-            .orElseThrow(() -> {
-                log.error("Player with login {} not found", principal.getName());
-                return new PlayerNotFoundException(
-                    String.format("Player with login %s not found", principal.getName()));
-            });
+        Player player = (Player) playerDetailsService.loadUserByUsername(principal.getName());
         Character character = prepareCharacter(dto.name());
         character.setPlayer(player);
         Character saved = characterRepository.save(character);
         player.getCharacters().add(saved);
-        playerRepository.save(player);
+        playerDetailsService.save(player);
         Set<CharacterAttribute> savedCharacterAttributes = saveCharacterAttributes(saved, dto.attributeNames());
         saved.setCharacterAttributes(savedCharacterAttributes);
         saved = characterRepository.save(saved);

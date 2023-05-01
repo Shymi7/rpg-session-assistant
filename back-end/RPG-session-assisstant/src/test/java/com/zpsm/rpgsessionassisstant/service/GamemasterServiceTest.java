@@ -3,7 +3,6 @@ package com.zpsm.rpgsessionassisstant.service;
 import com.zpsm.rpgsessionassisstant.model.Gamemaster;
 import com.zpsm.rpgsessionassisstant.model.Player;
 import com.zpsm.rpgsessionassisstant.repository.GamemasterRepository;
-import com.zpsm.rpgsessionassisstant.repository.PlayerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,12 +19,12 @@ class GamemasterServiceTest {
     @Mock
     private GamemasterRepository mockGamemasterRepository;
     @Mock
-    private PlayerRepository mockPlayerRepository;
+    private PlayerDetailsService mockDetailsService;
     private GamemasterService service;
 
     @BeforeEach
     void setUp() {
-        service = new GamemasterService(mockGamemasterRepository, mockPlayerRepository);
+        service = new GamemasterService(mockGamemasterRepository, mockDetailsService);
     }
 
     @Test

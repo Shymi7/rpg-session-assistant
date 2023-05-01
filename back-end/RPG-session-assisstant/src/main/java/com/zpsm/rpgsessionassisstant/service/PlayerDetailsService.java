@@ -88,4 +88,9 @@ public class PlayerDetailsService implements UserDetailsService {
             .map(roomMapper::mapToDto)
             .toList();
     }
+
+    public Player save(Player player) {
+        return playerRepository.save(player);
+    }
+
 }

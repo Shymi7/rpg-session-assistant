@@ -2,10 +2,11 @@ package com.zpsm.rpgsessionassisstant.service;
 
 import com.zpsm.rpgsessionassisstant.dto.*;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
-import com.zpsm.rpgsessionassisstant.exception.PlayerNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.*;
-import com.zpsm.rpgsessionassisstant.repository.*;
+import com.zpsm.rpgsessionassisstant.repository.AttributeRepository;
+import com.zpsm.rpgsessionassisstant.repository.CharacterAttributeRepository;
+import com.zpsm.rpgsessionassisstant.repository.CharacterRepository;
 import com.zpsm.rpgsessionassisstant.util.CharacterMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,13 +34,11 @@ class CharacterServiceTest {
     @Mock
     private CharacterAttributeRepository mockCharacterAttributeRepository;
     @Mock
-    private RoomRepository mockRoomRepository;
-    @Mock
-    private PlayerRepository mockPlayerRepository;
-    @Mock
     private CharacterMapper mockCharacterMapper;
     @Mock
     private ItemService mockItemService;
+    @Mock
+    private PlayerDetailsService mockDetailsService;
     @Mock
     private Principal mockPrincipal;
     private CharacterService characterService;
@@ -50,9 +49,8 @@ class CharacterServiceTest {
             mockCharacterRepository,
             mockAttributeRepository,
             mockCharacterAttributeRepository,
-            mockRoomRepository,
-            mockPlayerRepository,
             mockCharacterMapper,
+            mockDetailsService,
             mockItemService);
     }
 
@@ -127,7 +125,6 @@ class CharacterServiceTest {
         // given
         CreateCharacterDto dto = new CreateCharacterDto("Bezi", List.of("Strength"));
         Player player = new Player();
-        Room room = new Room();
         Character savedWithPlayer = getCharacter();
         savedWithPlayer.setPlayer(player);
         Attribute attribute = new Attribute();
@@ -141,7 +138,7 @@ class CharacterServiceTest {
         savedWithAttributes.setPlayer(player);
         savedWithAttributes.getCharacterAttributes().add(characterAttribute);
         when(mockPrincipal.getName()).thenReturn("Testowy");
-        when(mockPlayerRepository.findByLogin(anyString())).thenReturn(Optional.of(player));
+        when(mockDetailsService.loadUserByUsername(anyString())).thenReturn(player);
         when(mockCharacterRepository.save(any())).thenReturn(savedWithPlayer);
         when(mockAttributeRepository.findAllByNameIn(anyList())).thenReturn(List.of(attribute));
         when(mockCharacterAttributeRepository.saveAll(anySet())).thenReturn(List.of(characterAttribute));
@@ -152,19 +149,6 @@ class CharacterServiceTest {
 
         // then
         assertEquals(getCharacterDto(), actual);
-    }
-
-    @Test
-    void givenNonExistingPlayerShouldThrowPlayerNotFoundException() {
-        // given
-        when(mockPlayerRepository.findByLogin(anyString())).thenReturn(Optional.empty());
-        when(mockPrincipal.getName()).thenReturn("Testowy");
-
-        // when // then
-        assertThrows(PlayerNotFoundException.class, () ->
-            characterService.createCharacter(
-                new CreateCharacterDto("Bezi", List.of()),
-                mockPrincipal));
     }
 
     @Test

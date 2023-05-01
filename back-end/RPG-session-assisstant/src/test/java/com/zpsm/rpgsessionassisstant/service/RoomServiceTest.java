@@ -3,14 +3,12 @@ package com.zpsm.rpgsessionassisstant.service;
 import com.zpsm.rpgsessionassisstant.dto.*;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.exception.FullRoomException;
-import com.zpsm.rpgsessionassisstant.exception.PlayerNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.Gamemaster;
 import com.zpsm.rpgsessionassisstant.model.Player;
 import com.zpsm.rpgsessionassisstant.model.Room;
 import com.zpsm.rpgsessionassisstant.repository.CharacterRepository;
 import com.zpsm.rpgsessionassisstant.repository.GamemasterRepository;
-import com.zpsm.rpgsessionassisstant.repository.PlayerRepository;
 import com.zpsm.rpgsessionassisstant.repository.RoomRepository;
 import com.zpsm.rpgsessionassisstant.util.CharacterMapper;
 import com.zpsm.rpgsessionassisstant.util.RoomMapper;
@@ -43,13 +41,13 @@ class RoomServiceTest {
     @Mock
     private GamemasterRepository mockGamemasterRepository;
     @Mock
-    private PlayerRepository mockPlayerRepository;
-    @Mock
     private RoomRepository mockRoomRepository;
     @Mock
     private CharacterRepository mockCharacterRepository;
     @Mock
     private GamemasterService mockGamemasterService;
+    @Mock
+    private PlayerDetailsService mockDetailsService;
     @Mock
     private Principal mockPrincipal;
     @Mock
@@ -63,10 +61,10 @@ class RoomServiceTest {
     void setUp() {
         roomService = new RoomService(
             mockGamemasterRepository,
-            mockPlayerRepository,
             mockRoomRepository,
             mockCharacterRepository,
             mockGamemasterService,
+            mockDetailsService,
             mockRoomMapper,
             mockCharacterMapper,
             passwordEncoder);
@@ -187,7 +185,7 @@ class RoomServiceTest {
         RoomDto expected = new RoomDto(savedRoom.getId(), 1L, Set.of(), dto.capacity(), dto.name());
 
         when(mockPrincipal.getName()).thenReturn("Testowy");
-        when(mockPlayerRepository.findByLogin(anyString())).thenReturn(Optional.of(player));
+        when(mockDetailsService.loadUserByUsername(anyString())).thenReturn(player);
         when(mockGamemasterService.createGamemaster(any())).thenReturn(gamemaster);
         when(mockRoomRepository.save(any())).thenReturn(savedRoom);
         when(mockRoomMapper.mapToDto(any())).thenReturn(expected);
@@ -197,18 +195,6 @@ class RoomServiceTest {
 
         // then
         assertEquals(expected, actual);
-    }
-
-    @Test
-    void givenNonExistingPlayerShouldThrowPlayerNotFoundException() {
-        // given
-        String login = "Testowy";
-        CreateRoomDto dto = new CreateRoomDto(6, "password", "room without name");
-        when(mockPrincipal.getName()).thenReturn(login);
-        when(mockPlayerRepository.findByLogin(login)).thenReturn(Optional.empty());
-
-        // when // then
-        assertThrows(PlayerNotFoundException.class, () -> roomService.createRoom(dto, mockPrincipal));
     }
 
     @Test
@@ -278,7 +264,7 @@ class RoomServiceTest {
         player.setGamemasters(Set.of(gamemaster));
         when(mockPrincipal.getName()).thenReturn("Testowy");
         when(mockRoomRepository.findById(anyLong())).thenReturn(Optional.of(room));
-        when(mockPlayerRepository.findByLogin(anyString())).thenReturn(Optional.of(player));
+        when(mockDetailsService.loadUserByUsername(anyString())).thenReturn(player);
 
         // when
         roomService.deleteRoom(id, mockPrincipal);
@@ -298,20 +284,6 @@ class RoomServiceTest {
     }
 
     @Test
-    void givenNonExistingPlayerForRoomDeletionShouldThrowPlayerNotFoundException() {
-        // given
-        long id = 1L;
-        Room room = new Room();
-        room.setId(id);
-        when(mockPrincipal.getName()).thenReturn("Testowy");
-        when(mockRoomRepository.findById(id)).thenReturn(Optional.of(room));
-        when(mockPlayerRepository.findByLogin(anyString())).thenReturn(Optional.empty());
-
-        // when // then
-        assertThrows(PlayerNotFoundException.class, () -> roomService.deleteRoom(id, mockPrincipal));
-    }
-
-    @Test
     void givenCorrectDTOAndPrincipalShouldChangeRoomPassword() {
         // given
         RoomPasswordChangeDto dto = new RoomPasswordChangeDto(1L, "password1");
@@ -323,7 +295,7 @@ class RoomServiceTest {
         player.setGamemasters(Set.of(gamemaster));
         when(mockPrincipal.getName()).thenReturn("Testowy");
         when(mockRoomRepository.findById(anyLong())).thenReturn(Optional.of(room));
-        when(mockPlayerRepository.findByLogin(anyString())).thenReturn(Optional.of(player));
+        when(mockDetailsService.loadUserByUsername(anyString())).thenReturn(player);
 
         // when
         roomService.changeRoomPassword(dto, mockPrincipal);
@@ -344,7 +316,7 @@ class RoomServiceTest {
         player.setGamemasters(Set.of(gamemaster));
         when(mockPrincipal.getName()).thenReturn("Testowy");
         when(mockRoomRepository.findById(anyLong())).thenReturn(Optional.of(room));
-        when(mockPlayerRepository.findByLogin(anyString())).thenReturn(Optional.of(player));
+        when(mockDetailsService.loadUserByUsername(anyString())).thenReturn(player);
 
         // when
         roomService.changeRoomName(dto, mockPrincipal);

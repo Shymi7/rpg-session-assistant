@@ -5,8 +5,6 @@ import com.zpsm.rpgsessionassisstant.exception.CharacterNotInAnyRoomException;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.*;
-import com.zpsm.rpgsessionassisstant.repository.AttributeRepository;
-import com.zpsm.rpgsessionassisstant.repository.CharacterAttributeRepository;
 import com.zpsm.rpgsessionassisstant.repository.CharacterRepository;
 import com.zpsm.rpgsessionassisstant.util.CharacterMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,10 +29,6 @@ class CharacterServiceTest {
     @Mock
     private CharacterRepository mockCharacterRepository;
     @Mock
-    private AttributeRepository mockAttributeRepository;
-    @Mock
-    private CharacterAttributeRepository mockCharacterAttributeRepository;
-    @Mock
     private CharacterMapper mockCharacterMapper;
     @Mock
     private ItemService mockItemService;
@@ -43,6 +37,8 @@ class CharacterServiceTest {
     @Mock
     private QuestService mockQuestService;
     @Mock
+    private AttributeService mockAttributeService;
+    @Mock
     private Principal mockPrincipal;
     private CharacterService characterService;
 
@@ -50,12 +46,11 @@ class CharacterServiceTest {
     void setUp() {
         characterService = new CharacterService(
             mockCharacterRepository,
-            mockAttributeRepository,
-            mockCharacterAttributeRepository,
             mockCharacterMapper,
             mockDetailsService,
             mockItemService,
-            mockQuestService);
+            mockQuestService,
+            mockAttributeService);
     }
 
     @Test
@@ -144,8 +139,7 @@ class CharacterServiceTest {
         when(mockPrincipal.getName()).thenReturn("Testowy");
         when(mockDetailsService.loadUserByUsername(anyString())).thenReturn(player);
         when(mockCharacterRepository.save(any())).thenReturn(savedWithPlayer);
-        when(mockAttributeRepository.findAllByNameIn(anyList())).thenReturn(List.of(attribute));
-        when(mockCharacterAttributeRepository.saveAll(anySet())).thenReturn(List.of(characterAttribute));
+        when(mockAttributeService.saveCharacterAttributes(any(), anyList())).thenReturn(Set.of(characterAttribute));
         when(mockCharacterMapper.mapToDto(any())).thenReturn(getCharacterDto());
 
         // when
@@ -172,8 +166,10 @@ class CharacterServiceTest {
             character.getExperience(),
             Set.of(new ItemDto(item.getId(), item.getName(), item.getDescription(), Set.of())),
             Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)));
+        Character characterWithItem = getCharacter();
+        characterWithItem.getItems().add(item);
         when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.of(getCharacter()));
-        when(mockItemService.getItem(anyLong())).thenReturn(item);
+        when(mockItemService.addItemToCharacter(any(), anyLong())).thenReturn(characterWithItem);
         when(mockCharacterMapper.mapToDto(any())).thenReturn(expected);
 
         // when
@@ -195,7 +191,7 @@ class CharacterServiceTest {
         CharacterDto expected = getCharacterDto();
         AddOrRemoveFromCharacterDto dto = new AddOrRemoveFromCharacterDto(1L, 1L);
         when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.of(character));
-        when(mockItemService.getItem(anyLong())).thenReturn(item);
+        when(mockItemService.removeItemFromCharacter(any(), anyLong())).thenReturn(getCharacter());
         when(mockCharacterMapper.mapToDto(any())).thenReturn(expected);
 
         // when
@@ -203,28 +199,6 @@ class CharacterServiceTest {
 
         //then
         assertEquals(expected, actual);
-    }
-
-    @Test
-    void givenExistingIdShouldReturnCharacterEntity() {
-        // given
-        Character expected = getCharacter();
-        when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.of(expected));
-
-        // when
-        Character actual = characterService.getCharacter(1L);
-
-        // then
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void givenNonExistingIdForEntityShouldThrowEntityNotFoundException() {
-        // given
-        when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        // when // then
-        assertThrows(EntityNotFoundException.class, () -> characterService.getCharacter(1L));
     }
 
     @Test

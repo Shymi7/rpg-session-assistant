@@ -3,10 +3,10 @@ package com.zpsm.rpgsessionassisstant.service;
 import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateNewAttributeDto;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
-import com.zpsm.rpgsessionassisstant.model.Attribute;
-import com.zpsm.rpgsessionassisstant.model.Item;
-import com.zpsm.rpgsessionassisstant.model.ItemAttribute;
+import com.zpsm.rpgsessionassisstant.model.Character;
+import com.zpsm.rpgsessionassisstant.model.*;
 import com.zpsm.rpgsessionassisstant.repository.AttributeRepository;
+import com.zpsm.rpgsessionassisstant.repository.CharacterAttributeRepository;
 import com.zpsm.rpgsessionassisstant.repository.ItemAttributeRepository;
 import com.zpsm.rpgsessionassisstant.util.AttributeMapper;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -23,6 +23,7 @@ public class AttributeService {
 
     private final AttributeRepository attributeRepository;
     private final ItemAttributeRepository itemAttributeRepository;
+    private final CharacterAttributeRepository characterAttributeRepository;
     private final AttributeMapper attributeMapper;
 
     public AttributeDto getAttributeByName(String name) {
@@ -74,6 +75,25 @@ public class AttributeService {
         newItemAttribute.setAttribute(attribute);
         newItemAttribute.setAttributeValue(attributeValue);
         return itemAttributeRepository.save(newItemAttribute);
+    }
+
+    public Set<CharacterAttribute> saveCharacterAttributes(Character character, List<String> attributeNames) {
+        if (attributeNames.isEmpty()) {
+            return Set.of();
+        }
+        if (null == character) {
+            log.error("Character was null");
+            throw new EntityNotFoundException("Character was null");
+        }
+        List<Attribute> attributes = attributeRepository.findAllByNameIn(attributeNames);
+        Set<CharacterAttribute> characterAttributes = new LinkedHashSet<>();
+        attributes.forEach(attribute -> {
+            CharacterAttribute characterAttribute = new CharacterAttribute();
+            characterAttribute.setCharacter(character);
+            characterAttribute.setAttribute(attribute);
+            characterAttributes.add(characterAttribute);
+        });
+        return new HashSet<>(characterAttributeRepository.saveAll(characterAttributes));
     }
 
 }

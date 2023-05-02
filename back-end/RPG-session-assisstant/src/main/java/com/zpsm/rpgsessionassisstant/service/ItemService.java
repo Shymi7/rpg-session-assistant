@@ -4,6 +4,7 @@ import com.zpsm.rpgsessionassisstant.dto.CreateItemAttributeDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateItemDto;
 import com.zpsm.rpgsessionassisstant.dto.ItemDto;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
+import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.Item;
 import com.zpsm.rpgsessionassisstant.model.ItemAttribute;
 import com.zpsm.rpgsessionassisstant.repository.ItemRepository;
@@ -57,6 +58,24 @@ public class ItemService {
         return itemMapper.mapToDto(itemRepository.save(saved));
     }
 
+    public Character addItemToCharacter(Character character, long itemId) {
+        if (null == character) {
+            log.error("Character was null");
+            throw new EntityNotFoundException("Character was null");
+        }
+        character.addItem(getItem(itemId));
+        return character;
+    }
+
+    public Character removeItemFromCharacter(Character character, long itemId) {
+        if (null == character) {
+            log.error("Character was null");
+            throw new EntityNotFoundException("Character was null");
+        }
+        character.removeItem(getItem(itemId));
+        return character;
+    }
+
     private void addItemAttributesToItem(Item item, Set<CreateItemAttributeDto> itemAttributeDtos) {
         itemAttributeDtos.forEach(itemAttributeDto -> {
             ItemAttribute newItemAttribute = attributeService.createNewItemAttribute(
@@ -67,11 +86,12 @@ public class ItemService {
         });
     }
 
-    public Item getItem(long itemId) {
+    private Item getItem(long itemId) {
         return itemRepository.findById(itemId)
             .orElseThrow(() -> {
                 log.error("Item with id {} not found", itemId);
                 return new EntityNotFoundException(String.format("Item with id %d not found", itemId));
             });
     }
+
 }

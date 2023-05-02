@@ -3,6 +3,7 @@ package com.zpsm.rpgsessionassisstant.service;
 import com.zpsm.rpgsessionassisstant.dto.*;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Attribute;
+import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.Item;
 import com.zpsm.rpgsessionassisstant.model.ItemAttribute;
 import com.zpsm.rpgsessionassisstant.repository.ItemRepository;
@@ -175,29 +176,6 @@ class ItemServiceTest {
     }
 
     @Test
-    void givenExistingIdShouldReturnItemEntity() {
-        // given
-        Item expected = new Item();
-        expected.setId(1L);
-        when(mockiItemRepository.findById(anyLong())).thenReturn(Optional.of(expected));
-
-        // when
-        Item actual = itemService.getItem(expected.getId());
-
-        // then
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void givenNonExistingIdOfEntityShouldThrowEntityNotFoundException() {
-        // given
-        when(mockiItemRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        // when // then
-        assertThrows(EntityNotFoundException.class, () -> itemService.getItem(1L));
-    }
-
-    @Test
     void givenPageableShouldReturnPageOfItems() {
         // given
         PageRequest pageRequest = PageRequest.of(0, 20);
@@ -214,6 +192,50 @@ class ItemServiceTest {
 
         // then
         assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    void givenCharacterAndExistingItemIdWhenAddingItemShouldAddItemToCharacter() {
+        // given
+        Item item = new Item();
+        Character character = new Character();
+        character.addItem(item);
+        when(mockiItemRepository.findById(anyLong())).thenReturn(Optional.of(item));
+
+        // when
+        Character actual = itemService.addItemToCharacter(new Character(), 1L);
+
+        // then
+        assertFalse(actual.getItems().isEmpty());
+    }
+
+    @Test
+    void givenNullCharacterWhenAddingItemShouldThrowEntityNotFoundException() {
+        // given // then // then
+        assertThrows(EntityNotFoundException.class,
+            () -> itemService.addItemToCharacter(null, 1L));
+    }
+
+    @Test
+    void givenCharacterAndExistingItemIdWhenRemovingItemShouldRemoveItemFromCharacter() {
+        // given
+        Item item = new Item();
+        Character character = new Character();
+        character.addItem(item);
+        when(mockiItemRepository.findById(anyLong())).thenReturn(Optional.of(item));
+
+        // when
+        Character actual = itemService.removeItemFromCharacter(character, 1L);
+
+        // then
+        assertTrue(actual.getItems().isEmpty());
+    }
+
+    @Test
+    void givenNullCharacterWhenRemovingItemShouldThrowEntityNotFoundException() {
+        // given // then // then
+        assertThrows(EntityNotFoundException.class,
+            () -> itemService.removeItemFromCharacter(null, 1L));
     }
 
     private List<Item> getItems() {

@@ -3,11 +3,10 @@ package com.zpsm.rpgsessionassisstant.service;
 import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateNewAttributeDto;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
-import com.zpsm.rpgsessionassisstant.model.Attribute;
-import com.zpsm.rpgsessionassisstant.model.Item;
-import com.zpsm.rpgsessionassisstant.model.ItemAttribute;
-import com.zpsm.rpgsessionassisstant.model.ItemAttributeKey;
+import com.zpsm.rpgsessionassisstant.model.Character;
+import com.zpsm.rpgsessionassisstant.model.*;
 import com.zpsm.rpgsessionassisstant.repository.AttributeRepository;
+import com.zpsm.rpgsessionassisstant.repository.CharacterAttributeRepository;
 import com.zpsm.rpgsessionassisstant.repository.ItemAttributeRepository;
 import com.zpsm.rpgsessionassisstant.util.AttributeMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -33,11 +33,17 @@ class AttributeServiceTest {
     private AttributeMapper mockAttributeMapper;
     @Mock
     private ItemAttributeRepository mockItemAttributeRepository;
+    @Mock
+    private CharacterAttributeRepository mockCharacterAttributeRepository;
     private AttributeService attributeService;
 
     @BeforeEach
     void setUp() {
-        attributeService = new AttributeService(mockAttributeRepository, mockItemAttributeRepository, mockAttributeMapper);
+        attributeService = new AttributeService(
+            mockAttributeRepository,
+            mockItemAttributeRepository,
+            mockCharacterAttributeRepository,
+            mockAttributeMapper);
     }
 
     @Test
@@ -191,6 +197,45 @@ class AttributeServiceTest {
         // when // then
         assertThrows(EntityNotFoundException.class,
             () -> attributeService.createNewItemAttribute(item, "Strength", 6));
+    }
+
+    @Test
+    void givenCharacterAndAttributesNamesShouldSaveCharacterAttributes() {
+        // given
+        Character character = new Character();
+        List<String> attributeNames = List.of("Strength");
+        Attribute attribute = new Attribute();
+        CharacterAttribute characterAttribute = new CharacterAttribute();
+        characterAttribute.setCharacter(character);
+        characterAttribute.setAttribute(attribute);
+        when(mockAttributeRepository.findAllByNameIn(anyList())).thenReturn(List.of(new Attribute()));
+        when(mockCharacterAttributeRepository.saveAll(anyIterable())).thenReturn(List.of(characterAttribute));
+
+        // when
+        var actual = attributeService.saveCharacterAttributes(character, attributeNames);
+
+        // then
+        assertIterableEquals(Set.of(characterAttribute), actual);
+    }
+
+    @Test
+    void givenEmptyAttributeNamesListShouldReturnEmptySet() {
+        // given // when
+        var actual = attributeService.saveCharacterAttributes(new Character(), List.of());
+
+        // then
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    void givenNullCharacterShouldThrowEntityNotFoundException() {
+        // given
+        Character character = new Character();
+        List<String> attributes = List.of("Strength");
+
+        // when // then
+        assertThrows(EntityNotFoundException.class,
+            () -> attributeService.saveCharacterAttributes(null, attributes));
     }
 
 }

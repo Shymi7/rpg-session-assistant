@@ -52,4 +52,18 @@ public class CharacterController {
         return ResponseEntity.ok(characterService.removeItem(dto));
     }
 
+    @PatchMapping("/add-quest")
+    public ResponseEntity<Void> addQuestToCharacter(@RequestBody AddOrRemoveFromCharacterDto dto) {
+        log.info("Add quest to character with id {}", dto.characterId());
+        characterService.addQuest(dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/remove-quest")
+    public ResponseEntity<Void> removeQuestFromCharacter(@RequestBody AddOrRemoveFromCharacterDto dto) {
+        log.info("Remove quest from character with id {}", dto.characterId());
+        characterService.removeQuest(dto);
+        return ResponseEntity.noContent().build();
+    }
+
 }

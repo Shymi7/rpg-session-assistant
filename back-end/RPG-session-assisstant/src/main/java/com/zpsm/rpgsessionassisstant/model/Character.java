@@ -81,4 +81,14 @@ public class Character {
         item.getCharacters().remove(this);
     }
 
+    public void addQuest(Quest quest) {
+        this.quests.add(quest);
+        quest.getCharacters().add(this);
+    }
+
+    public void removeQuest(Quest quest) {
+        this.quests.remove(quest);
+        quest.getCharacters().remove(this);
+    }
+
 }

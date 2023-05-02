@@ -1,6 +1,7 @@
 package com.zpsm.rpgsessionassisstant.service;
 
 import com.zpsm.rpgsessionassisstant.dto.*;
+import com.zpsm.rpgsessionassisstant.exception.CharacterNotInAnyRoomException;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.*;
@@ -22,7 +23,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CharacterServiceTest {
@@ -40,6 +41,8 @@ class CharacterServiceTest {
     @Mock
     private PlayerDetailsService mockDetailsService;
     @Mock
+    private QuestService mockQuestService;
+    @Mock
     private Principal mockPrincipal;
     private CharacterService characterService;
 
@@ -51,7 +54,8 @@ class CharacterServiceTest {
             mockCharacterAttributeRepository,
             mockCharacterMapper,
             mockDetailsService,
-            mockItemService);
+            mockItemService,
+            mockQuestService);
     }
 
     @Test
@@ -221,6 +225,70 @@ class CharacterServiceTest {
 
         // when // then
         assertThrows(EntityNotFoundException.class, () -> characterService.getCharacter(1L));
+    }
+
+    @Test
+    void givenCharacterThatIsInRoomShouldAddQuest() {
+        // given
+        Room room = new Room();
+        Quest quest = new Quest();
+        quest.setId(1L);
+        Character character = getCharacter();
+        character.getRooms().add(room);
+        Character characterWithQuest = getCharacter();
+        characterWithQuest.getRooms().add(room);
+        characterWithQuest.getQuests().add(quest);
+        when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.of(character));
+        when(mockQuestService.addQuestToCharacter(any(), anyLong())).thenReturn(characterWithQuest);
+
+        // when
+        characterService.addQuest(new AddOrRemoveFromCharacterDto(character.getId(), quest.getId()));
+
+        // then
+        verify(mockCharacterRepository, atMostOnce()).save(characterWithQuest);
+    }
+
+    @Test
+    void givenCharacterThatIsNotInAnyRoomShouldThrowCharacterNotInAnyRoomException() {
+        // given
+        Character character = getCharacter();
+        when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.of(character));
+
+        // when // then
+        assertThrows(CharacterNotInAnyRoomException.class,
+            () -> characterService.addQuest(new AddOrRemoveFromCharacterDto(character.getId(), 1L)));
+    }
+
+    @Test
+    void givenCharacterThatIsInRoomShouldRemoveQuest() {
+        // given
+        Room room = new Room();
+        Quest quest = new Quest();
+        quest.setId(1L);
+        Character characterWithoutQuest = getCharacter();
+        characterWithoutQuest.getRooms().add(room);
+        Character characterWithQuest = getCharacter();
+        characterWithQuest.getRooms().add(room);
+        characterWithQuest.getQuests().add(quest);
+        when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.of(characterWithQuest));
+        when(mockQuestService.removeQuestFromCharacter(any(), anyLong())).thenReturn(characterWithoutQuest);
+
+        // when
+        characterService.removeQuest(new AddOrRemoveFromCharacterDto(characterWithoutQuest.getId(), quest.getId()));
+
+        // then
+        verify(mockCharacterRepository, atMostOnce()).save(characterWithoutQuest);
+    }
+
+    @Test
+    void givenCharacterThatIsNotInAnyRoomWhenRemovingQuestShouldThrowCharacterNotInAnyRoomException() {
+        // given
+        Character character = getCharacter();
+        when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.of(character));
+
+        // when // then
+        assertThrows(CharacterNotInAnyRoomException.class,
+            () -> characterService.removeQuest(new AddOrRemoveFromCharacterDto(character.getId(), 1L)));
     }
 
     private Character getCharacter() {

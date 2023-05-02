@@ -31,8 +31,6 @@ class QuestServiceTest {
     @Mock
     private QuestRepository mockQuestRepository;
     @Mock
-    private CharacterService mockCharacterService;
-    @Mock
     private PlayerDetailsService mockDetailsService;
     @Mock
     private QuestMapper mockQuestMapper;
@@ -42,7 +40,10 @@ class QuestServiceTest {
 
     @BeforeEach
     void setUp() {
-        questService = new QuestService(mockQuestRepository, mockCharacterService, mockDetailsService, mockQuestMapper);
+        questService = new QuestService(
+            mockQuestRepository,
+            mockDetailsService,
+            mockQuestMapper);
     }
 
     @Test
@@ -107,8 +108,7 @@ class QuestServiceTest {
         quest.setName("Test");
         quest.setDescription("testowy opis");
         QuestDto expected = new QuestDto(quest.getId(), quest.getName(), quest.getDescription());
-        when(mockCharacterService.getCharacter(anyLong())).thenReturn(new Character());
-        when(mockQuestRepository.findByCharacters(any())).thenReturn(Set.of(quest));
+        when(mockQuestRepository.findByCharactersId(anyLong())).thenReturn(Set.of(quest));
         when(mockQuestMapper.mapToDto(any())).thenReturn(expected);
 
         // when
@@ -121,8 +121,7 @@ class QuestServiceTest {
     @Test
     void givenCharacterWithNoQuestsShouldReturnEmptyCollection() {
         // given
-        when(mockCharacterService.getCharacter(anyLong())).thenReturn(new Character());
-        when(mockQuestRepository.findByCharacters(any())).thenReturn(Set.of());
+        when(mockQuestRepository.findByCharactersId(anyLong())).thenReturn(Set.of());
 
         // when
         Collection<QuestDto> actual = questService.findCharactersQuests(1L);
@@ -162,6 +161,36 @@ class QuestServiceTest {
 
         // when // then
         assertThrows(NotGamemasterException.class, () -> questService.createQuest(dto, mockPrincipal));
+    }
+
+    @Test
+    void givenCharacterAndQuestIdShouldAddQuest() {
+        // given
+        Quest quest = new Quest();
+        quest.setId(1L);
+        when(mockQuestRepository.findById(anyLong())).thenReturn(Optional.of(quest));
+
+        // when
+        Character actual = questService.addQuestToCharacter(new Character(), quest.getId());
+
+        // then
+        assertFalse(actual.getQuests().isEmpty());
+    }
+
+    @Test
+    void givenCharacterAndQuestIdShouldRemoveQuest() {
+        // given
+        Quest quest = new Quest();
+        quest.setId(1L);
+        Character character = new Character();
+        character.getQuests().add(quest);
+        when(mockQuestRepository.findById(anyLong())).thenReturn(Optional.of(quest));
+
+        // when
+        Character actual = questService.removeQuestFromCharacter(character, quest.getId());
+
+        // then
+        assertTrue(actual.getQuests().isEmpty());
     }
 
 }

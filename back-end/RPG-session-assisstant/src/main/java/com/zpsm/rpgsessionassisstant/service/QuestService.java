@@ -22,7 +22,6 @@ import java.util.Collection;
 public class QuestService {
 
     private final QuestRepository questRepository;
-    private final CharacterService characterService;
     private final PlayerDetailsService playerDetailsService;
     private final QuestMapper questMapper;
 
@@ -36,17 +35,11 @@ public class QuestService {
     }
 
     public QuestDto findQuestById(Long id) {
-        return questRepository.findById(id)
-            .map(questMapper::mapToDto)
-            .orElseThrow(() -> {
-                log.error("Quest with id {} doesn't exists", id);
-                return new EntityNotFoundException(String.format("Quest with name %d doesn't exists", id));
-            });
+        return questMapper.mapToDto(getQuest(id));
     }
 
     public Collection<QuestDto> findCharactersQuests(Long characterId) {
-        Character character = characterService.getCharacter(characterId);
-        return questRepository.findByCharacters(character)
+        return questRepository.findByCharactersId(characterId)
             .stream()
             .map(questMapper::mapToDto)
             .toList();
@@ -62,6 +55,26 @@ public class QuestService {
         quest.setName(createQuestDto.name());
         quest.setDescription(createQuestDto.description());
         return questMapper.mapToDto(questRepository.save(quest));
+    }
+
+    public Character addQuestToCharacter(Character character, Long questId) {
+        Quest quest = getQuest(questId);
+        character.addQuest(quest);
+        return character;
+    }
+
+    public Character removeQuestFromCharacter(Character character, Long questId) {
+        Quest quest = getQuest(questId);
+        character.removeQuest(quest);
+        return character;
+    }
+
+    private Quest getQuest(Long id) {
+        return questRepository.findById(id)
+            .orElseThrow(() -> {
+                log.error("Quest with id {} doesn't exists", id);
+                return new EntityNotFoundException(String.format("Quest with name %d doesn't exists", id));
+            });
     }
 
 }

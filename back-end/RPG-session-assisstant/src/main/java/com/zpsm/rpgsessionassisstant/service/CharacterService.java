@@ -3,6 +3,7 @@ package com.zpsm.rpgsessionassisstant.service;
 import com.zpsm.rpgsessionassisstant.dto.AddOrRemoveFromCharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateCharacterDto;
+import com.zpsm.rpgsessionassisstant.exception.CharacterNotInAnyRoomException;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.*;
@@ -29,6 +30,7 @@ public class CharacterService {
     private final CharacterMapper characterMapper;
     private final PlayerDetailsService playerDetailsService;
     private final ItemService itemService;
+    private final QuestService questService;
 
     public CharacterDto getCharacterById(Long id) {
         return characterRepository.findById(id)
@@ -83,6 +85,28 @@ public class CharacterService {
                 log.error("Character with id {} not found", characterId);
                 return new EntityNotFoundException(String.format("Character with id %d not found", characterId));
             });
+    }
+
+    @Transactional
+    public void addQuest(AddOrRemoveFromCharacterDto dto) {
+        Character character = getCharacter(dto.characterId());
+        if (character.getRooms().isEmpty()) {
+            log.error("Cannot add quest to a character which doesn't belong to any room");
+            throw new CharacterNotInAnyRoomException("Cannot add quest to a character which doesn't belong to any room");
+        }
+        character = questService.addQuestToCharacter(character, dto.entityId());
+        characterRepository.save(character);
+    }
+
+    @Transactional
+    public void removeQuest(AddOrRemoveFromCharacterDto dto) {
+        Character character = getCharacter(dto.characterId());
+        if (character.getRooms().isEmpty()) {
+            log.error("Cannot remove quest from a character which doesn't belong to any room");
+            throw new CharacterNotInAnyRoomException("Cannot remove quest from a character which doesn't belong to any room");
+        }
+        character = questService.removeQuestFromCharacter(character, dto.entityId());
+        characterRepository.save(character);
     }
 
     private Character prepareCharacter(String name) {

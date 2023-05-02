@@ -2,10 +2,7 @@ package com.zpsm.rpgsessionassisstant.config.exceptions;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.zpsm.rpgsessionassisstant.config.security.jwt.MissingTokenException;
-import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
-import com.zpsm.rpgsessionassisstant.exception.FullRoomException;
-import com.zpsm.rpgsessionassisstant.exception.LoginAlreadyTakenException;
-import com.zpsm.rpgsessionassisstant.exception.NotGamemasterException;
+import com.zpsm.rpgsessionassisstant.exception.*;
 import com.zpsm.rpgsessionassisstant.util.ErrorsMapper;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -48,7 +45,9 @@ public class RestResponseEntityExceptionHandler {
     @ExceptionHandler({
         JWTVerificationException.class,
         AccessDeniedException.class,
-        NotGamemasterException.class})
+        NotGamemasterException.class,
+        CharacterNotInAnyRoomException.class
+    })
     public ResponseEntity<Map<String, String>> handleJwtErrors(RuntimeException e) {
         return new ResponseEntity<>(ErrorsMapper.getErrorsMap(e.getMessage()), HttpStatus.FORBIDDEN);
     }

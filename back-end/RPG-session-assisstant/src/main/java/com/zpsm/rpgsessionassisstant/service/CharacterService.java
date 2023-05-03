@@ -3,6 +3,7 @@ package com.zpsm.rpgsessionassisstant.service;
 import com.zpsm.rpgsessionassisstant.dto.AddOrRemoveFromCharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateCharacterDto;
+import com.zpsm.rpgsessionassisstant.dto.ModifyCharactersAttributesDto;
 import com.zpsm.rpgsessionassisstant.exception.CharacterNotInAnyRoomException;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Character;
@@ -93,6 +94,11 @@ public class CharacterService {
         characterRepository.save(character);
     }
 
+    public CharacterDto modifyCharactersAttributes(Long characterId, ModifyCharactersAttributesDto dto) {
+        dto.attributesLevelSet()
+            .forEach(attributeLevelPair -> attributeService.updateCharacterAttribute(characterId, attributeLevelPair));
+        return characterMapper.mapToDto(getCharacter(characterId));
+    }
 
     private Character prepareCharacter(String name) {
         Character character = new Character();
@@ -111,5 +117,4 @@ public class CharacterService {
                 return new EntityNotFoundException(String.format("Character with id %d not found", characterId));
             });
     }
-
 }

@@ -2,6 +2,7 @@ package com.zpsm.rpgsessionassisstant.service;
 
 import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateNewAttributeDto;
+import com.zpsm.rpgsessionassisstant.dto.ModifyCharactersAttributesDto;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.*;
@@ -94,6 +95,17 @@ public class AttributeService {
             characterAttributes.add(characterAttribute);
         });
         return new HashSet<>(characterAttributeRepository.saveAll(characterAttributes));
+    }
+
+    @Transactional
+    public int updateCharacterAttribute(
+        Long characterId,
+        ModifyCharactersAttributesDto.AttributeLevelPair attributeLevelPair) {
+
+        return characterAttributeRepository.updateAttributeLevel(
+            attributeLevelPair.attributeId(),
+            characterId,
+            attributeLevelPair.newLevel());
     }
 
 }

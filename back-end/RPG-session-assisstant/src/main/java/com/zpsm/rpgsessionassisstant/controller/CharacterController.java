@@ -3,6 +3,7 @@ package com.zpsm.rpgsessionassisstant.controller;
 import com.zpsm.rpgsessionassisstant.dto.AddOrRemoveFromCharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.CreateCharacterDto;
+import com.zpsm.rpgsessionassisstant.dto.ModifyCharactersAttributesDto;
 import com.zpsm.rpgsessionassisstant.service.CharacterService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -64,6 +65,15 @@ public class CharacterController {
         log.info("Remove quest from character with id {}", dto.characterId());
         characterService.removeQuest(dto);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/modify-attributes")
+    public ResponseEntity<CharacterDto> modifyCharactersAttributes(
+        @PathVariable Long id,
+        @Valid @RequestBody ModifyCharactersAttributesDto dto) {
+
+        log.info("Changing attributes of character with id {}", id);
+        return new ResponseEntity<>(characterService.modifyCharactersAttributes(id, dto), HttpStatus.NO_CONTENT);
     }
 
 }

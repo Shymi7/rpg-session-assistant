@@ -17,3 +17,7 @@ jwt:
   secret: "enBzbV9wcm9qZWt0X3JwZ19zZXNzaW9uX2Fzc2lzc3RhbnRfMmsyMw=="
   accessTokenExpirationAfterHours: 8
   refreshTokenExpirationAfterHours: 24
+  ignoredPaths:
+    - "/login"
+    - "/api/token/refresh"
+    - "/h2-console"

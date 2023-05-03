@@ -40,7 +40,7 @@ public class JwtAccessTokenVerifier extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
 
-        if (request.getServletPath().equals("/login") || request.getServletPath().equals("/api/token/refresh")) {
+        if (jwtConfig.getIgnoredPaths().contains(request.getServletPath())) {
             filterChain.doFilter(request, response);
             return;
         }

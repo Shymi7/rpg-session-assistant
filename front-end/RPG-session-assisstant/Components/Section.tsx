@@ -10,7 +10,7 @@ export function Section({children, variant}: PropsWithChildren<Props>) {
     return (
         <View
             className={classNames(
-                "rounded-2xl m-4 py-2 h-auto ",
+                "rounded-2xl m-4 p-2 h-auto ",
                 variant == "light" ? "bg-color-greyLight" : "bg-color-greyDark"
             )}
             style={{

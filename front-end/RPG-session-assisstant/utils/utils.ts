@@ -29,6 +29,21 @@ interface StorageItem {
     value: any;
 }
 
+export async function getUserDataFromLocalStorage() {
+    const authKey = await AsyncStorage.getItem('@loginAuthKey');
+    const playerId = await AsyncStorage.getItem('@loginUserId');
+
+    return {authKey, playerId};
+}
+
+export async function GETRequestWithAuthKey(url: string, key: string | null) {
+    return await axios.get(url, {
+        headers: {
+            Authorization: key,
+        }
+    })
+}
+
 export function saveToAsyncStorage(items: Array<StorageItem>): Promise<any> {
     let promiseRejection;
 

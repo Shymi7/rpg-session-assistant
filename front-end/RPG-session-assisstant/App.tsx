@@ -1,8 +1,8 @@
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import {LoginScreen} from "./Screens/LoginScreen";
-import {NewCharacterScreen} from "./Screens/NewCharacterScreen";
-import {NewRoomScreen} from "./Screens/NewRoomScreen";
+import {EnterNewRoom} from "./Screens/EnterNewRoom";
+import {CreateNewRoomScreen} from "./Screens/CreateNewRoomScreen";
 import {CharacterSheetScreen} from "./Screens/CharacterSheetScreen";
 import {GamemasterPanelScreen} from "./Screens/GamemasterPanelScreen";
 import {RegisterScreen} from "./Screens/RegisterScreen";
@@ -20,8 +20,8 @@ export default function App() {
 
                 <Stack.Screen name="browseRooms"        component={BrowseRoomsScreen}       options={{title:'Browse rooms'}}/>
 
-                <Stack.Screen name="newRoom"            component={NewRoomScreen}           options={{title:'Create new room'}}/>
-                <Stack.Screen name="newCharacter"       component={NewCharacterScreen}      options={{title:'Create new character'}}/>
+                <Stack.Screen name="createNewRoom"      component={CreateNewRoomScreen}     options={{title:'Create new room'}}/>
+                <Stack.Screen name="enterNewRoom"       component={EnterNewRoom}            options={{title:'Enter new room'}}/>
 
                 <Stack.Screen name="characterSheet"     component={CharacterSheetScreen}    options={{}}/>
                 <Stack.Screen name="gamemasterPanel"    component={GamemasterPanelScreen}   options={{}}/>

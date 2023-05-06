@@ -62,7 +62,7 @@ export function RoomLabel({roomName, roomId, isGM = false}: Props) {
 
 
     return (
-        <Section variant={'dark'} key={roomId}>
+        <Section variant={isGM? 'light' : 'dark'} key={roomId}>
             <View className={'flex-row justify-around text-color-white h-20'}>
                 <View className={'flex-col w-3/4 justify-around pl-3'}>
                     <Text className={'text-xl text-color-white'}>

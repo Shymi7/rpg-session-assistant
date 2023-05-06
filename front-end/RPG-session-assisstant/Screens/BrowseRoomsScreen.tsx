@@ -15,8 +15,7 @@ export function BrowseRoomsScreen({navigation}: { navigation: any }) {
 
     const [roomLabelElements, setRoomLabelElements] = useState<JSX.Element[]>([]);
 
-    const [roomName, setRoomName] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
+
 
 
     async function getRoomsData(url: string, key: string | null) {
@@ -76,52 +75,26 @@ export function BrowseRoomsScreen({navigation}: { navigation: any }) {
 
     }, []);
 
-    function enterRoomSection() {
-        return (
-            <Section variant={"light"}>
-                <Text className={"text-2xl font-bold text-center text-color-white"}>
-                    Enter new room
-                </Text>
-                <View className={'flex-row w-full'}>
-                    <View className={"flex-col w-3/4"}>
-                        <CustomInput
-                            placeholder={'Room name'}
-                            func={(value: string, isValid: boolean) => {
-                                setRoomName(value);
-                                //setAreInputsValid(modifyElementInArrayByIndex(areInputsValid, 0, isValid));
-                            }
-                            }/>
-                        <CustomInput
-                            placeholder={'Password'}
-                            password
 
-                        />
-                    </View>
-                    <TouchableOpacity
-                        className={'bg-color-accent rounded-xl w-1/6 justify-center items-center p-2 mx-5 my-2'}
-                    >
-                        <Text className={'text-4xl text-color-white'}>
-                            +
-                        </Text>
 
-                    </TouchableOpacity>
-                </View>
 
-            </Section>
-        )
-    }
 
 
     return (
         <View className={'items-center'}>
 
             {roomLabelElements}
+            <Btn
+                func={() => {
+                    navigation.navigate('enterNewRoom');
+                }}
+                text={'Enter new room'}
+            />
 
-            {enterRoomSection()}
 
             <Btn
                 func={() => {
-                    navigation.navigate('newRoom');
+                    navigation.navigate('createNewRoom');
                 }}
                 text={'Create new room'}
             />

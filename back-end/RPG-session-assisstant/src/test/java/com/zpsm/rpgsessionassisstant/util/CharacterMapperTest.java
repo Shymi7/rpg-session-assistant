@@ -1,9 +1,6 @@
 package com.zpsm.rpgsessionassisstant.util;
 
-import com.zpsm.rpgsessionassisstant.dto.AttributeDto;
-import com.zpsm.rpgsessionassisstant.dto.CharacterAttributeDto;
-import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
-import com.zpsm.rpgsessionassisstant.dto.ItemDto;
+import com.zpsm.rpgsessionassisstant.dto.*;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,11 +22,13 @@ class CharacterMapperTest {
     private ItemMapper mockItemMapper;
     @Mock
     private AttributeMapper mockAttributeMapper;
+    @Mock
+    private QuestMapper mockQuestMapper;
     private CharacterMapper characterMapper;
 
     @BeforeEach
     void setUp() {
-        characterMapper = new CharacterMapper(mockItemMapper, mockAttributeMapper);
+        characterMapper = new CharacterMapper(mockItemMapper, mockAttributeMapper, mockQuestMapper);
     }
 
     @Test
@@ -41,6 +40,8 @@ class CharacterMapperTest {
             .thenReturn(new ItemDto(1L, "Sword", "", Set.of()));
         when(mockAttributeMapper.mapToCharacterAttributeDto(any()))
             .thenReturn(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1));
+        when(mockQuestMapper.mapToDto(any()))
+            .thenReturn(new QuestDto(1L, "Quest", "test"));
 
         // when
         CharacterDto actual = characterMapper.mapToDto(character);
@@ -58,6 +59,8 @@ class CharacterMapperTest {
             .thenReturn(new ItemDto(1L, "Master Sword", "Sword", Set.of()));
         when(mockAttributeMapper.mapToCharacterAttributeDto(any()))
             .thenReturn(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1));
+        when(mockQuestMapper.mapToDto(any()))
+            .thenReturn(new QuestDto(1L, "Quest", "test"));
 
         // when
         CharacterDto actual = characterMapper.mapToDto(character);
@@ -98,8 +101,10 @@ class CharacterMapperTest {
             22,
             300,
             Set.of(new ItemDto(1L, "Sword", "", Set.of())),
-            Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)));
+            Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)),
+            Set.of(new QuestDto(1L, "Quest", "test")));
     }
+
     private CharacterDto getCharacterDto1() {
         return new CharacterDto(
             1L,
@@ -109,7 +114,8 @@ class CharacterMapperTest {
             22,
             300,
             Set.of(new ItemDto(1L, "Master Sword", "Sword", Set.of())),
-            Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)));
+            Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)),
+            Set.of(new QuestDto(1L, "Quest", "test")));
     }
 
 

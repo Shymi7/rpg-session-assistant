@@ -154,6 +154,7 @@ class RoomServiceTest {
             character.getSkillPoints(),
             character.getExperience(),
             Set.of(),
+            Set.of(),
             Set.of());
         List<CharacterDto> expected = List.of(characterDto);
         when(mockRoomRepository.findAllByRoomId(roomId)).thenReturn(List.of(character));
@@ -355,6 +356,7 @@ class RoomServiceTest {
             character.getHealth(),
             character.getSkillPoints(),
             character.getExperience(),
+            Set.of(),
             Set.of(),
             Set.of());
         when(mockPrincipal.getName()).thenReturn("Testowy");

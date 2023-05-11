@@ -12,5 +12,6 @@ import java.util.Set;
 public record CharacterDto(Long id, @Size(max = 30) @NotNull String name, @NotNull Integer level,
                            @NotNull Integer health, @NotNull Integer skillPoints, @NotNull Integer experience,
                            Set<ItemDto> items,
-                           Set<CharacterAttributeDto> characterAttributes) implements Serializable {
+                           Set<CharacterAttributeDto> characterAttributes,
+                           Set<QuestDto> quests) implements Serializable {
 }

@@ -57,7 +57,16 @@ class CharacterServiceTest {
     void givenValidIdShouldGetCharacterById() {
         // given
         long id = 1L;
-        CharacterDto expected = new CharacterDto(id, "Bezi", 3, 150, 2, 220, Set.of(), Set.of());
+        CharacterDto expected = new CharacterDto(
+            id,
+            "Bezi",
+            3,
+            150,
+            2,
+            220,
+            Set.of(),
+            Set.of(),
+            Set.of());
         Character character = new Character();
         character.setId(expected.id());
         character.setName(expected.name());
@@ -87,7 +96,16 @@ class CharacterServiceTest {
     @Test
     void givenValidIdShouldGetPlayersCharacters() {
         // given
-        CharacterDto dto = new CharacterDto(1L, "Bezi", 3, 150, 2, 220, Set.of(), Set.of());
+        CharacterDto dto = new CharacterDto(
+            1L,
+            "Bezi",
+            3,
+            150,
+            2,
+            220,
+            Set.of(),
+            Set.of(),
+            Set.of());
         Character character = new Character();
         character.setId(dto.id());
         character.setName(dto.name());
@@ -165,7 +183,8 @@ class CharacterServiceTest {
             character.getSkillPoints(),
             character.getExperience(),
             Set.of(new ItemDto(item.getId(), item.getName(), item.getDescription(), Set.of())),
-            Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)));
+            Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)),
+            Set.of());
         Character characterWithItem = getCharacter();
         characterWithItem.getItems().add(item);
         when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.of(getCharacter()));
@@ -285,7 +304,8 @@ class CharacterServiceTest {
             0,
             0,
             Set.of(),
-            Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)));
+            Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)),
+            Set.of());
     }
 
 }

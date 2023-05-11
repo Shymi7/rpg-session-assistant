@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.only;
@@ -41,6 +42,7 @@ class JwtAccessTokenVerifierTest {
     void setUp() {
         JwtConfig jwtConfig = new JwtConfig();
         jwtConfig.setSecret("secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret");
+        jwtConfig.setIgnoredPaths(List.of("/login", "/api/token/refresh", "/h2-console"));
         mockHttpServletRequest = new MockHttpServletRequest();
         mockHttpServletResponse = new MockHttpServletResponse();
         jwtAccessTokenVerifier = new JwtAccessTokenVerifier(

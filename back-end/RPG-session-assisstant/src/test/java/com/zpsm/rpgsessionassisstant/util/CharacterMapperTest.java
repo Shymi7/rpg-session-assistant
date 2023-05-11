@@ -86,6 +86,7 @@ class CharacterMapperTest {
         character.setHealth(100);
         character.setSkillPoints(22);
         character.setExperience(300);
+        character.setDescription("Test character");
         character.setCharacterAttributes(Set.of(characterAttribute));
         character.setItems(Set.of(item));
         character.setQuests(Set.of(quest));
@@ -100,6 +101,7 @@ class CharacterMapperTest {
             100,
             22,
             300,
+            "Test character",
             Set.of(new ItemDto(1L, "Sword", "", Set.of())),
             Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)),
             Set.of(new QuestDto(1L, "Quest", "test")));
@@ -113,6 +115,7 @@ class CharacterMapperTest {
             100,
             22,
             300,
+            "Test character",
             Set.of(new ItemDto(1L, "Master Sword", "Sword", Set.of())),
             Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)),
             Set.of(new QuestDto(1L, "Quest", "test")));

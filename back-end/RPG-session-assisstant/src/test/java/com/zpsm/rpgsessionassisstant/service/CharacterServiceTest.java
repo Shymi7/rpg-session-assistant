@@ -64,6 +64,7 @@ class CharacterServiceTest {
             150,
             2,
             220,
+            "Test character",
             Set.of(),
             Set.of(),
             Set.of());
@@ -74,6 +75,7 @@ class CharacterServiceTest {
         character.setHealth(expected.health());
         character.setSkillPoints(expected.skillPoints());
         character.setExperience(expected.experience());
+        character.setDescription(expected.description());
         when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.of(character));
         when(mockCharacterMapper.mapToDto(any())).thenReturn(expected);
 
@@ -103,6 +105,7 @@ class CharacterServiceTest {
             150,
             2,
             220,
+            "Test character",
             Set.of(),
             Set.of(),
             Set.of());
@@ -113,6 +116,7 @@ class CharacterServiceTest {
         character.setHealth(dto.health());
         character.setSkillPoints(dto.skillPoints());
         character.setExperience(dto.experience());
+        character.setDescription(dto.description());
         List<CharacterDto> expected = List.of(dto);
         List<Character> characters = List.of(character);
         when(mockCharacterRepository.findAllPlayersCharacters(anyLong())).thenReturn(characters);
@@ -140,7 +144,7 @@ class CharacterServiceTest {
     @Test
     void givenCorrectDTOShouldCreateCharacter() {
         // given
-        CreateCharacterDto dto = new CreateCharacterDto("Bezi", List.of("Strength"));
+        CreateCharacterDto dto = new CreateCharacterDto("Bezi", "Test character", List.of("Strength"));
         Player player = new Player();
         Character savedWithPlayer = getCharacter();
         savedWithPlayer.setPlayer(player);
@@ -182,6 +186,7 @@ class CharacterServiceTest {
             character.getHealth(),
             character.getSkillPoints(),
             character.getExperience(),
+            character.getDescription(),
             Set.of(new ItemDto(item.getId(), item.getName(), item.getDescription(), Set.of())),
             Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)),
             Set.of());
@@ -303,6 +308,7 @@ class CharacterServiceTest {
             100,
             0,
             0,
+            "Test character",
             Set.of(),
             Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)),
             Set.of());

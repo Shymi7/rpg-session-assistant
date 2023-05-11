@@ -11,12 +11,12 @@ VALUES (4, 'Jerzyzkoszalina', 'password');
 INSERT INTO zpsm_projekt.Gamemaster (gamemaster_id, player_id)
 VALUES (1, 3);
 -- Character Entity
-INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience)
-VALUES (1, 1, 'lil_NASARIUS', 10, 100, 3, 500);
-INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience)
-VALUES (2, 2, 'cagedman', 10, 100, 3, 500);
-INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience)
-VALUES (3, 4, 'koszalin_sorcerer', 10, 100, 3, 500);
+INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience, description)
+VALUES (1, 1, 'lil_NASARIUS', 10, 100, 3, 500, 'Big lolo');
+INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience, description)
+VALUES (2, 2, 'cagedman', 10, 100, 3, 500, 'Hi is in fact not a cage');
+INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience, description)
+VALUES (3, 4, 'koszalin_sorcerer', 10, 100, 3, 500, 'Dzik');
 -- Attribute Entity
 ---- Character Attributes
 INSERT INTO zpsm_projekt.Attribute (attribute_id, name)

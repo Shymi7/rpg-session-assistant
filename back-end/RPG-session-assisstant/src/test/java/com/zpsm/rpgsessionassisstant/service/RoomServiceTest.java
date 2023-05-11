@@ -153,6 +153,7 @@ class RoomServiceTest {
             character.getHealth(),
             character.getSkillPoints(),
             character.getExperience(),
+            character.getDescription(),
             Set.of(),
             Set.of(),
             Set.of());
@@ -356,6 +357,7 @@ class RoomServiceTest {
             character.getHealth(),
             character.getSkillPoints(),
             character.getExperience(),
+            "Test character",
             Set.of(),
             Set.of(),
             Set.of());

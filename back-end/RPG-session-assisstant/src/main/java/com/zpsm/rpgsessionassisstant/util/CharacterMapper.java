@@ -30,6 +30,7 @@ public class CharacterMapper {
             character.getHealth(),
             character.getSkillPoints(),
             character.getExperience(),
+            character.getDescription(),
             mapItems(character.getItems()),
             mapCharacterAttributes(character.getCharacterAttributes()),
             mapQuests(character.getQuests()));

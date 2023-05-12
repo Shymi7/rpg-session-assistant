@@ -57,7 +57,17 @@ class CharacterServiceTest {
     void givenValidIdShouldGetCharacterById() {
         // given
         long id = 1L;
-        CharacterDto expected = new CharacterDto(id, "Bezi", 3, 150, 2, 220, Set.of(), Set.of());
+        CharacterDto expected = new CharacterDto(
+            id,
+            "Bezi",
+            3,
+            150,
+            2,
+            220,
+            "Test character",
+            Set.of(),
+            Set.of(),
+            Set.of());
         Character character = new Character();
         character.setId(expected.id());
         character.setName(expected.name());
@@ -65,6 +75,7 @@ class CharacterServiceTest {
         character.setHealth(expected.health());
         character.setSkillPoints(expected.skillPoints());
         character.setExperience(expected.experience());
+        character.setDescription(expected.description());
         when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.of(character));
         when(mockCharacterMapper.mapToDto(any())).thenReturn(expected);
 
@@ -87,7 +98,17 @@ class CharacterServiceTest {
     @Test
     void givenValidIdShouldGetPlayersCharacters() {
         // given
-        CharacterDto dto = new CharacterDto(1L, "Bezi", 3, 150, 2, 220, Set.of(), Set.of());
+        CharacterDto dto = new CharacterDto(
+            1L,
+            "Bezi",
+            3,
+            150,
+            2,
+            220,
+            "Test character",
+            Set.of(),
+            Set.of(),
+            Set.of());
         Character character = new Character();
         character.setId(dto.id());
         character.setName(dto.name());
@@ -95,6 +116,7 @@ class CharacterServiceTest {
         character.setHealth(dto.health());
         character.setSkillPoints(dto.skillPoints());
         character.setExperience(dto.experience());
+        character.setDescription(dto.description());
         List<CharacterDto> expected = List.of(dto);
         List<Character> characters = List.of(character);
         when(mockCharacterRepository.findAllPlayersCharacters(anyLong())).thenReturn(characters);
@@ -122,7 +144,7 @@ class CharacterServiceTest {
     @Test
     void givenCorrectDTOShouldCreateCharacter() {
         // given
-        CreateCharacterDto dto = new CreateCharacterDto("Bezi", List.of("Strength"));
+        CreateCharacterDto dto = new CreateCharacterDto("Bezi", "Test character", List.of("Strength"));
         Player player = new Player();
         Character savedWithPlayer = getCharacter();
         savedWithPlayer.setPlayer(player);
@@ -164,8 +186,10 @@ class CharacterServiceTest {
             character.getHealth(),
             character.getSkillPoints(),
             character.getExperience(),
+            character.getDescription(),
             Set.of(new ItemDto(item.getId(), item.getName(), item.getDescription(), Set.of())),
-            Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)));
+            Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)),
+            Set.of());
         Character characterWithItem = getCharacter();
         characterWithItem.getItems().add(item);
         when(mockCharacterRepository.findById(anyLong())).thenReturn(Optional.of(getCharacter()));
@@ -284,8 +308,10 @@ class CharacterServiceTest {
             100,
             0,
             0,
+            "Test character",
             Set.of(),
-            Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)));
+            Set.of(new CharacterAttributeDto(new AttributeDto(1L, "Strength"), 1)),
+            Set.of());
     }
 
 }

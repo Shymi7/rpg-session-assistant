@@ -153,6 +153,8 @@ class RoomServiceTest {
             character.getHealth(),
             character.getSkillPoints(),
             character.getExperience(),
+            character.getDescription(),
+            Set.of(),
             Set.of(),
             Set.of());
         List<CharacterDto> expected = List.of(characterDto);
@@ -355,6 +357,8 @@ class RoomServiceTest {
             character.getHealth(),
             character.getSkillPoints(),
             character.getExperience(),
+            "Test character",
+            Set.of(),
             Set.of(),
             Set.of());
         when(mockPrincipal.getName()).thenReturn("Testowy");

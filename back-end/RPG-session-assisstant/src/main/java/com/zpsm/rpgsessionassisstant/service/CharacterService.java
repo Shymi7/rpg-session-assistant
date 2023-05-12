@@ -46,7 +46,7 @@ public class CharacterService {
     @Transactional
     public CharacterDto createCharacter(CreateCharacterDto dto, Principal principal) {
         Player player = (Player) playerDetailsService.loadUserByUsername(principal.getName());
-        Character character = prepareCharacter(dto.name());
+        Character character = prepareCharacter(dto.name(), dto.description());
         character.setPlayer(player);
         Character saved = characterRepository.save(character);
         player.getCharacters().add(saved);
@@ -100,13 +100,14 @@ public class CharacterService {
         return characterMapper.mapToDto(getCharacter(characterId));
     }
 
-    private Character prepareCharacter(String name) {
+    private Character prepareCharacter(String name, String description) {
         Character character = new Character();
         character.setName(name);
         character.setHealth(100);
         character.setLevel(1);
         character.setSkillPoints(0);
         character.setExperience(0);
+        character.setDescription(description);
         return character;
     }
 

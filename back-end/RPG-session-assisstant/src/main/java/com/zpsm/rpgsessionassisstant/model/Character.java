@@ -46,6 +46,11 @@ public class Character {
     @Column(name = "experience", nullable = false)
     private Integer experience;
 
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "description", nullable = false)
+    private String description;
+
     @ManyToMany
     @JoinTable(name = "Item_Character",
         schema = "zpsm_projekt",

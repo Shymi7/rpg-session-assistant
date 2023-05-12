@@ -8,28 +8,30 @@ interface Props {
     roomName: string;
     roomId: number;
     isGM?: boolean;
+    navigation: any;
 }
 
-export function RoomLabel({roomName, roomId, isGM = false}: Props) {
+export function RoomLabel({roomName, roomId, isGM = false, navigation}: Props) {
 
     const [characterData, setCharacterData] = useState<any>(null);
 
-    useEffect(() => {
-        getUserDataFromLocalStorage()
-            .then(({authKey, playerId}) => {
-                const getCharacterDataUrl = API_URL + '/api/room/' + roomId + '/character';
-                GETRequestWithAuthKey(getCharacterDataUrl, authKey)
-                    .then(res => {
-                        setCharacterData(res.data);
-                    })
-                    .catch(err => {
-                        console.log('get character data request error: '+err);
-                    })
-            })
-            .catch(err => {
-                console.log('get user data from async storage error: '+err);
-            })
+    async function getDataFromApi() {
+        try{
+            const {authKey, playerId} = await getUserDataFromLocalStorage()
 
+            const getCharacterDataUrl = API_URL + '/api/room/' + roomId + '/character';
+            const res = await GETRequestWithAuthKey(getCharacterDataUrl, authKey)
+
+            setCharacterData(res.data);
+        } catch (error){
+            console.log('get character data request error: ' + error);
+        }
+
+    }
+
+    useEffect(() => {
+        getDataFromApi()
+            .catch(error => console.error(error))
     }, [])
 
     function characterDataElement() {
@@ -62,9 +64,9 @@ export function RoomLabel({roomName, roomId, isGM = false}: Props) {
 
 
     return (
-        <Section variant={isGM? 'light' : 'dark'} key={roomId}>
+        <Section colorVariant={isGM ? 'light' : 'dark'} key={Math.random() * 1000}>
             <View className={'flex-row justify-around text-color-white h-20'}>
-                <View className={'flex-col w-3/4 justify-around pl-3'}>
+                <View className={'flex-col w-3/4 justify-around '}>
                     <Text className={'text-xl text-color-white'}>
                         {roomName}
                     </Text>
@@ -72,8 +74,12 @@ export function RoomLabel({roomName, roomId, isGM = false}: Props) {
                         {characterDataElement()}
                     </Text>
                 </View>
+
                 <TouchableOpacity
-                    className={'w-1/4 bg-color-accent rounded-2xl overflow-hidden m-2 p-0 w-16 justify-center items-center'}
+                    className={'w-fit bg-color-accent rounded-2xl overflow-hidden p-0 w-20 justify-center items-center'}
+                    onPress={() => {
+                        navigation.navigate('characterSheet', {roomId: roomId})
+                    }}
                 >
                     <Image
                         source={require('../Icons/enterRoom.png')}

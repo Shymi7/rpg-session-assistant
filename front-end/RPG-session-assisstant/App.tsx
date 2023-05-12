@@ -1,7 +1,7 @@
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import {LoginScreen} from "./Screens/LoginScreen";
-import {EnterNewRoom} from "./Screens/EnterNewRoom";
+import {EnterNewRoomScreen} from "./Screens/EnterNewRoomScreen";
 import {CreateNewRoomScreen} from "./Screens/CreateNewRoomScreen";
 import {CharacterSheetScreen} from "./Screens/CharacterSheetScreen";
 import {GamemasterPanelScreen} from "./Screens/GamemasterPanelScreen";
@@ -21,7 +21,7 @@ export default function App() {
                 <Stack.Screen name="browseRooms"        component={BrowseRoomsScreen}       options={{title:'Browse rooms'}}/>
 
                 <Stack.Screen name="createNewRoom"      component={CreateNewRoomScreen}     options={{title:'Create new room'}}/>
-                <Stack.Screen name="enterNewRoom"       component={EnterNewRoom}            options={{title:'Enter new room'}}/>
+                <Stack.Screen name="enterNewRoom"       component={EnterNewRoomScreen}      options={{title:'Enter new room'}}/>
 
                 <Stack.Screen name="characterSheet"     component={CharacterSheetScreen}    options={{}}/>
                 <Stack.Screen name="gamemasterPanel"    component={GamemasterPanelScreen}   options={{}}/>

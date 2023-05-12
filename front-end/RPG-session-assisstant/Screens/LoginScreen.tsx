@@ -58,7 +58,7 @@ export function LoginScreen({navigation}: { navigation: any }) {
 
     return (
         <View className={"flex-col justify-center h-full"}>
-            <Section variant={"light"}>
+            <Section colorVariant={"light"}>
                 <View className={'items-center px-4'}>
                     <CustomInput
                         placeholder={"enter login"}

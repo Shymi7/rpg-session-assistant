@@ -17,7 +17,7 @@ export function RegisterScreen({navigation}: { navigation: any }) {
 
     const [areInputsValid, setAreInputsValid] = useState<boolean[]>(Array(3));
 
-    const [serverError, setServerError] = useState(null);
+    const [serverErrorValue, setServerErrorValue] = useState(null);
 
 
     function register() {
@@ -27,18 +27,18 @@ export function RegisterScreen({navigation}: { navigation: any }) {
         })
             .then(function (response) {
                 console.log(response);
-                setServerError(null);
+                setServerErrorValue(null);
                 navigation.navigate('login');
             })
             .catch(function (error) {
-                setServerError(error.message);
+                setServerErrorValue(error.message);
             });
     }
 
 
     return (
         <View className={"flex-col justify-center h-full w-full"}>
-            <Section variant={"light"}>
+            <Section colorVariant={"light"}>
                 <View className={'items-center px-4'}>
                     <CustomInput
                         placeholder={"login"}
@@ -87,8 +87,8 @@ export function RegisterScreen({navigation}: { navigation: any }) {
 
             {
 
-                (serverError !== null) &&
-                <Warning text={serverError}/>
+                (serverErrorValue !== null) &&
+                <Warning text={serverErrorValue}/>
             }
 
         </View>

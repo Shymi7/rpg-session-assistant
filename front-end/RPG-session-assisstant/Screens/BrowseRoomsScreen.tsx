@@ -1,5 +1,5 @@
 import {Text, TouchableOpacity, View} from "react-native";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {RoomLabel} from "../Components/RoomLabel";
 import {API_URL} from "../env";
@@ -7,15 +7,20 @@ import {Section} from "../Components/Section";
 import {CustomInput} from "../Components/CustomInput";
 import {getUserDataFromLocalStorage} from "../utils/utils";
 import {Btn} from "../Components/Btn";
+import {useFocusEffect} from "@react-navigation/native";
 
 
 export function BrowseRoomsScreen({navigation}: { navigation: any }) {
 
-    let roomsData: any;
-
     const [roomLabelElements, setRoomLabelElements] = useState<JSX.Element[]>([]);
 
 
+    //refresh rooms list after entering new room
+    useFocusEffect(
+        React.useCallback(() => {
+            handleDataFromApi();
+        }, [])
+    );
 
 
     async function getRoomsData(url: string, key: string | null) {
@@ -31,10 +36,11 @@ export function BrowseRoomsScreen({navigation}: { navigation: any }) {
             roomName={room.name}
             roomId={room.id}
             isGM={isGM}
+            navigation={navigation}
         />
     }
 
-    useEffect(() => {
+    function handleDataFromApi(){
         //load all rooms where player is a character or a game master
         getUserDataFromLocalStorage()
             .then(({authKey, playerId}) => {
@@ -71,8 +77,11 @@ export function BrowseRoomsScreen({navigation}: { navigation: any }) {
             .then(tempRoomLabelElements => {
                 setRoomLabelElements(tempRoomLabelElements);
             })
+    }
 
 
+    useEffect(() => {
+        handleDataFromApi();
     }, []);
 
 

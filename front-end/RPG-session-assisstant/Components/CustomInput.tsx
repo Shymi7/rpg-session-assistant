@@ -41,8 +41,9 @@ export function CustomInput({
 
         <TextInput
             className={classNames(
-                "rounded-xl m-2 px-3 py-2 text-color-greyLight font-bold text-xl w-full",
-                isValid ? "bg-color-white" : "bg-color-warning"
+                "rounded-xl m-2 px-3 py-2 font-bold text-xl w-full text-color-accent",
+                isValid ? "bg-color-white" : "bg-color-warning",
+                //isValid ? "text-color-accent" : "text-color-greyLight" //TODO: for some reason this causes text value of input to disappear
             )}
             style={{
                 shadowColor: "#000000",

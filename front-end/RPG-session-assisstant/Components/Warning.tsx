@@ -7,7 +7,7 @@ interface Props {
 export function Warning({text}: Props) {
     return(
         <View
-            className={"bg-color-warning rounded-xl w-fit flex-row justify-center py-2 m-4 overflow-hidden"}
+            className={"bg-color-warning rounded-xl w-fit flex-row justify-center p-2 m-4 overflow-hidden"}
 
             style={{
                 shadowColor: "#000000",

@@ -64,7 +64,7 @@ export function RoomLabel({roomName, roomId, isGM = false, navigation}: Props) {
 
 
     return (
-        <Section colorVariant={isGM ? 'light' : 'dark'} key={Math.random() * 1000}>
+        <Section colorVariant={isGM ? 'light' : 'dark'}>
             <View className={'flex-row justify-around text-color-white h-20'}>
                 <View className={'flex-col w-3/4 justify-around '}>
                     <Text className={'text-xl text-color-white'}>
@@ -78,7 +78,11 @@ export function RoomLabel({roomName, roomId, isGM = false, navigation}: Props) {
                 <TouchableOpacity
                     className={'w-fit bg-color-accent rounded-2xl overflow-hidden p-0 w-20 justify-center items-center'}
                     onPress={() => {
-                        navigation.navigate('characterSheet', {roomId: roomId})
+                        if(isGM){
+                            navigation.navigate('gamemasterPanel', {roomId: roomId})
+                        } else {
+                            navigation.navigate('characterSheet', {roomId: roomId})
+                        }
                     }}
                 >
                     <Image

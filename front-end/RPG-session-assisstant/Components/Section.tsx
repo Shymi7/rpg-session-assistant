@@ -32,7 +32,7 @@ export function Section({children, colorVariant, title, hasPadding = true, hasMa
             {
                 title &&
                 <Text
-                    className={'font-bold text-3xl text-center text-color-white'}
+                    className={'font-bold text-3xl text-center text-color-white my-2'}
                 >
                     {title}
                 </Text>

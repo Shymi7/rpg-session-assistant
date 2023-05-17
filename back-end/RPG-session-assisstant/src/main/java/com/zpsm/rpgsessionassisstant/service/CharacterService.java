@@ -6,6 +6,7 @@ import com.zpsm.rpgsessionassisstant.dto.CreateCharacterDto;
 import com.zpsm.rpgsessionassisstant.dto.ModifyCharactersAttributesDto;
 import com.zpsm.rpgsessionassisstant.exception.CharacterNotInAnyRoomException;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
+import com.zpsm.rpgsessionassisstant.exception.ModifyingAttributesException;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.CharacterAttribute;
 import com.zpsm.rpgsessionassisstant.model.Player;
@@ -94,10 +95,12 @@ public class CharacterService {
         characterRepository.save(character);
     }
 
-    public CharacterDto modifyCharactersAttributes(Long characterId, ModifyCharactersAttributesDto dto) {
-        dto.attributesLevelSet()
-            .forEach(attributeLevelPair -> attributeService.updateCharacterAttribute(characterId, attributeLevelPair));
-        return characterMapper.mapToDto(getCharacter(characterId));
+    public CharacterDto modifyCharactersAttribute(Long characterId, ModifyCharactersAttributesDto dto) {
+        Character character = getCharacter(characterId);
+        canModifyCharactersAttributes(character, dto);
+        attributeService.updateCharacterAttribute(characterId, dto);
+        character.setSkillPoints(character.getSkillPoints() - dto.skillPoints());
+        return characterMapper.mapToDto(characterRepository.save(character));
     }
 
     private Character prepareCharacter(String name, String description) {
@@ -118,4 +121,21 @@ public class CharacterService {
                 return new EntityNotFoundException(String.format("Character with id %d not found", characterId));
             });
     }
+
+    private boolean doesCharacterHasGivenAttributes(Long characterId, Long attributeId) {
+        return characterRepository.doesCharacterHasGivenAttributes(characterId, attributeId)
+            .isPresent();
+    }
+
+    private void canModifyCharactersAttributes(Character character, ModifyCharactersAttributesDto dto) {
+        if (!doesCharacterHasGivenAttributes(character.getId(), dto.attributeId())) {
+            log.error("Character doesn't have one or more provided attributes");
+            throw new ModifyingAttributesException("Character doesn't has one or more provided attributes");
+        }
+        if (character.getSkillPoints() < dto.skillPoints()) {
+            log.error("Character doesn't have enough skill points");
+            throw new ModifyingAttributesException("Character doesn't have enough skill points");
+        }
+    }
+
 }

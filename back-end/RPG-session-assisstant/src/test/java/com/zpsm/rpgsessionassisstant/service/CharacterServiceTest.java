@@ -3,6 +3,7 @@ package com.zpsm.rpgsessionassisstant.service;
 import com.zpsm.rpgsessionassisstant.dto.*;
 import com.zpsm.rpgsessionassisstant.exception.CharacterNotInAnyRoomException;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
+import com.zpsm.rpgsessionassisstant.exception.ModifyingAttributesException;
 import com.zpsm.rpgsessionassisstant.model.Character;
 import com.zpsm.rpgsessionassisstant.model.*;
 import com.zpsm.rpgsessionassisstant.repository.CharacterRepository;
@@ -287,6 +288,62 @@ class CharacterServiceTest {
         // when // then
         assertThrows(CharacterNotInAnyRoomException.class,
             () -> characterService.removeQuest(new AddOrRemoveFromCharacterDto(character.getId(), 1L)));
+    }
+
+    @Test
+    void givenExitingCharacterIdAndCorrectDtoShouldModifyCharactersAttribute() {
+        // given
+        Attribute attribute = new Attribute();
+        attribute.setId(1L);
+        attribute.setName("Strength");
+
+        CharacterAttribute characterAttribute = new CharacterAttribute();
+        characterAttribute.setAttribute(attribute);
+        characterAttribute.setAttributeLevel(0);
+
+        Character character = getCharacter();
+        character.setSkillPoints(2);
+        characterAttribute.setCharacter(character);
+        character.getCharacterAttributes().add(characterAttribute);
+
+        var dto = new ModifyCharactersAttributesDto(attribute.getId(), 1);
+        CharacterDto expected = getCharacterDto();
+        when(mockCharacterRepository.findById(any())).thenReturn(Optional.of(character));
+        when(mockCharacterRepository.doesCharacterHasGivenAttributes(anyLong(), anyLong())).thenReturn(Optional.of(character));
+        when(mockCharacterRepository.save(any())).thenReturn(getCharacter());
+        when(mockCharacterMapper.mapToDto(any())).thenReturn(expected);
+
+        // when
+        CharacterDto actual = characterService.modifyCharactersAttribute(character.getId(), dto);
+
+        // then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void givenCharacterThatDoesntHaveGivenAttributeShouldThrowModifyingAttributesException() {
+        // given
+        var dto = new ModifyCharactersAttributesDto(1L, 1);
+        when(mockCharacterRepository.findById(any())).thenReturn(Optional.of(getCharacter()));
+        when(mockCharacterRepository.doesCharacterHasGivenAttributes(1L, dto.attributeId()))
+            .thenReturn(Optional.empty());
+
+        // when // then
+        assertThrows(ModifyingAttributesException.class,
+            () -> characterService.modifyCharactersAttribute(1L, dto));
+    }
+
+    @Test
+    void givenCharacterWithNotEnoughSkillPointsShouldThrowModifyingAttributesException() {
+        Character character = getCharacter();
+        var dto = new ModifyCharactersAttributesDto(1L, 1);
+        when(mockCharacterRepository.findById(any())).thenReturn(Optional.of(character));
+        when(mockCharacterRepository.doesCharacterHasGivenAttributes(1L, dto.attributeId()))
+            .thenReturn(Optional.of(character));
+
+        // when // then
+        assertThrows(ModifyingAttributesException.class,
+            () -> characterService.modifyCharactersAttribute(1L, dto));
     }
 
     private Character getCharacter() {

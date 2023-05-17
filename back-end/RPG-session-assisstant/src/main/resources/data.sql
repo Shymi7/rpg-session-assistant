@@ -18,12 +18,12 @@ VALUES (3, 4);
 
 
 -- Character Entity
-INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience)
-VALUES (1, 1, 'Gandalf', 21, 200, 6, 87);
-INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience)
-VALUES (2, 1, 'Harry Potter', 12, 130, 2, 21);
-INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience)
-VALUES (3, 1, 'Jack Sparrow', 22, 80, 8, 54);
+INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience, description)
+VALUES (1, 1, 'Gandalf', 21, 200, 6, 87, 'czarodziej');
+INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience, description)
+VALUES (2, 1, 'Harry Potter', 12, 130, 2, 21, 'You are squatter Harry');
+INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience, description)
+VALUES (3, 1, 'Jack Sparrow', 22, 80, 8, 54, 'Tpb.com');
 
 
 -- Room Entity

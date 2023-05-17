@@ -33,12 +33,15 @@ public class RestResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handlenotFoundErrors(EntityNotFoundException e) {
+    public ResponseEntity<Map<String, String>> handleNotFoundErrors(EntityNotFoundException e) {
         return new ResponseEntity<>(ErrorsMapper.getErrorsMap(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(LoginAlreadyTakenException.class)
-    public ResponseEntity<Map<String, String>> handleLoginTakenError(LoginAlreadyTakenException e) {
+    @ExceptionHandler({
+        LoginAlreadyTakenException.class,
+        ModifyingAttributesException.class
+    })
+    public ResponseEntity<Map<String, String>> handleConflicts(RuntimeException e) {
         return new ResponseEntity<>(ErrorsMapper.getErrorsMap(e.getMessage()), HttpStatus.CONFLICT);
     }
 

@@ -98,14 +98,14 @@ public class AttributeService {
     }
 
     @Transactional
-    public int updateCharacterAttribute(
+    public void updateCharacterAttribute(
         Long characterId,
-        ModifyCharactersAttributesDto.AttributeLevelPair attributeLevelPair) {
+        ModifyCharactersAttributesDto dto) {
 
-        return characterAttributeRepository.updateAttributeLevel(
-            attributeLevelPair.attributeId(),
+        characterAttributeRepository.updateAttributeLevel(
+            dto.attributeId(),
             characterId,
-            attributeLevelPair.newLevel());
+            dto.skillPoints());
     }
 
 }

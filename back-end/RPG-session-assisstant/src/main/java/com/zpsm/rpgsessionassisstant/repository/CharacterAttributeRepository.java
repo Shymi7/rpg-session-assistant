@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface CharacterAttributeRepository extends JpaRepository<CharacterAttribute, CharacterAttributeKey> {
 
     @Modifying
-    @Query("update CharacterAttribute set attributeLevel = :newAttributeLevel " +
+    @Query("update CharacterAttribute set attributeLevel = attributeLevel + :newAttributeLevel " +
         "where characterAttributeKey.characterId = :characterId and characterAttributeKey.attributeId = :attributeId")
     int updateAttributeLevel(long attributeId, long characterId, int newAttributeLevel);
 

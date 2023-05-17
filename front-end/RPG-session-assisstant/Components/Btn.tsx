@@ -18,15 +18,13 @@ const iconPaths = [
 
 
 export function Btn({text, func, disabled = false, iconIndex, additionalTailwindClasses}: Props) {
-
-    //const iconPath = iconPaths[iconIndex];
-
     return(
         <TouchableOpacity
             onPress={func}
             className={classNames(
-                "rounded-xl w-2/3 flex-row justify-center py-2 m-2",
+                "rounded-xl flex-row justify-center py-2 m-2",
                 disabled ? "bg-color-accentInactive" : "bg-color-accent",
+                text && 'w-1/2',
                 additionalTailwindClasses && additionalTailwindClasses
             )}
             style={{
@@ -47,13 +45,13 @@ export function Btn({text, func, disabled = false, iconIndex, additionalTailwind
                     {text}
                 </Text>
             }
-            {/*{*/}
-            {/*    iconIndex &&*/}
-            {/*    <Image*/}
-            {/*        source={iconPaths[iconIndex]}*/}
-            {/*        className={'w-10 h-12'}*/}
-            {/*    />*/}
-            {/*}*/}
+            {
+                iconIndex !== undefined &&
+                <Image
+                    source={iconPaths[iconIndex]}
+                    className={'w-6 h-6'}
+                />
+            }
 
         </TouchableOpacity>
     )

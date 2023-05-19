@@ -1,9 +1,6 @@
 package com.zpsm.rpgsessionassisstant.controller;
 
-import com.zpsm.rpgsessionassisstant.dto.AddOrRemoveFromCharacterDto;
-import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
-import com.zpsm.rpgsessionassisstant.dto.CreateCharacterDto;
-import com.zpsm.rpgsessionassisstant.dto.ModifyCharactersAttributesDto;
+import com.zpsm.rpgsessionassisstant.dto.*;
 import com.zpsm.rpgsessionassisstant.service.CharacterService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -42,26 +39,26 @@ public class CharacterController {
     }
 
     @PatchMapping("/add-item")
-    public ResponseEntity<CharacterDto> addItemToCharacter(@RequestBody AddOrRemoveFromCharacterDto dto) {
+    public ResponseEntity<CharacterDto> addItemToCharacter(@Valid @RequestBody AddOrRemoveFromCharacterDto dto) {
         log.info("Add item to character with id {}", dto.characterId());
         return ResponseEntity.ok(characterService.addItem(dto));
     }
 
     @PatchMapping("/remove-item")
-    public ResponseEntity<CharacterDto> removeItemFromCharacter(@RequestBody AddOrRemoveFromCharacterDto dto) {
+    public ResponseEntity<CharacterDto> removeItemFromCharacter(@Valid @RequestBody AddOrRemoveFromCharacterDto dto) {
         log.info("Removing item from character with id {}", dto.characterId());
         return ResponseEntity.ok(characterService.removeItem(dto));
     }
 
     @PatchMapping("/add-quest")
-    public ResponseEntity<Void> addQuestToCharacter(@RequestBody AddOrRemoveFromCharacterDto dto) {
+    public ResponseEntity<Void> addQuestToCharacter(@Valid @RequestBody AddOrRemoveFromCharacterDto dto) {
         log.info("Add quest to character with id {}", dto.characterId());
         characterService.addQuest(dto);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/remove-quest")
-    public ResponseEntity<Void> removeQuestFromCharacter(@RequestBody AddOrRemoveFromCharacterDto dto) {
+    public ResponseEntity<Void> removeQuestFromCharacter(@Valid @RequestBody AddOrRemoveFromCharacterDto dto) {
         log.info("Remove quest from character with id {}", dto.characterId());
         characterService.removeQuest(dto);
         return ResponseEntity.noContent().build();
@@ -74,6 +71,16 @@ public class CharacterController {
 
         log.info("Changing attributes of character with id {}", id);
         return new ResponseEntity<>(characterService.modifyCharactersAttribute(id, dto), HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping("/add-xp")
+    public ResponseEntity<Void> addExperienceToCharacter(
+        @Valid @RequestBody AddXpDto dto,
+        Principal principal) {
+
+        log.info("Add experience to character with id {}", dto.characterId());
+        characterService.addExperienceToCharacter(dto, principal);
+        return ResponseEntity.noContent().build();
     }
 
 }

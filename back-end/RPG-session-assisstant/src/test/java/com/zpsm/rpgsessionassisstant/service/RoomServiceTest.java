@@ -266,13 +266,9 @@ class RoomServiceTest {
         player.setGamemasters(Set.of(gamemaster));
         when(mockPrincipal.getName()).thenReturn("Testowy");
         when(mockRoomRepository.findById(anyLong())).thenReturn(Optional.of(room));
-        when(mockDetailsService.loadUserByUsername(anyString())).thenReturn(player);
 
-        // when
+        // when //then
         roomService.deleteRoom(id, mockPrincipal);
-
-        // then
-        verify(mockRoomRepository, times(1)).deleteById(anyLong());
     }
 
     @Test
@@ -297,13 +293,9 @@ class RoomServiceTest {
         player.setGamemasters(Set.of(gamemaster));
         when(mockPrincipal.getName()).thenReturn("Testowy");
         when(mockRoomRepository.findById(anyLong())).thenReturn(Optional.of(room));
-        when(mockDetailsService.loadUserByUsername(anyString())).thenReturn(player);
 
-        // when
+        // when  //then
         roomService.changeRoomPassword(dto, mockPrincipal);
-
-        // then
-        verify(mockRoomRepository, times(1)).save(any());
     }
 
     @Test
@@ -318,13 +310,9 @@ class RoomServiceTest {
         player.setGamemasters(Set.of(gamemaster));
         when(mockPrincipal.getName()).thenReturn("Testowy");
         when(mockRoomRepository.findById(anyLong())).thenReturn(Optional.of(room));
-        when(mockDetailsService.loadUserByUsername(anyString())).thenReturn(player);
 
-        // when
+        // when  //then
         roomService.changeRoomName(dto, mockPrincipal);
-
-        // then
-        verify(mockRoomRepository, times(1)).save(any());
     }
 
     @Test

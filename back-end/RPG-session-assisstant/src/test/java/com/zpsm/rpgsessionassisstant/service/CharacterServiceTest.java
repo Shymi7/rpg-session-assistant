@@ -40,6 +40,8 @@ class CharacterServiceTest {
     @Mock
     private AttributeService mockAttributeService;
     @Mock
+    private GamemasterService mockGamemasterService;
+    @Mock
     private Principal mockPrincipal;
     private CharacterService characterService;
 
@@ -51,7 +53,8 @@ class CharacterServiceTest {
             mockDetailsService,
             mockItemService,
             mockQuestService,
-            mockAttributeService);
+            mockAttributeService,
+            mockGamemasterService);
     }
 
     @Test
@@ -344,6 +347,16 @@ class CharacterServiceTest {
         // when // then
         assertThrows(ModifyingAttributesException.class,
             () -> characterService.modifyCharactersAttribute(1L, dto));
+    }
+
+    @Test
+    void givenCorrectDtoAndGamemasterShouldAddExperience() {
+        // given
+        AddXpDto dto = new AddXpDto(1L, 1L, 10);
+        when(mockPrincipal.getName()).thenReturn("Testowy");
+
+        // when // then
+        characterService.addExperienceToCharacter(dto, mockPrincipal);
     }
 
     private Character getCharacter() {

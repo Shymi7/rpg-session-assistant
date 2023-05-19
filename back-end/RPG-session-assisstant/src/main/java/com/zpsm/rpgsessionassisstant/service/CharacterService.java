@@ -1,9 +1,6 @@
 package com.zpsm.rpgsessionassisstant.service;
 
-import com.zpsm.rpgsessionassisstant.dto.AddOrRemoveFromCharacterDto;
-import com.zpsm.rpgsessionassisstant.dto.CharacterDto;
-import com.zpsm.rpgsessionassisstant.dto.CreateCharacterDto;
-import com.zpsm.rpgsessionassisstant.dto.ModifyCharactersAttributesDto;
+import com.zpsm.rpgsessionassisstant.dto.*;
 import com.zpsm.rpgsessionassisstant.exception.CharacterNotInAnyRoomException;
 import com.zpsm.rpgsessionassisstant.exception.EntityNotFoundException;
 import com.zpsm.rpgsessionassisstant.exception.ModifyingAttributesException;
@@ -32,6 +29,7 @@ public class CharacterService {
     private final ItemService itemService;
     private final QuestService questService;
     private final AttributeService attributeService;
+    private final GamemasterService gamemasterService;
 
     public CharacterDto getCharacterById(Long id) {
         return characterMapper.mapToDto(getCharacter(id));
@@ -101,6 +99,14 @@ public class CharacterService {
         attributeService.updateCharacterAttribute(characterId, dto);
         character.setSkillPoints(character.getSkillPoints() - dto.skillPoints());
         return characterMapper.mapToDto(characterRepository.save(character));
+    }
+
+    public void addExperienceToCharacter(AddXpDto dto, Principal principal) {
+        gamemasterService.findGamemasterForGivenRoomAndDoSomething(dto.roomId(), principal.getName(), gamemaster -> {
+            Character character = getCharacter(dto.characterId());
+            character.setExperience(character.getExperience() + dto.experience());
+            characterRepository.save(character);
+        });
     }
 
     private Character prepareCharacter(String name, String description) {

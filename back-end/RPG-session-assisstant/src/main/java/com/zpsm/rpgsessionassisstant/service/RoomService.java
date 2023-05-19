@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.function.Consumer;
 
 @Slf4j
 @Service
@@ -90,7 +89,7 @@ public class RoomService {
 
     public void deleteRoom(long id, Principal principal) {
         Room room = getRoomById(id);
-        findGamemasterForGivenRoomAndDoSomething(
+        gamemasterService.findGamemasterForGivenRoomAndDoSomething(
             room.getId(),
             principal.getName(),
             gamemaster -> roomRepository.deleteById(id));
@@ -99,25 +98,19 @@ public class RoomService {
 
     public void changeRoomPassword(RoomPasswordChangeDto dto, Principal principal) {
         Room room = getRoomById(dto.roomId());
-        findGamemasterForGivenRoomAndDoSomething(
-            room.getId(),
-            principal.getName(),
-            gamemaster -> {
-                room.setPassword(passwordEncoder.encode(dto.newPassword()));
-                roomRepository.save(room);
-            });
+        gamemasterService.findGamemasterForGivenRoomAndDoSomething(room.getId(), principal.getName(), gamemaster -> {
+            room.setPassword(passwordEncoder.encode(dto.newPassword()));
+            roomRepository.save(room);
+        });
         log.info("Room password changed");
     }
 
     public void changeRoomName(RoomNameChangeDto dto, Principal principal) {
         Room room = getRoomById(dto.roomId());
-        findGamemasterForGivenRoomAndDoSomething(
-            room.getId(),
-            principal.getName(),
-            gamemaster -> {
-                room.setName(passwordEncoder.encode(dto.newRoomName()));
-                roomRepository.save(room);
-            });
+        gamemasterService.findGamemasterForGivenRoomAndDoSomething(room.getId(), principal.getName(), gamemaster -> {
+            room.setName(passwordEncoder.encode(dto.newRoomName()));
+            roomRepository.save(room);
+        });
         log.info("Room name changed");
     }
 
@@ -153,15 +146,6 @@ public class RoomService {
                 character.getRooms().add(savedRoom);
                 characterRepository.save(character);
             });
-    }
-
-    private void findGamemasterForGivenRoomAndDoSomething(long roomId, String playerName, Consumer<Gamemaster> action) {
-        Player player = (Player) playerDetailsService.loadUserByUsername(playerName);
-        player.getGamemasters()
-            .stream()
-            .filter(gamemaster -> gamemaster.getRoom().getId() == roomId)
-            .findFirst()
-            .ifPresent(action);
     }
 
     private Room getRoomById(long id) {

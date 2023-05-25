@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, {Axios, AxiosResponse} from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function modifyElementInArrayByIndex(array: Array<any>, index: number, value: any): Array<any> { //todo: test it
@@ -42,6 +42,44 @@ export async function GETRequestWithAuthKey(url: string, key: string | null) {
             Authorization: key,
         }
     })
+}
+
+export async function requestWithAuthKey(
+    url: string,
+    key: string | null,
+    method: "POST" | "GET" | "PATCH",
+    body?: any) :Promise<AxiosResponse>{
+
+    if (method === "GET") {
+        return await axios.get(url, {
+            headers: {
+                Authorization: key,
+            }
+        })
+    }
+
+    if (method === "POST") {
+        return await axios.post(
+            url,
+            body,
+            {
+                headers: {
+                    Authorization: key,
+                }
+            })
+    }
+
+    if (method === "PATCH") {
+        return await axios.patch(
+            url,
+            body,
+            {
+                headers: {
+                    Authorization: key,
+                }
+            })
+    }
+
 }
 
 export function saveToAsyncStorage(items: Array<StorageItem>): Promise<any> {

@@ -1,6 +1,8 @@
 import {Section} from "./Section";
 import {Text, TouchableOpacity, View} from "react-native";
 import React from "react";
+import {getUserDataFromLocalStorage, requestWithAuthKey} from "../utils/utils";
+import {API_URL} from "../env";
 
 interface Attribute {
     attribute: {
@@ -14,11 +16,43 @@ interface Props {
     attributesList: Attribute[];
     freeSkillPoints: number;
     refreshFunc: () => void;
+    GMMode?: boolean;
+    characterId?: number;
+
 }
 
-export function CharacterAttributes({attributesList, freeSkillPoints, refreshFunc}: Props) {
+export function CharacterAttributes({
+                                        attributesList,
+                                        freeSkillPoints,
+                                        refreshFunc,
+                                        GMMode = false,
+                                        characterId
+                                    }: Props) {
 
-    function sendAttributeLvlUpRequest(){
+    async function sendAttributeLvlUpRequest(attributeId: number,
+                                             currentAttributeValue: number,
+                                             addedValue = 1) {
+        try {
+            const {authKey, playerId} = await getUserDataFromLocalStorage()
+
+            //create new quest
+            const modifyAttributeUrl = API_URL + '/api/character/' + characterId + '/modify-attributes';
+            const modifyAttributeBody = {
+                attributesLevelSet: [
+                    {
+                        attributeId: attributeId,
+                        newLevel: currentAttributeValue + addedValue
+                    }
+                ]
+            }
+            const res = await requestWithAuthKey(modifyAttributeUrl, authKey, "PATCH", modifyAttributeBody);
+
+            if (refreshFunc) {
+                refreshFunc();
+            }
+        } catch (error) {
+            console.log('modify attributes request error: ' + error);
+        }
 
     }
 
@@ -42,9 +76,13 @@ export function CharacterAttributes({attributesList, freeSkillPoints, refreshFun
                 <TouchableOpacity
                     className={'bg-color-accent rounded-2xl p-2 w-12 justify-center '}
                     onPress={() => {
-                        sendAttributeLvlUpRequest();
+                        console.log(Number(attribute.attribute.id),Number(attribute.attributeLevel))
+                        // sendAttributeLvlUpRequest(
+                        //     Number(attribute.attribute.id),
+                        //     Number(attribute.attributeLevel)
+                        // )
+                        //     .catch(error => console.log(error));
                         refreshFunc();
-                        //todo send attributeLvlUp request
                     }}
                 >
                     <Text className={'text-xl text-color-white font-bold text-center'}>

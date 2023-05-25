@@ -17,6 +17,8 @@ export function GamemasterPanelScreen({route, navigation}: any) {
     const [currentCharacterData, setCurrentCharacterData] = React.useState<CharacterData>();
     const [currentCharacterId, setCurrentCharacterId] = React.useState<number>(0);
 
+    const [refreshSwitch, setRefreshSwitch] = React.useState<boolean>(false);
+
     let authKey: string | null;
     let playerId: string | null;
 
@@ -32,6 +34,8 @@ export function GamemasterPanelScreen({route, navigation}: any) {
             setCharacterList(res.data);
             setCurrentCharacterData(res.data[currentCharacterId]);//default character is the first character
 
+
+
         } catch (error) {
             console.log('get characters list request error: ' + error);
         }
@@ -42,11 +46,14 @@ export function GamemasterPanelScreen({route, navigation}: any) {
         setCurrentCharacterId(characterId);
     }
 
+    function refreshComponent(){
+        setRefreshSwitch(prevState => !prevState);
+    }
 
     useEffect(() => {
         getCharacterList()
             .catch(error => console.error(error));
-    }, [])
+    }, [refreshSwitch])
 
     function characterListElement() {
         if (charactersList === undefined) {
@@ -60,8 +67,9 @@ export function GamemasterPanelScreen({route, navigation}: any) {
                     onPress={()=>{
                         changeCurrentCharacter(index);
                     }}
+                    key={character.id}
                 >
-                    <Section colorVariant={'dark'} key={character.id}>
+                    <Section colorVariant={'dark'}>
                         <View className={'flex-row justify-between'}>
                             <Text className={'text-xl text-color-white'}>
                                 {character.name}
@@ -109,11 +117,13 @@ export function GamemasterPanelScreen({route, navigation}: any) {
             <CharacterAttributes
                 attributesList={currentCharacterData.characterAttributes}
                 freeSkillPoints={currentCharacterData.skillPoints}
-                refreshFunc={()=>{}}
+                refreshFunc={refreshComponent}
             />
             <CharacterQuests
                 questsList={currentCharacterData.quests}
                 GMMode={true}
+                characterId={currentCharacterData.id}
+                refreshFunc={refreshComponent}
             />
             <CharacterInventory
                 itemsList={currentCharacterData.items}

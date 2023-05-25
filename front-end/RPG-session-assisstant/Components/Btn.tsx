@@ -14,6 +14,7 @@ const iconPaths = [
     require('../Icons/details.png'),
     require('../Icons/enterRoom.png'),
     require('../Icons/openList.png'),
+    require('../Icons/checked.png'),
 ]
 
 

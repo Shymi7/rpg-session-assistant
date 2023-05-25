@@ -1,20 +1,33 @@
-import {Button, Text, TouchableOpacity} from "react-native";
+import {Button, Image, Text, TouchableOpacity} from "react-native";
 import classNames from "classnames";
 
 interface Props {
-    text: string;
     func: () => void;
+    text?: string;
     disabled?: boolean;
+    iconIndex?: number;
+    additionalTailwindClasses?: string;
 }
 
-export function Btn({text, func, disabled = false}: Props) {
+//necessary, require function can't use dynamic values
+const iconPaths = [
+    require('../Icons/details.png'),
+    require('../Icons/enterRoom.png'),
+    require('../Icons/openList.png'),
+    require('../Icons/checked.png'),
+]
+
+
+export function Btn({text, func, disabled = false, iconIndex, additionalTailwindClasses}: Props) {
     return(
         <TouchableOpacity
-            className={classNames(
-                "rounded-xl w-2/3 flex-row justify-center py-2 m-2",
-                disabled ? "bg-color-accentInactive" : "bg-color-accent"
-            )}
             onPress={func}
+            className={classNames(
+                "rounded-xl flex-row justify-center py-2 m-2",
+                disabled ? "bg-color-accentInactive" : "bg-color-accent",
+                text && 'w-1/2',
+                additionalTailwindClasses && additionalTailwindClasses
+            )}
             style={{
                 shadowColor: "#000000",
                 shadowOffset: {
@@ -27,11 +40,20 @@ export function Btn({text, func, disabled = false}: Props) {
             }}
             disabled={disabled}
         >
-            <Text
-                className={"text-color-white text-xl font-bold"}
-            >
-                {text}
-            </Text>
+            {
+                text &&
+                <Text className={"text-color-white text-xl font-bold"}>
+                    {text}
+                </Text>
+            }
+            {
+                iconIndex !== undefined &&
+                <Image
+                    source={iconPaths[iconIndex]}
+                    className={'w-6 h-6'}
+                />
+            }
+
         </TouchableOpacity>
     )
 }

@@ -1,6 +1,7 @@
-import {TextInput} from "react-native";
+import {TextInput, View} from "react-native";
 import React, {useState} from "react";
 import classNames from "classnames";
+import tailwindColor from "../tailwind.config";
 
 
 interface Props {
@@ -31,6 +32,12 @@ export function CustomInput({
             return;
         }
 
+        if(textValue===''){
+            setIsValid(true);
+            func(textValue, false);
+            return;
+        }
+
         setIsValid(false);
         func(textValue, false);
     }
@@ -38,10 +45,10 @@ export function CustomInput({
     const tailwindColor = require("../tailwind.config");
     return (
 
-
+    <View className={'grow self-stretch basis-auto'}>
         <TextInput
             className={classNames(
-                "rounded-xl m-2 px-3 py-2 font-bold text-xl w-full text-color-accent",
+                "rounded-xl my-2 px-3 py-2 font-bold text-xl text-color-accent",
                 isValid ? "bg-color-white" : "bg-color-warning",
                 //isValid ? "text-color-accent" : "text-color-greyLight" //TODO: for some reason this causes text value of input to disappear
             )}
@@ -63,6 +70,8 @@ export function CustomInput({
             }}
             secureTextEntry={password}
         />
+    </View>
+
 
 
     );

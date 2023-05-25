@@ -74,7 +74,7 @@ export function LoginScreen({navigation}: { navigation: any }) {
                             setPassword(value);
                             setAreInputsValid(modifyElementInArrayByIndex(areInputsValid, 1, isValid));
                         }}
-                        password
+                        password={true}
                     />
                     <Btn
                         text={"Log in"}

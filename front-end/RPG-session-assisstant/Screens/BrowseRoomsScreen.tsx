@@ -1,10 +1,8 @@
-import {Text, TouchableOpacity, View} from "react-native";
+import {View} from "react-native";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {RoomLabel} from "../Components/RoomLabel";
 import {API_URL} from "../env";
-import {Section} from "../Components/Section";
-import {CustomInput} from "../Components/CustomInput";
 import {getUserDataFromLocalStorage} from "../utils/utils";
 import {Btn} from "../Components/Btn";
 import {useFocusEffect} from "@react-navigation/native";
@@ -37,10 +35,11 @@ export function BrowseRoomsScreen({navigation}: { navigation: any }) {
             roomId={room.id}
             isGM={isGM}
             navigation={navigation}
+            key={room.id}
         />
     }
 
-    function handleDataFromApi(){
+    function handleDataFromApi() {
         //load all rooms where player is a character or a game master
         getUserDataFromLocalStorage()
             .then(({authKey, playerId}) => {
@@ -83,10 +82,6 @@ export function BrowseRoomsScreen({navigation}: { navigation: any }) {
     useEffect(() => {
         handleDataFromApi();
     }, []);
-
-
-
-
 
 
     return (

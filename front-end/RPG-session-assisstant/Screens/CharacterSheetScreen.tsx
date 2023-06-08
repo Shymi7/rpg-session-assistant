@@ -12,6 +12,8 @@ import {CharacterInventory} from "../Components/CharacterInventory";
 export function CharacterSheetScreen({route, navigation}: any) {
 
     const [characterData, setCharacterData] = React.useState<CharacterData>();
+    const [refreshSwitch, setRefreshSwitch] = React.useState<boolean>(false);
+
 
     async function getData() {
         try {
@@ -21,18 +23,21 @@ export function CharacterSheetScreen({route, navigation}: any) {
             const res = await GETRequestWithAuthKey(getCharacterDataUrl, authKey)
 
             setCharacterData(res.data);
-            console.log('a');
-
         } catch (error) {
-            console.log('get character data request error: ' + error);
+            console.log('add XP to character request error: ' + error);
         }
     }
+
 
     useEffect(() => {
         getData()
             .catch(error => console.error(error));
-    }, [])
+    }, [refreshSwitch])
 
+
+    function refreshComponent() {
+        setRefreshSwitch(prevState => !prevState);
+    }
 
     return (
         characterData &&
@@ -42,17 +47,22 @@ export function CharacterSheetScreen({route, navigation}: any) {
                 description={characterData.description}
                 level={characterData.level}
                 experience={characterData.experience}
+                characterId={characterData.id}
+                refreshFunc={refreshComponent}
+                roomID={route.params.roomId}
             />
             <CharacterAttributes
                 attributesList={characterData.characterAttributes}
                 freeSkillPoints={characterData.skillPoints}
                 refreshFunc={getData}
+                characterId={characterData.id}
             />
             <CharacterQuests
                 questsList={characterData.quests}
             />
             <CharacterInventory
                 itemsList={characterData.items}
+                refreshFunc={refreshComponent}
             />
         </ScrollView>
     );

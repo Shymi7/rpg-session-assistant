@@ -1,9 +1,9 @@
-import {View} from "react-native";
+import {ScrollView, View} from "react-native";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {RoomLabel} from "../Components/RoomLabel";
 import {API_URL} from "../env";
-import {getUserDataFromLocalStorage} from "../utils/utils";
+import {GETRequestWithAuthKey, getUserDataFromLocalStorage} from "../utils/utils";
 import {Btn} from "../Components/Btn";
 import {useFocusEffect} from "@react-navigation/native";
 
@@ -16,7 +16,7 @@ export function BrowseRoomsScreen({navigation}: { navigation: any }) {
     //refresh rooms list after entering new room
     useFocusEffect(
         React.useCallback(() => {
-            handleDataFromApi();
+            sendLoadRoomListRequest();
         }, [])
     );
 
@@ -29,14 +29,37 @@ export function BrowseRoomsScreen({navigation}: { navigation: any }) {
         })
     }
 
-    function roomLabelFromData(room: any, isGM: boolean = false): JSX.Element {
-        return <RoomLabel
-            roomName={room.name}
-            roomId={room.id}
-            isGM={isGM}
-            navigation={navigation}
-            key={room.id}
-        />
+
+
+    async function sendLoadRoomListRequest() {
+        try {
+            const playerData = await getUserDataFromLocalStorage();
+            const authKey = playerData.authKey;
+            const playerId = playerData.playerId;
+
+            const getRoomsWhereIsPlayerUrl = API_URL + '/api/player/' + playerId + '/player-in-rooms';
+            const getRoomsWherePlayerIsGm = API_URL + '/api/player/' + playerId + '/gamemaster-in-rooms';
+
+
+
+            //send first request to load rooms where player has a character
+            let res = await GETRequestWithAuthKey(getRoomsWhereIsPlayerUrl, authKey)
+            let tempRoomLabelElements = res.data.map((room: any) => {
+                return roomLabelFromData(room);
+            });
+
+            //send second request to load rooms where player is gamemaster
+            res = await GETRequestWithAuthKey(getRoomsWherePlayerIsGm, authKey)
+            const gmRoomElements = res.data.map((room: any) => {
+                return roomLabelFromData(room, true);
+            });
+            tempRoomLabelElements = tempRoomLabelElements.concat(gmRoomElements);
+
+
+            setRoomLabelElements(tempRoomLabelElements);
+        } catch (error) {
+            console.log('Load room list request error: ' + error);
+        }
     }
 
     function handleDataFromApi() {
@@ -80,28 +103,40 @@ export function BrowseRoomsScreen({navigation}: { navigation: any }) {
 
 
     useEffect(() => {
-        handleDataFromApi();
+        sendLoadRoomListRequest();
     }, []);
 
+    function roomLabelFromData(room: any, isGM: boolean = false): JSX.Element {
+        return <RoomLabel
+            roomName={room.name}
+            roomId={room.id}
+            isGM={isGM}
+            navigation={navigation}
+            key={room.id}
+        />
+    }
 
     return (
-        <View className={'items-center'}>
+        <ScrollView>
+            <View className={'items-center'}>
+                {roomLabelElements}
+                <Btn
+                    func={() => {
+                        navigation.navigate('enterNewRoom');
+                    }}
+                    text={'Enter new room'}
+                />
 
-            {roomLabelElements}
-            <Btn
-                func={() => {
-                    navigation.navigate('enterNewRoom');
-                }}
-                text={'Enter new room'}
-            />
+
+                <Btn
+                    func={() => {
+                        navigation.navigate('createNewRoom');
+                    }}
+                    text={'Create new room'}
+                />
+            </View>
 
 
-            <Btn
-                func={() => {
-                    navigation.navigate('createNewRoom');
-                }}
-                text={'Create new room'}
-            />
-        </View>
+        </ScrollView>
     )
 }

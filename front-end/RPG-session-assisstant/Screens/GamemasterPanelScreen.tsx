@@ -108,6 +108,9 @@ export function GamemasterPanelScreen({route, navigation}: any) {
                 showCharacterListFunc={() => {
                     setIsCharacterListVisible(prevState => !prevState);
                 }}
+                characterId={currentCharacterData.id}
+                refreshFunc={refreshComponent}
+                roomID={route.params.roomId}
             />
             {
                 isCharacterListVisible &&
@@ -118,6 +121,8 @@ export function GamemasterPanelScreen({route, navigation}: any) {
                 attributesList={currentCharacterData.characterAttributes}
                 freeSkillPoints={currentCharacterData.skillPoints}
                 refreshFunc={refreshComponent}
+                GMMode={true}
+                characterId={currentCharacterData.id}
             />
             <CharacterQuests
                 questsList={currentCharacterData.quests}
@@ -127,6 +132,9 @@ export function GamemasterPanelScreen({route, navigation}: any) {
             />
             <CharacterInventory
                 itemsList={currentCharacterData.items}
+                refreshFunc={refreshComponent}
+                GMMode={true}
+                characterId={currentCharacterData.id}
             />
 
 

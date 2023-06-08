@@ -1,6 +1,15 @@
 import {Section} from "./Section";
 import {Image, Text, TouchableOpacity, View} from "react-native";
 import React, {useState} from "react";
+import {CustomInput} from "./CustomInput";
+import {Btn} from "./Btn";
+import {
+    getUserDataFromLocalStorage,
+    isArrayFilledWithTrue,
+    modifyElementInArrayByIndex,
+    requestWithAuthKey
+} from "../utils/utils";
+import {API_URL} from "../env";
 
 interface Attribute {
     attribute: {
@@ -19,11 +28,17 @@ interface Item {
 
 interface Props {
     itemsList: Item[];
+    refreshFunc: () => void;
+    GMMode?: boolean;
+    characterId?: number;
+
+
 }
 
 function InventoryItem({name, itemAttributes, description}: Item) {
 
     const [areAttributesVisible, setAreAttributesVisible] = useState(false);
+
 
     const attributesElements = itemAttributes.map((itemAttribute: Attribute) => {
         return (
@@ -69,24 +84,138 @@ function InventoryItem({name, itemAttributes, description}: Item) {
 }
 
 
-export function CharacterInventory({itemsList}: Props) {
 
-    const inventoryItemElements = itemsList.map((item: Item) => {
-        return (
-            <InventoryItem
-                name={item.name}
-                description={item.description}
-                id={item.id}
-                itemAttributes={item.itemAttributes}
-                key={item.id}
+export function CharacterInventory({itemsList, refreshFunc, GMMode = false, characterId}: Props) {
+
+    const [itemNameInputValue, setItemNameInputValue] = useState('');
+    const [itemDescriptionInputValue, setItemDescriptionInputValue] = useState('');
+    const [itemPriceInputValue, setItemPriceInputValue] = useState('');
+    const [itemWeightInputValue, setItemWeightInputValue] = useState('');
+
+    const [areInputsValid, setAreInputsValid] = useState<boolean[]>(Array(4));
+
+    async function sendCreateNewItemRequest(){
+        try {
+            const {authKey, playerId} = await getUserDataFromLocalStorage()
+
+            const createNewItemUrl = API_URL + '/api/item/create';
+            const createNewItemBody = {
+                name: itemNameInputValue,
+                description: itemDescriptionInputValue,
+                itemAttributes:[
+                    {
+                        attribute:{
+                            name: "Price"
+                        },
+                        attributeValue: Number(itemPriceInputValue)
+                    },
+                    {
+                        attribute:{
+                            name: "Weight"
+                        },
+                        attributeValue: Number(itemWeightInputValue)
+                    }
+                ]
+            };
+
+            const res = await requestWithAuthKey(createNewItemUrl, authKey, "POST", createNewItemBody);
+            const idOfNewItem = res.data.id;
+
+            //assign that quest to character
+            const addItemToCharacterUrl = API_URL + '/api/character/add-item';
+            const addItemToCharacterBody = {
+                characterId: characterId,
+                entityId: idOfNewItem
+            }
+            await requestWithAuthKey(addItemToCharacterUrl, authKey, "PATCH", addItemToCharacterBody);
+
+            if (refreshFunc) {
+                refreshFunc();
+            }
+        } catch (error) {
+            console.log('modify attributes request error: ' + error);
+        }
+    }
+
+
+
+    const addNewItemsUiElements =
+        <View className={'flex-col items-center'}>
+            <CustomInput
+                placeholder={'Item name'}
+                func={(value: string, isValid: boolean) => {
+                    setItemNameInputValue(value);
+                    setAreInputsValid(prevState =>
+                        modifyElementInArrayByIndex(prevState, 0, isValid)
+                    )
+                }}
+                regex={/^.{3,30}$/}
+
             />
-        );
-    })
+            <CustomInput
+                placeholder={'Item description'}
+                func={(value: string, isValid: boolean) => {
+                    setItemDescriptionInputValue(value);
+                    setAreInputsValid(prevState =>
+                        modifyElementInArrayByIndex(prevState, 1, isValid)
+                    )
+                }}
+                regex={/^.{3,200}$/}
+
+            />
+            <View className={'flex-row'}>
+
+                <CustomInput
+                    placeholder={'Price'}
+                    additionalTailwindClasses={'mr-4'}
+                    func={(value: string, isValid: boolean) => {
+                        setItemPriceInputValue(value);
+                        setAreInputsValid(prevState =>
+                            modifyElementInArrayByIndex(prevState, 2, isValid)
+                        )
+                    }}
+                    regex={/^\d+$/}
+                />
+                <CustomInput
+                    placeholder={'Weight'}
+                    func={(value: string, isValid: boolean) => {
+                        setItemWeightInputValue(value);
+                        setAreInputsValid(prevState =>
+                            modifyElementInArrayByIndex(prevState, 3, isValid)
+                        )
+                    }}
+                    regex={/^\d+$/}
+                />
+            </View>
+            <Btn
+                text={'Add item'}
+                func={() => {
+                    sendCreateNewItemRequest();
+                }}
+                disabled={!isArrayFilledWithTrue(areInputsValid)}
+            />
+        </View>
+
+
+    const inventoryItemElements = itemsList
+        .sort((a, b) => b.id - a.id)//DESC sort by item.id
+        .map((item: Item) => {
+            return (
+                <InventoryItem
+                    name={item.name}
+                    description={item.description}
+                    id={item.id}
+                    itemAttributes={item.itemAttributes}
+                    key={item.id}
+                />
+            );
+        })
 
 
     return (
         <Section colorVariant={'light'} title={'Inventory'}>
             <View className={''}>
+                {GMMode && addNewItemsUiElements}
                 {inventoryItemElements}
             </View>
         </Section>

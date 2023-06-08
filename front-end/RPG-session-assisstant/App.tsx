@@ -23,8 +23,8 @@ export default function App() {
                 <Stack.Screen name="createNewRoom"      component={CreateNewRoomScreen}     options={{title:'Create new room'}}/>
                 <Stack.Screen name="enterNewRoom"       component={EnterNewRoomScreen}      options={{title:'Enter new room'}}/>
 
-                <Stack.Screen name="characterSheet"     component={CharacterSheetScreen}    options={{}}/>
-                <Stack.Screen name="gamemasterPanel"    component={GamemasterPanelScreen}   options={{}}/>
+                <Stack.Screen name="characterSheet"     component={CharacterSheetScreen}    options={{title:'Your character'}}/>
+                <Stack.Screen name="gamemasterPanel"    component={GamemasterPanelScreen}   options={{title:'Manage characters'}}/>
 
             </Stack.Navigator>
         </NavigationContainer>

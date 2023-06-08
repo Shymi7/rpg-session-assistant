@@ -3,20 +3,57 @@ import {Text, View} from "react-native";
 import React from "react";
 import {Btn} from "./Btn";
 import {CustomInput} from "./CustomInput";
+import {getUserDataFromLocalStorage, requestWithAuthKey} from "../utils/utils";
+import {API_URL} from "../env";
 
 interface Props {
     name: string;
     description: string;
     level: number;
     experience: number;
+    refreshFunc: () => void;
+    characterId: number;
+    roomID: number;
     GMMode?: boolean;
     showCharacterListFunc?: () => void;
+
+
 }
 
-export function CharacterInfo({name, description, level, experience, GMMode = false, showCharacterListFunc}: Props) {
+export function CharacterInfo({
+                                  name,
+                                  description,
+                                  level,
+                                  experience,
+                                  GMMode = false,
+                                  showCharacterListFunc,
+                                  refreshFunc,
+                                  characterId,
+                                  roomID
+                              }: Props) {
 
-    function sendAddXpRequest(){
+    const [xpInputValue, setXpInputValue] = React.useState('');
+    const [isInputValid, setIsInputValid] = React.useState(false)
 
+    async function sendAddXpRequest() {
+        try {
+            const {authKey, playerId} = await getUserDataFromLocalStorage()
+
+            const addXpRequestUrl = API_URL + '/api/character/add-xp';
+            const addXpRequestBody = {
+                characterId: characterId,
+                roomId: roomID,
+                experience: xpInputValue
+            }
+
+            await requestWithAuthKey(addXpRequestUrl, authKey, "PATCH", addXpRequestBody);
+
+            if (refreshFunc) {
+                refreshFunc();
+            }
+        } catch (error) {
+            console.log('modify attributes request error: ' + error);
+        }
     }
 
     return (
@@ -59,12 +96,16 @@ export function CharacterInfo({name, description, level, experience, GMMode = fa
                     <CustomInput
                         placeholder={'Add XP (as %)'}
                         regex={/^([1-9]|[1-9][0-9]|100)$/}
-                        func={()=>{}}
+                        func={(value: string, isValid: boolean) => {
+                            setXpInputValue(value);
+                            setIsInputValid(isValid);
+                        }}
                     />
                     <Btn
                         func={sendAddXpRequest}
                         text={'+'}
                         additionalTailwindClasses={'w-10 ml-4'}
+                        disabled={!isInputValid}
                     />
                 </View>
 

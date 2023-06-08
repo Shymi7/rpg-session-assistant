@@ -37,9 +37,9 @@ public class CharacterService {
 
     public Collection<CharacterDto> getPlayersCharacters(Long id) {
         return characterRepository.findAllPlayersCharacters(id)
-            .stream()
-            .map(characterMapper::mapToDto)
-            .toList();
+                .stream()
+                .map(characterMapper::mapToDto)
+                .toList();
     }
 
     @Transactional
@@ -104,7 +104,13 @@ public class CharacterService {
     public void addExperienceToCharacter(AddXpDto dto, Principal principal) {
         gamemasterService.findGamemasterForGivenRoomAndDoSomething(dto.roomId(), principal.getName(), gamemaster -> {
             Character character = getCharacter(dto.characterId());
-            character.setExperience(character.getExperience() + dto.experience());
+            int summedExperience = character.getExperience() + dto.experience();
+            if (summedExperience >= 100) {
+                character.setLevel(character.getLevel() + 1);
+                character.setExperience(summedExperience - 100);
+            } else {
+                character.setExperience(character.getExperience() + dto.experience());
+            }
             characterRepository.save(character);
         });
     }
@@ -122,15 +128,15 @@ public class CharacterService {
 
     private Character getCharacter(long characterId) {
         return characterRepository.findById(characterId)
-            .orElseThrow(() -> {
-                log.error("Character with id {} not found", characterId);
-                return new EntityNotFoundException(String.format("Character with id %d not found", characterId));
-            });
+                .orElseThrow(() -> {
+                    log.error("Character with id {} not found", characterId);
+                    return new EntityNotFoundException(String.format("Character with id %d not found", characterId));
+                });
     }
 
     private boolean doesCharacterHasGivenAttributes(Long characterId, Long attributeId) {
         return characterRepository.doesCharacterHasGivenAttributes(characterId, attributeId)
-            .isPresent();
+                .isPresent();
     }
 
     private void canModifyCharactersAttributes(Character character, ModifyCharactersAttributesDto dto) {

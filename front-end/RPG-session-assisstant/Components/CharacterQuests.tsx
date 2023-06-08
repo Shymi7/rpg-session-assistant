@@ -84,7 +84,7 @@ export function CharacterQuests({questsList, GMMode = false, characterId, refres
     }
 
     const questElements = questsList
-        .sort((a, b) => a.id - b.id)
+        .sort((a, b) => b.id - a.id)//DESC sort by item.id
         .map((quest: Quest, index: number) => {
             return (
                 <View className={'w-full'} key={quest.id}>

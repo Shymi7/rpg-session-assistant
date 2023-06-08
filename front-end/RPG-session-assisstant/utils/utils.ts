@@ -80,6 +80,8 @@ export async function requestWithAuthKey(
             })
     }
 
+    return Promise.reject();
+
 }
 
 export function saveToAsyncStorage(items: Array<StorageItem>): Promise<any> {

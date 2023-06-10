@@ -5,7 +5,6 @@ import {Section} from "../Components/Section";
 import {Btn} from "../Components/Btn";
 import {modifyElementInArrayByIndex, saveToAsyncStorage} from "../utils/utils";
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Warning} from "../Components/Warning";
 import {API_URL} from "../env";
 
@@ -28,7 +27,7 @@ export function LoginScreen({navigation}: { navigation: any }) {
         }).then(res => {
             const authKey = res.headers.authorization;
 
-            const url = getUserIdApiUrl+"?login="+login
+            const url = getUserIdApiUrl + "?login=" + login
             axios.get(url, {
                 headers: {
                     Authorization: authKey
@@ -37,22 +36,22 @@ export function LoginScreen({navigation}: { navigation: any }) {
                 const playerId = res.data.id.toString();
 
                 saveToAsyncStorage([
-                    {key: '@loginAuthKey', value : authKey},
-                    {key: '@loginUserId', value : playerId}
+                    {key: '@loginAuthKey', value: authKey},
+                    {key: '@loginUserId', value: playerId}
                 ]).then(() => {
                     setServerError(null);
                     navigation.navigate('browseRooms');
                 }).catch(err => {
-                    console.log("async storage error: "+err);
+                    console.log("async storage error: " + err);
                 });
 
             }).catch(err => {
-                console.log("get player id error: "+err);
+                console.log("get player id error: " + err);
             })
 
         }).catch(err => {
             setServerError("Login failed: \n" + err.message);
-            console.log("login error"+err);
+            console.log("login error" + err);
         })
     }
 

@@ -59,7 +59,7 @@ export function CharacterAttributes({
                 <View className={'w-full flex-row my-2'} key={attribute.attribute.id}>
                     <View className={classNames(
                         'mr-2',
-                        GMMode ? 'w-full' : 'w-5/6',
+                        GMMode || freeSkillPoints <= 0 ? 'w-full' : 'w-5/6',
                     )}>
                         <Section colorVariant={"dark"} hasPadding={false} hasMargin={false}>
                             <View className={'flex-row justify-between py-2 px-4'}>
@@ -74,18 +74,19 @@ export function CharacterAttributes({
                         </Section>
                     </View>
                     {
-                        !GMMode &&
+                        !GMMode && freeSkillPoints > 0 &&
                         <TouchableOpacity
                             className={'bg-color-accent rounded-2xl p-2 w-12 justify-center '}
                             onPress={() => {
                                 sendAttributeLvlUpRequest(
                                     Number(attribute.attribute.id),
-                                    Number(attribute.attributeLevel)
+                                    1
                                 )
                                     .catch(error => console.log(error));
 
                                 refreshFunc();
                             }}
+
                         >
                             <Text className={'text-xl text-color-white font-bold text-center'}>
                                 +
@@ -101,6 +102,12 @@ export function CharacterAttributes({
 
     return (
         <Section colorVariant={'light'} title={'Attributes'}>
+            {
+                freeSkillPoints > 0 &&
+                <Text className={'text-base text-center text-color-white'}>
+                    ({freeSkillPoints} free skill points)
+                </Text>
+            }
             <View className={''}>
                 {attributeElements}
             </View>

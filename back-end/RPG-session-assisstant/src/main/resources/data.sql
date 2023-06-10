@@ -7,6 +7,8 @@ INSERT INTO zpsm_projekt.Player (player_id, login, password)
 VALUES (3, 'Wandzia', '$2a$12$DvyXGZq9v.bIOmofMmCBcOLTs3k925PrJc3DwqcY.9yJKR9i2oC9a');
 INSERT INTO zpsm_projekt.Player (player_id, login, password)
 VALUES (4, 'Krzysiek', '$2a$12$DvyXGZq9v.bIOmofMmCBcOLTs3k925PrJc3DwqcY.9yJKR9i2oC9a');
+INSERT INTO zpsm_projekt.Player (player_id, login, password)
+VALUES (5, 'Cela', '$2a$12$DvyXGZq9v.bIOmofMmCBcOLTs3k925PrJc3DwqcY.9yJKR9i2oC9a');
 
 -- Gamemaster Entity
 INSERT INTO zpsm_projekt.Gamemaster (gamemaster_id, player_id)
@@ -15,32 +17,47 @@ INSERT INTO zpsm_projekt.Gamemaster (gamemaster_id, player_id)
 VALUES (2, 3);
 INSERT INTO zpsm_projekt.Gamemaster (gamemaster_id, player_id)
 VALUES (3, 4);
+INSERT INTO zpsm_projekt.Gamemaster (gamemaster_id, player_id)
+VALUES (4, 5);
 
 
 -- Character Entity
 INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience, description)
-VALUES (1, 1, 'Gandalf', 21, 200, 6, 87, 'Czarodziej');
+VALUES (1, 1, 'Gandalf', 21, 200, 6, 87, 'A wise and enigmatic wizard, Gandalf wields immense power and knowledge of ancient magic. With his long flowing beard and staff in hand, he is a formidable ally and a force to be reckoned with in the realms of Middle-earth.');
 INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience, description)
-VALUES (2, 1, 'Harry Potter', 12, 130, 2, 21, 'You are squatter Harry');
+VALUES (2, 3, 'Harry Potter', 12, 130, 2, 21, 'You are a wizard, Harry, destined to battle the forces of darkness. Armed with a wand and accompanied by loyal friends, you embark on a thrilling journey to discover your true potential as a wizard and confront the dark lord Voldemort.');
 INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience, description)
-VALUES (3, 1, 'Jack Sparrow', 22, 80, 8, 54, 'Tpb.com');
-
+VALUES (3, 4, 'Jack Sparrow', 22, 80, 8, 54, 'Captain Jack Sparrow, the infamous pirate with a charm for trouble and a knack for getting out of it. With his quick wit, and cunning strategies, he sails through treacherous waters in search of adventure, hidden treasures, and a sip of rum.');
+INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience, description)
+VALUES (4, 1, 'Luke Skywalker', 18, 150, 5, 65, 'A skilled Jedi Knight and the last hope of the galaxy in the Star Wars saga. Luke possesses a strong connection to the Force and wields a lightsaber in his quest to defeat the Sith and restore peace.');
+INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience, description)
+VALUES (5, 1, 'Hermione Granger', 15, 120, 4, 40, 'A brilliant and resourceful witch from the Harry Potter series. Hermione is known for her extensive knowledge of magic and her quick thinking. With her wand and clever spellcasting, she aids Harry in his fight against dark forces.');
+INSERT INTO zpsm_projekt.Character (character_id, char_player_id, name, level, health, skill_points, experience, description)
+VALUES (6, 1, 'Davy Jones', 25, 180, 7, 95, 'A skilled ranger and the rightful heir to the throne in The Lord of the Rings trilogy. Aragorn is a skilled swordsman, leading the Fellowship on their perilous journey to destroy the One Ring and save Middle-earth.');
 
 -- Room Entity
 INSERT INTO zpsm_projekt.Room (room_id, gamemaster_id, capacity, password, NAME)
 VALUES (1, 1, 6, '$2a$12$DvyXGZq9v.bIOmofMmCBcOLTs3k925PrJc3DwqcY.9yJKR9i2oC9a', 'Gondor');
 INSERT INTO zpsm_projekt.Room (room_id, gamemaster_id, capacity, password, NAME)
-VALUES (2, 2, 4, '$2a$12$DvyXGZq9v.bIOmofMmCBcOLTs3k925PrJc3DwqcY.9yJKR9i2oC9a', 'Hogwarts');
+VALUES (2, 2, 4, '$2a$12$DvyXGZq9v.bIOmofMmCBcOLTs3k925PrJc3DwqcY.9yJKR9i2oC9a', 'Tatooine');
 INSERT INTO zpsm_projekt.Room (room_id, gamemaster_id, capacity, password, NAME)
-VALUES (3, 3, 5, '$2a$12$DvyXGZq9v.bIOmofMmCBcOLTs3k925PrJc3DwqcY.9yJKR9i2oC9a', 'Mordor');
+VALUES (3, 3, 5, '$2a$12$DvyXGZq9v.bIOmofMmCBcOLTs3k925PrJc3DwqcY.9yJKR9i2oC9a', 'Hogwarts');
+INSERT INTO zpsm_projekt.Room (room_id, gamemaster_id, capacity, password, NAME)
+VALUES (4, 4, 5, '$2a$12$DvyXGZq9v.bIOmofMmCBcOLTs3k925PrJc3DwqcY.9yJKR9i2oC9a', 'Caribbean');
 
 -- Room_Character Entity
 INSERT INTO zpsm_projekt.Room_Character (room_id, character_id)
 VALUES (1, 1);
 INSERT INTO zpsm_projekt.Room_Character (room_id, character_id)
-VALUES (2, 2);
+VALUES (1, 2);
 INSERT INTO zpsm_projekt.Room_Character (room_id, character_id)
-VALUES (3, 3);
+VALUES (1, 3);
+INSERT INTO zpsm_projekt.Room_Character (room_id, character_id)
+VALUES (2, 4);
+INSERT INTO zpsm_projekt.Room_Character (room_id, character_id)
+VALUES (3, 5);
+INSERT INTO zpsm_projekt.Room_Character (room_id, character_id)
+VALUES (4, 6);
 
 
 -- Attribute Entity
@@ -62,23 +79,26 @@ VALUES (6, 'Price');
 
 -- Item Entity
 INSERT INTO zpsm_projekt.Item (item_id, name, description)
-VALUES (1, 'Ulu-Mulu',
-        'Posiadający tę broń zdobywa szacunek orków i może przechodzić obok nich bez obawy ataku z ich strony.');
+VALUES (1, 'Shadowblade',
+        'A weapon that commands respect from orcs, allowing its wielder to pass by them without fear of attack.');
 INSERT INTO zpsm_projekt.Item (item_id, name, description)
-VALUES (2, 'RTX 4090',
-        'Nakłada na przeciwnika efekt szoku po zobaczeniu ceny i wymiarów karty.');
+VALUES (2, 'Dragonfire Staff',
+        'Inflicts a shock effect on opponents upon witnessing the immense power and size of the enchanted staff.');
 INSERT INTO zpsm_projekt.Item (item_id, name, description)
-VALUES (3, 'GTA Vice City',
-        'Nakłada na przeciwnika efekt nostalgii i traci on chęć do walki.');
+VALUES (3, 'Scroll of Arcane Wisdom',
+        'Imbues opponents with a sense of nostalgia and diminishes their desire to engage in combat.');
 INSERT INTO zpsm_projekt.Item (item_id, name, description)
-VALUES (4, 'Excalibur',
-        'Legendarna magiczna klinga, która może przeciąć stalowy pancerz.');
+VALUES (4, 'Soulbane',
+        'A legendary magical blade capable of cleaving through even the toughest steel armor.');
 INSERT INTO zpsm_projekt.Item (item_id, name, description)
-VALUES (5, 'Potion of Healing',
-        'Mikstura, która przywraca zdrowie i regeneruje rany.');
+VALUES (5, 'Elixir of Vitality',
+        'A potion that restores health and accelerates the healing of wounds.');
 INSERT INTO zpsm_projekt.Item (item_id, name, description)
-VALUES (6, 'Invisibility Cloak',
-        'Peleryna, która sprawia, że noszący ją staje się niewidzialny dla innych.');
+VALUES (6, 'Veil of Concealment',
+        'A cloak that grants invisibility to the wearer, rendering them unseen by others.');
+
+
+
 
 -- Item_Character Entity
 INSERT INTO zpsm_projekt.Item_Character (item_id, character_id)
@@ -146,12 +166,37 @@ INSERT INTO zpsm_projekt.Character_Attribute (attribute_id, character_id, attrib
 VALUES (3, 3, 5);
 INSERT INTO zpsm_projekt.Character_Attribute (attribute_id, character_id, attribute_level)
 VALUES (4, 3, 5);
+INSERT INTO zpsm_projekt.Character_Attribute (attribute_id, character_id, attribute_level)
+VALUES (1, 4, 3);
+INSERT INTO zpsm_projekt.Character_Attribute (attribute_id, character_id, attribute_level)
+VALUES (2, 4, 4);
+INSERT INTO zpsm_projekt.Character_Attribute (attribute_id, character_id, attribute_level)
+VALUES (3, 4, 2);
+INSERT INTO zpsm_projekt.Character_Attribute (attribute_id, character_id, attribute_level)
+VALUES (4, 4, 5);
+INSERT INTO zpsm_projekt.Character_Attribute (attribute_id, character_id, attribute_level)
+VALUES (1, 5, 5);
+INSERT INTO zpsm_projekt.Character_Attribute (attribute_id, character_id, attribute_level)
+VALUES (2, 5, 3);
+INSERT INTO zpsm_projekt.Character_Attribute (attribute_id, character_id, attribute_level)
+VALUES (3, 5, 4);
+INSERT INTO zpsm_projekt.Character_Attribute (attribute_id, character_id, attribute_level)
+VALUES (4, 5, 1);
+INSERT INTO zpsm_projekt.Character_Attribute (attribute_id, character_id, attribute_level)
+VALUES (1, 6, 2);
+INSERT INTO zpsm_projekt.Character_Attribute (attribute_id, character_id, attribute_level)
+VALUES (2, 6, 4);
+INSERT INTO zpsm_projekt.Character_Attribute (attribute_id, character_id, attribute_level)
+VALUES (3, 6, 5);
+INSERT INTO zpsm_projekt.Character_Attribute (attribute_id, character_id, attribute_level)
+VALUES (4, 6, 3);
+
 
 -- Quest Entity
 INSERT INTO zpsm_projekt.Quest (quest_id, name, description)
-VALUES (1, 'Poza znanym...', 'Twoja przygoda w tym zapomnianym przez bogów miejscu właśnie się zaczyna.');
+VALUES (1, 'Beyond the Known...','Your adventure in this forsaken place, abandoned by the gods, is about to begin.');
 INSERT INTO zpsm_projekt.Quest (quest_id, name, description)
-VALUES (2, 'Dziad rzepny', 'Zbierz 20 rzep dla Dziada.');
+VALUES (2, 'The Elder Gourd','Gather 20 gourds for the Elder Gourd.');
 INSERT INTO zpsm_projekt.Quest (quest_id, name, description)
 VALUES (3, 'The Lost Artifact', 'Embark on a journey to find the ancient artifact and save the world.');
 INSERT INTO zpsm_projekt.Quest (quest_id, name, description)

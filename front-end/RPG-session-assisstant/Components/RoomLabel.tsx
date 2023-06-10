@@ -30,8 +30,11 @@ export function RoomLabel({roomName, roomId, isGM = false, navigation}: Props) {
     }
 
     useEffect(() => {
-        getDataFromApi()
-            .catch(error => console.error(error))
+        if(!isGM){
+            getDataFromApi()
+                .catch(error => console.error(error));
+        }
+
     }, [])
 
     function characterDataElement() {
